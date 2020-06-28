@@ -4,9 +4,13 @@ version = "0.1.0"
 description = "A Python layer over Vivado through TCL"
 authors = ["Daniele Paletti"]
 license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/DPaletti/pyvado"
+repository = "https://github.com/DPaletti/pyvado"
+keywords = ["Xilinx", "Vivado", "TCL", "VHDL", "Verilog", "RTL"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.7"
 
 [tool.poetry.dev-dependencies]
 
