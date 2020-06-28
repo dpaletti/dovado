@@ -1,4 +1,10 @@
-# Pyvado
+# PyVado
 
-Part of the Advanced Computer Architectures research project 2020.
-A python layer over Vivado through TCL.
+<p> Advanced Computer Architectures research project 2020. <br>
+    A python layer over Vivado through TCL. </p>
+
+## Target Functionalities
+- [ ] programmatically create a Vivado project
+- [ ] utilization of a design point
+- [ ] timing of a design point
+
