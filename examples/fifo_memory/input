@@ -1,0 +1,4 @@
+examples/fifo_memory/fifo.vhd
+examples/fifo_memory/constraints.xdc
+fifo_mem
+xc7z020clg400-1

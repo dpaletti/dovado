@@ -6,5 +6,3 @@ tmp/
 *.egg
 build
 htmlcov
-
-src/pyvado/vivado_out/*

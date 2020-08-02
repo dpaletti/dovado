@@ -1,0 +1,29 @@
+# TCL script with blank fields to be filled
+# with user input in order to evaluate vhdl source
+TCL_VHDL_EVALUATE_SCRIPT_PATH: "tcl/vhdl_evaluate_point_frame.tcl"
+
+# TCL script with blank fields to be filled
+# with user input in order to evaluate verilog source
+TCL_VERILOG_EVALUATE_SCRIPT_PATH: "tcl/verilog_evaluate_point_frame.tcl"
+
+# Placeholder inside the two above files
+# to be swapped with user input
+PLACEHOLDER: "____"
+
+# TCL script with all fields filled with user input
+TCL_OUTPUT_SCRIPT_PATH: "tcl/full_evalutate_point_frame.tcl"
+
+# Output of vivado call (reports and checkpoints)
+VIVADO_OUTPUT_DIR: "vivado_out/"
+
+# Utilisation Report Name
+# concatenate this to VIVADO_OUTPUT_DIR to get its path
+VIVADO_UTILISATION_REPORT_NAME: "post_synth_util.xml"
+
+# Timing (setup) Report Name
+# concatenate this to VIVADO_OUTPUT_DIR to get its path
+VIVADO_TIMING_SETUP_REPORT_NAME: "post_synth_setup_timing.rpt"
+
+# Security measures against buffer overflows
+MAXIMUM_TOP_MODULE_LENGTH: 100
+MAXIMUM_PART_IDENTIFIER_LENGTH: 100

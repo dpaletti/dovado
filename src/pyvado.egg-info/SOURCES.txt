@@ -1,9 +1,12 @@
 README.md
 setup.py
 src/pyvado/__init__.py
-src/pyvado/pyvado.py
+src/pyvado/main.py
+src/pyvado/report_parser.py
+src/pyvado/tcl_completion_and_execution.py
 src/pyvado.egg-info/PKG-INFO
 src/pyvado.egg-info/SOURCES.txt
 src/pyvado.egg-info/dependency_links.txt
+src/pyvado.egg-info/entry_points.txt
+src/pyvado.egg-info/requires.txt
 src/pyvado.egg-info/top_level.txt
-src/pyvado/xdc/constraints.xdc

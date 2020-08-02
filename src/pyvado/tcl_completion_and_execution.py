@@ -62,5 +62,5 @@ def write_tcl_evaluation_script(replacements, src_lang, vhdl_path,
 
 
 def evaluate_tcl_script(out_path):
-    subprocess.run(" vivado -mode batch -source " + out_path,
+    subprocess.run(" vivado -mode batch -nolog -nojournal -source " + out_path,
                    shell=True)

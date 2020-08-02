@@ -1,10 +1,10 @@
 # Output Directory
-set outputDir ./vivado_out/
+set outputDir vivado_out/
 file mkdir $outputDir
 
 # Design Sources and Constraints
-set vhdDir ../../../test_sources/fifo.vhd
-set xdcFile ./xdc/constraints.xdc
+set vhdDir examples/fifo_memory/fifo.vhd
+set xdcFile examples/fifo_memory/constraints.xdc
 read_vhdl -library bftLib [ glob $vhdDir]
 read_xdc $xdcFile
 
