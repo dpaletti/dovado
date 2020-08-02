@@ -12,6 +12,8 @@ keywords = ["Xilinx", "Vivado", "TCL", "VHDL", "Verilog", "RTL", "Design Space"]
 [tool.poetry.dependencies]
 python = "^3.8"
 pathvalidate = "^2.3.0"
+BeautifulSoup4 = "^4.9.1"
+lxml = "^4.5.2"
 
 [tool.poetry.dev-dependencies]
 
