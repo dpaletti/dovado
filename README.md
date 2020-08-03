@@ -1,17 +1,11 @@
 
-# Table of Contents
 
-1.  [State of the Project](#org2e7e363)
-2.  [How to inspect the project](#org16cf649)
-    1.  [Install Poetry](#orge7b46b3)
-    2.  [Run an example](#org105a632)
+# DoVado
 
 Advanced Computer Architectures (ACA) Research project 2020.   
 A CLI tool for RTL Design Space Exploration on top of Vivado.   
 &ldquo;Do&rsquo; vado?&rdquo; is an italian slang expression for &ldquo;Dove vado?&rdquo; which means &ldquo;Where do I go?&rdquo;
 
-
-<a id="org2e7e363"></a>
 
 # State of the Project
 
@@ -19,15 +13,11 @@ A CLI tool for RTL Design Space Exploration on top of Vivado.
 Given an input RTL file after-synthesis utilization and timing are extracted.
 
 
-<a id="org16cf649"></a>
-
 # How to inspect the project
 
 This project uses [Poetry](https://python-poetry.org/) for managing dependences and python versions in order to avoid conflicting versions on different machines.
 Following instructions are tested on a Linux machine but should work on OSX with minor (or none) modifications.
 
-
-<a id="orge7b46b3"></a>
 
 ## Install Poetry
 
@@ -43,8 +33,6 @@ To check that everything went well run:
 
 If this does not work add the poetry installation directory to the PATH ([instructions](https://docs.oracle.com/cd/E19062-01/sun.mgmt.ctr36/819-5418/gaznb/index.html) for Linux)
 
-
-<a id="org105a632"></a>
 
 ## Run an example
 
