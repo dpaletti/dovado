@@ -1,5 +1,5 @@
-import pyvado.tcl_completion_and_execution as tcae
-import pyvado.report_parser as rp
+import dovado.tcl_completion_and_execution as tcae
+import dovado.report_parser as rp
 import yaml
 from pathlib import Path
 

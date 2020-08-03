@@ -1,16 +1,17 @@
 
 # Table of Contents
 
-1.  [State of the Project](#org6452945)
-2.  [How to inspect the project](#org31d26a2)
-    1.  [Install Poetry](#orgd14bb9e)
-    2.  [Run an example](#org2c18eef)
+1.  [State of the Project](#org2e7e363)
+2.  [How to inspect the project](#org16cf649)
+    1.  [Install Poetry](#orge7b46b3)
+    2.  [Run an example](#org105a632)
 
-Advanced Computer Architectures (ACA) Research project 2020.
-RTL design space exploration with python through Vivado.
+Advanced Computer Architectures (ACA) Research project 2020.   
+A CLI tool for RTL Design Space Exploration on top of Vivado.   
+&ldquo;Do&rsquo; vado?&rdquo; is an italian slang expression for &ldquo;Dove vado?&rdquo; which means &ldquo;Where do I go?&rdquo;
 
 
-<a id="org6452945"></a>
+<a id="org2e7e363"></a>
 
 # State of the Project
 
@@ -18,7 +19,7 @@ RTL design space exploration with python through Vivado.
 Given an input RTL file after-synthesis utilization and timing are extracted.
 
 
-<a id="org31d26a2"></a>
+<a id="org16cf649"></a>
 
 # How to inspect the project
 
@@ -26,7 +27,7 @@ This project uses [Poetry](https://python-poetry.org/) for managing dependences 
 Following instructions are tested on a Linux machine but should work on OSX with minor (or none) modifications.
 
 
-<a id="orgd14bb9e"></a>
+<a id="orge7b46b3"></a>
 
 ## Install Poetry
 
@@ -43,17 +44,17 @@ To check that everything went well run:
 If this does not work add the poetry installation directory to the PATH ([instructions](https://docs.oracle.com/cd/E19062-01/sun.mgmt.ctr36/819-5418/gaznb/index.html) for Linux)
 
 
-<a id="org2c18eef"></a>
+<a id="org105a632"></a>
 
 ## Run an example
 
 Clone this repository to your local machine:
 
-    git clone https://github.com/DPaletti/pyvado.git
+    git clone https://github.com/DPaletti/dovado.git
 
 Now position at the project root:
 
-    cd pyvado
+    cd dovado
 
 Install all the required dependences:
 
@@ -61,7 +62,7 @@ Install all the required dependences:
 
 Run an example:
 
-    poetry run pyvado < examples/fifo_memory/input
+    poetry run dovado < examples/fifo_memory/input
 
 Doing so all the program prompts are automatically answered with each line in input (one line = one answer), open it to see the answers.
 After all the vivado output you should see examples&rsquo; WNS (worst negative slack) and LUT (lookup table) percentage utilization

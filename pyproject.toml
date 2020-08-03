@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "pyvado"
+name = "DoVado"
 version = "0.1.0"
-description = "A Python layer over Vivado through TCL"
+description = "CLI tool for RTL Design Space Exploration on top of Vivado"
 authors = ["Daniele Paletti"]
 license = "Eclipse"
 readme = "README.md"
-homepage = "https://github.com/DPaletti/pyvado"
-repository = "https://github.com/DPaletti/pyvado"
+homepage = "https://github.com/DPaletti/dovado"
+repository = "https://github.com/DPaletti/dovado"
 keywords = ["Xilinx", "Vivado", "TCL", "VHDL", "Verilog", "RTL", "Design Space"]
 
 [tool.poetry.dependencies]
@@ -19,7 +19,7 @@ pyyaml = "^5.3.1"
 [tool.poetry.dev-dependencies]
 
 [tool.poetry.scripts]
-pyvado = "pyvado.main:main"
+dovado = "dovado.main:main"
 
 [build-system]
 requires = ["poetry>=0.12"]
