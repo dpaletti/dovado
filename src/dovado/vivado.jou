@@ -1,0 +1,20 @@
+#-----------------------------------------------------------
+# Vivado v2019.2 (64-bit)
+# SW Build 2708876 on Wed Nov  6 21:39:14 MST 2019
+# IP Build 2700528 on Thu Nov  7 00:09:20 MST 2019
+# Start of session at: Thu Aug  6 14:06:45 2020
+# Process ID: 11291
+# Current directory: /home/danielepaletti/Nextcloud/POLIMI_disroot/advanced_computer_architectures/project/dovado/src/dovado
+# Command line: vivado -mode tcl
+# Log file: /home/danielepaletti/Nextcloud/POLIMI_disroot/advanced_computer_architectures/project/dovado/src/dovado/vivado.log
+# Journal file: /home/danielepaletti/Nextcloud/POLIMI_disroot/advanced_computer_architectures/project/dovado/src/dovado/vivado.jou
+#-----------------------------------------------------------
+get_parts
+help synth_part
+help synth_design
+help synth_partr
+help synth_design
+help place_design
+help synth_design
+help place_design
+help route_design
