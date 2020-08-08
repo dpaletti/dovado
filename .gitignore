@@ -7,3 +7,6 @@ tmp/
 build
 htmlcov
 *.org
+
+*.hypothesis
+poetry.lock

@@ -40,7 +40,7 @@ Clone this repository to your local machine:
 
     git clone https://github.com/DPaletti/dovado.git
 
-Now position at the project root:
+Now position at the project root (from now on all commands assume you are at project root):
 
     cd dovado
 
@@ -54,4 +54,21 @@ Run an example:
 
 Doing so all the program prompts are automatically answered with each line in input (one line = one answer), open it to see the answers.
 After all the vivado output you should see examples&rsquo; WNS (worst negative slack) and LUT (lookup table) percentage utilization
+
+
+# Testing
+
+A recap of test coverage can be read by:
+
+    cd html_cov/
+    firefox index.html
+
+if you do not have firefox installed any other browser will do.   
+In order to run tests:
+
+    cd ..
+    poetry run pytest
+
+All tests will be ran and their respective outcome shown. The coverage in file above will be updated with the latest run.   
+Tests are managed through pytest which is used as a testing library and as a test runner. Hypothesis is a library used for property based testing. Functions which call Vivado are mocked through monkeypatch (from pytest).   
 
