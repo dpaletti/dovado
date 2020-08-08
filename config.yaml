@@ -1,29 +1,76 @@
-# TCL script with blank fields to be filled
-# with user input in order to evaluate vhdl source
-TCL_VHDL_EVALUATE_SCRIPT_PATH: "tcl/vhdl_evaluate_point_frame.tcl"
+# Directory holding tcl scripts
+TCL_DIR: "tcl/"
+
+# Directory holding xdc files
+XDC_DIR: "xdc/"
+
+# Constraint file for setting master clock frequency
+# with blank clock to be filled
+CONSTRAINT_FRAME: "constraint_frame.xdc"
+
+# Constraint file with clock filled
+CONSTRAINT: "constraint.xdc"
 
 # TCL script with blank fields to be filled
-# with user input in order to evaluate verilog source
-TCL_VERILOG_EVALUATE_SCRIPT_PATH: "tcl/verilog_evaluate_point_frame.tcl"
+# with user input in order to evaluate vhdl source until synthesis
+SYNTHESIS_FRAME: "synthesis_frame.tcl"
+
+# TCL script with all fields filled with user input until synthesis
+SYNTHESIS: "synthesis.tcl"
+# TCL script with blank fields to be filled
+# with user input in order to evaluate vhdl source
+IMPLEMENTATION_FRAME: "implementation_frame.tcl"
+
+# TCL script with all fields filled with user input
+IMPLEMENTATION: "implementation.tcl"
 
 # Placeholder inside the two above files
 # to be swapped with user input
 PLACEHOLDER: "____"
 
-# TCL script with all fields filled with user input
-TCL_OUTPUT_SCRIPT_PATH: "tcl/full_evalutate_point_frame.tcl"
-
 # Output of vivado call (reports and checkpoints)
 VIVADO_OUTPUT_DIR: "vivado_out/"
 
-# Utilisation Report Name
-# concatenate this to VIVADO_OUTPUT_DIR to get its path
-VIVADO_UTILISATION_REPORT_NAME: "post_synth_util.xml"
+# After Synthesis Utilisation Report Name
+SYNTHESIS_UTILISATION: "post_synth_util.xml"
 
-# Timing (setup) Report Name
-# concatenate this to VIVADO_OUTPUT_DIR to get its path
-VIVADO_TIMING_SETUP_REPORT_NAME: "post_synth_setup_timing.rpt"
+# After Implementation Utilisation Report Name
+IMPLEMENTATION_UTILISATION: "post_impl_util.xml"
 
-# Security measures against buffer overflows
-MAXIMUM_TOP_MODULE_LENGTH: 100
-MAXIMUM_PART_IDENTIFIER_LENGTH: 100
+# After Synthesis Timing (setup) Report Name 
+SYNTHESIS_TIMING: "post_synth_setup_timing.rpt"
+
+# After Implementation Timing (setup) Report Name 
+IMPLEMENTATION_TIMING: "post_impl_setup_timing.rpt"
+
+# Utilization metrics available from Vivado "report_utilization" tcl command
+# Should not be changed unless the actual names in the report change
+UTILIZATION_METRICS:
+  [ "Slice LUTs",
+    "LUT as Logic",
+    "LUT as Memory",
+    "Slice Registers",
+    "Registers as Flip Flop",
+    "Registers as Latch",
+    "F7 Muxes",
+    "F8 Muxes",
+    "Block RAM Tile",
+    "RAMB36/FIFO",
+    "RAMB18",
+    "DSPs"]
+  
+# Section titles from "report_utilization" must have same length of UTILIZATION_METRICS
+# Should not be changed unless the actual names in the report change
+UTILIZATION_SECTION_TITLES:
+  [ "Slice Logic",
+    "Slice Logic",
+    "Slice Logic",
+    "Slice Logic",
+    "Slice Logic",
+    "Slice Logic",
+    "Slice Logic",
+    "Slice Logic",
+    "Memory",
+    "Memory",
+    "Memory",
+    "DSP"]

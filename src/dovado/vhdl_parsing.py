@@ -6,9 +6,8 @@ def list_modules(src):
     return [
         re.sub(r"[ \t]*is", "", re.sub(r"entity[ \t]*", "", i))
         for i in re.findall(
-            r"entity .* is",
-            re.sub(r"--.*\n", "", Path(src).open("r").read()),
-            re.DOTALL,
+            r"entity[ \t]*.*[ \t]*is",
+            re.sub(r"--.*\n", "", Path(src).read_text()),
         )
     ]
 

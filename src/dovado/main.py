@@ -1,10 +1,9 @@
 import dovado.user_input as user_input
 import dovado.tcl_parsing as tcl
-import dovado.report_parser as report
+import dovado.report_parsing as report
 import dovado.vivado_interaction as vivado
 import yaml
 from pathlib import Path
-import sys
 
 
 def main():
@@ -16,46 +15,72 @@ def main():
     SRC_FOLDER = user_input.request_code_dir()
     TOP_MODULE = user_input.request_top_module(SRC_FOLDER)
 
-    if vivado.expect("Vivado%") != 0:
-        sys.exit("Could not start Vivado")
+    SYNTHESIS_PART = user_input.request_part()
 
-    SYNTH_PART = user_input.request_part()
+    # STOP_STEP can take the following values:
+    #  "synthesis", "implementation"
+    STOP_STEP = user_input.request_stop_step()
 
-    # either "synthesis" or "implementation"
-    STOP_STEP = user_input.request_synth_step()
-
+    # INCREMENTAL_MODE has the following structure:
     # {"is synthesis incremental" : boolean,
     #  "is implementation incremental" : boolean}
-    # if STOP_SETP = "synthesis" the second key is absent
-    INCREMENTAL_MODE = user_input.request_incremental_mode()
-    # Swapping out placeholders in TCL scripts
+    # if STOP_STEP == "synthesis" the second key is absent
+    INCREMENTAL_MODE = user_input.request_incremental_mode(STOP_STEP)
+
+    # Directives to give to the -directive switch in
+    # synth_design and eventually in place_design and route_design
+    # some directives are forbidden in incremental mode
+    # for place_design and route_design
+    (
+        SYNTHESIS_DIRECTIVES,
+        PLACE_DIRECTIVES,
+        ROUTE_DIRECTIVES,
+    ) = user_input.request_directives(STOP_STEP, INCREMENTAL_MODE)
+
+    CLOCK = user_input.request_clock()
+
+    # Swapping out placeholder in constraint file
     tcl.fill_frame(
-        CONFIG["SYNTHESIS_FRAME_SCRIPT_PATH"][
+        CONFIG["XDC_DIR"] + CONFIG["CONSTRAINT_FRAME"],
+        [str(1000 / CLOCK)],
+        CONFIG["PLACEHOLDER"],
+        CONFIG["XDC_DIR"] + CONFIG["CONSTRAINT"],
+    )
+
+    # Swapping out placeholders in TCL scripts
+    # TODO start debugging from here, above still needs much testing, maybe start writing tests
+    # here how to mock user input https://stackoverflow.com/questions/21046717/python-mocking-raw-input-in-unittests
+    # use pytest for tests
+    tcl.fill_frame(
+        CONFIG["TCL_DIR"] + CONFIG[STOP_STEP.upper() + "_FRAME"],
+        [
             CONFIG["VIVADO_OUTPUT_DIR"],
             SRC_FOLDER,
-            CONFIG["CONSTRAINTS_FILE_PATH"],
+            CONFIG["XDC_DIR"] + CONFIG["CONSTRAINT"],
             TOP_MODULE,
-            SYNTH_PART,
-            CONFIG["VIVADO_TIMING_SETUP_REPORT_NAME"],
-            CONFIG["VIVADO_UTILISATION_REPORT_NAME"],
+            SYNTHESIS_PART,
+            CONFIG[STOP_STEP.upper() + "_TIMING"],
+            CONFIG[STOP_STEP.upper() + "_UTILISATION"],
         ],
         CONFIG["PLACEHOLDER"],
-        CONFIG["SYNTHESIS_SCRIPT_PATH"],
+        CONFIG[STOP_STEP.upper()],
     )
 
     # Calling vivado to evaluate the script
-    vivado.communicate("source " + CONFIG["SYNTHESIS_SCRIPT_PATH"])
+    vivado.execute_command("source " + CONFIG[STOP_STEP.upper()])
+
     utilization_metrics = {
         i: report.get_utilisation(
             CONFIG["UTILIZATION METRICS"],
             CONFIG["UTILIZATION_SECTION_TITLES"],
             CONFIG["VIVADO_OUTPUT_DIR"]
-            + CONFIG["VIVADO_UTILISATION" + "_REPORT_NAME"],
+            + CONFIG[STOP_STEP.upper() + "UTILISATION"],
             "Util%",
             i,
         )
         for i in user_input.request_utilization_metrics()
     }
+
     max_frequency = report.get_wns(
         CONFIG["VIVADO_OUTPUT_DIR"] + CONFIG["VIVADO_TIMING_SETUP_REPORT_NAME"]
     )

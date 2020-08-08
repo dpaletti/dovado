@@ -6,6 +6,7 @@ file mkdir $outputDir
 set vhdDir examples/fifo_memory/fifo.vhd
 set xdcFile examples/fifo_memory/constraints.xdc
 read_vhdl -library bftLib [ glob $vhdDir]
+read_verilog [ glob $verilogDir]
 read_xdc $xdcFile
 
 # Run synthesis and write checkpoint
