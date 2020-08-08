@@ -8,5 +8,5 @@ build
 htmlcov
 *.org
 
-*.hypothesis
+.hypothesis/
 poetry.lock
