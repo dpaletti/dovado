@@ -3,46 +3,42 @@ import pytest
 from hypothesis import given, example
 from hypothesis.strategies import text
 import tests.vivado_2019_2_mock_data as version_dependent
+from unittest.mock import patch
 
 
-# Care in this test \n is assumed as newline
 @given(command=text())
 @example(command="synthesis")
 @example(command="place")
 @example(command="route")
-# ignoring a false positive HypothesisDeprecationWarning
-# other warnings may be shadowed too
-@pytest.mark.filterwarnings("ignore:tests/test_doc_parsing.py")
-def test_get_directives_paragraph(command, monkeypatch):
-    with monkeypatch.context() as m:
-        if command not in {"synthesis", "place", "route"}:
-            pytest.raises(ValueError, d.get_directives_paragraph, command)
-            return
-        if command == "synthesis":
-            m.setattr(
-                "dovado.vivado_interaction.get_help",
-                lambda x: version_dependent.help_synth_design,
-            )
+def test_get_directives_paragraph(command):
+    if command not in {"synthesis", "place", "route"}:
+        pytest.raises(ValueError, d.get_directives_paragraph, command)
+        return
+    if command == "synthesis":
+        with patch(
+            "dovado.vivado_interaction.get_help",
+            lambda x: version_dependent.help_synth_design,
+        ):
             assert d.get_directives_paragraph(
                 command
             ) in version_dependent.synth_directives_paragraph.replace(
                 "\n\n", "\n"
             )
-        elif command == "place":
-            m.setattr(
-                "dovado.vivado_interaction.get_help",
-                lambda x: version_dependent.help_place_design,
-            )
+    elif command == "place":
+        with patch(
+            "dovado.vivado_interaction.get_help",
+            lambda x: version_dependent.help_place_design,
+        ):
             assert d.get_directives_paragraph(
                 command
             ) in version_dependent.place_directives_paragraph.strip().replace(
                 "\n\n", "\n"
             )
-        elif command == "route":
-            m.setattr(
-                "dovado.vivado_interaction.get_help",
-                lambda x: version_dependent.help_route_design,
-            )
+    elif command == "route":
+        with patch(
+            "dovado.vivado_interaction.get_help",
+            lambda x: version_dependent.help_route_design,
+        ):
             assert d.get_directives_paragraph(
                 command
             ) in version_dependent.route_directives_paragraph.strip().replace(

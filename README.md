@@ -66,7 +66,6 @@ A recap of test coverage can be read by:
 if you do not have firefox installed any other browser will do.   
 In order to run tests:
 
-    cd ..
     poetry run pytest
 
 All tests will be ran and their respective outcome shown. The coverage in file above will be updated with the latest run.   

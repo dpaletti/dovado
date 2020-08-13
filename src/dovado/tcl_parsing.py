@@ -3,6 +3,10 @@ from pathlib import Path
 
 
 def fill_frame(tcl_frame_path, replacements, placeholder, out_path):
+    # TODO make this work both with verilog and vhdl at the same time
+    # Care that there may be nested folder, this must be handled
+    # Both synthesis and implementation may be taken into account
+    # check that here and in main is correct
     try:
         tcl_out = re.sub(
             placeholder,

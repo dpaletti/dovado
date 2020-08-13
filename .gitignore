@@ -10,3 +10,4 @@ htmlcov
 
 .hypothesis/
 poetry.lock
+src/dovado/src_parsing.py

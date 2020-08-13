@@ -9,17 +9,15 @@ def get_utilisation(
     if len(utilization_metrics) != len(titles):
         raise ValueError(
             "Length mismatch between utilization_metrics and titles"
-            + +"\nUtilization: "
+            + "\nUtilization: "
             + str(utilization_metrics)
-            + +"\nTitles: "
+            + "\nTitles: "
             + str(titles)
         )
-    column_name_to_title = dict(zip(utilization_metrics, titles))
+    row_name_to_title = dict(zip(utilization_metrics, titles))
     try:
         report = BeautifulSoup(Path(report_path).open(), "lxml-xml")
-        section = report(
-            "section", {"title": column_name_to_title[column_name]}
-        )[0]
+        section = report("section", {"title": row_name_to_title[row_name]})[0]
         rows = section("tablerow")
         header = rows[0]
         column = header("tableheader").index(
@@ -37,18 +35,8 @@ def get_utilisation(
             + "FileNotFoundError: "
             + str(f)
         )
-    except IndexError as e:
-        raise IndexError(
-            "Failed parsing utilization report"
-            + "Calling parameters that could have caused this"
-            + "\n"
-            + column_name
-            + "\n"
-            + row_name
-            + "\n"
-            + "IndexError message: "
-            + str(e)
-        )
+    except Exception as e:
+        raise Exception(str(e))
 
 
 def get_wns(report_path):
@@ -63,3 +51,5 @@ def get_wns(report_path):
             + "FileNotFoundError: "
             + str(f)
         )
+    except Exception as e:
+        raise Exception(str(e))

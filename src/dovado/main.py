@@ -13,13 +13,20 @@ def main():
     CONFIG = yaml.safe_load(Path("config.yaml").open())
 
     SRC_FOLDER = user_input.request_code_dir()
-    TOP_MODULE = user_input.request_top_module(SRC_FOLDER)
+    TOP_MODULE, TOP_SRC = user_input.request_top_module(SRC_FOLDER)
 
     SYNTHESIS_PART = user_input.request_part()
 
     # STOP_STEP can take the following values:
     #  "synthesis", "implementation"
     STOP_STEP = user_input.request_stop_step()
+
+    # Clock and out are needed for boxing the component
+    # to avoid overflowing pins
+    if STOP_STEP == "implementation":
+        CLOCK_PORT, OUT_PORT = user_input.request_identifiers(
+            TOP_SRC, TOP_MODULE
+        )
 
     # INCREMENTAL_MODE has the following structure:
     # {"is synthesis incremental" : boolean,
@@ -48,9 +55,6 @@ def main():
     )
 
     # Swapping out placeholders in TCL scripts
-    # TODO start debugging from here, above still needs much testing, maybe start writing tests
-    # here how to mock user input https://stackoverflow.com/questions/21046717/python-mocking-raw-input-in-unittests
-    # use pytest for tests
     tcl.fill_frame(
         CONFIG["TCL_DIR"] + CONFIG[STOP_STEP.upper() + "_FRAME"],
         [

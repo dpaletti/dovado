@@ -27,6 +27,37 @@ route_note = ""
 incremental_place_directives = []
 incremental_route_directives = []
 
+# available utilization metrics
+available_utilization_metrics = [
+    "Slice LUTs",
+    "LUT as Logic",
+    "LUT as Memory",
+    "Slice Registers",
+    "Registers as Flip Flop",
+    "Registers as Latch",
+    "F7 Muxes",
+    "F8 Muxes",
+    "Block RAM Tile",
+    "RAMB36/FIFO",
+    "RAMB18",
+    "DSPs",
+]
+
+utilization_titles = [
+    "Slice Logic",
+    "Slice Logic",
+    "Slice Logic",
+    "Slice Logic",
+    "Slice Logic",
+    "Slice Logic",
+    "Slice Logic",
+    "Slice Logic",
+    "Memory",
+    "Memory",
+    "Memory",
+    "DSP",
+]
+
 parts = [
     "xc7k70tfbv676-1",
     "xc7k70tfbv676-2",
