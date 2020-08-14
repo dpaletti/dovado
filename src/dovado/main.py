@@ -12,27 +12,25 @@ def main():
 
     CONFIG = yaml.safe_load(Path("config.yaml").open())
 
-    SRC_FOLDER = user_input.request_code_dir()
-    TOP_MODULE, TOP_SRC = user_input.request_top_module(SRC_FOLDER)
+    SRC_FOLDER = user_input.ask_code_dir()
+    TOP_MODULE, TOP_SRC = user_input.ask_top_module(SRC_FOLDER)
 
-    SYNTHESIS_PART = user_input.request_part()
+    SYNTHESIS_PART = user_input.ask_part()
 
     # STOP_STEP can take the following values:
     #  "synthesis", "implementation"
-    STOP_STEP = user_input.request_stop_step()
+    STOP_STEP = user_input.ask_stop_step()
 
     # Clock and out are needed for boxing the component
     # to avoid overflowing pins
     if STOP_STEP == "implementation":
-        CLOCK_PORT, OUT_PORT = user_input.request_identifiers(
-            TOP_SRC, TOP_MODULE
-        )
+        CLOCK_PORT, OUT_PORT = user_input.ask_identifiers(TOP_SRC, TOP_MODULE)
 
     # INCREMENTAL_MODE has the following structure:
     # {"is synthesis incremental" : boolean,
     #  "is implementation incremental" : boolean}
     # if STOP_STEP == "synthesis" the second key is absent
-    INCREMENTAL_MODE = user_input.request_incremental_mode(STOP_STEP)
+    INCREMENTAL_MODE = user_input.ask_incremental_mode(STOP_STEP)
 
     # Directives to give to the -directive switch in
     # synth_design and eventually in place_design and route_design
@@ -42,9 +40,9 @@ def main():
         SYNTHESIS_DIRECTIVES,
         PLACE_DIRECTIVES,
         ROUTE_DIRECTIVES,
-    ) = user_input.request_directives(STOP_STEP, INCREMENTAL_MODE)
+    ) = user_input.ask_directives(STOP_STEP, INCREMENTAL_MODE)
 
-    CLOCK = user_input.request_clock()
+    CLOCK = user_input.ask_clock()
 
     # Swapping out placeholder in constraint file
     tcl.fill_frame(
@@ -82,7 +80,7 @@ def main():
             "Util%",
             i,
         )
-        for i in user_input.request_utilization_metrics()
+        for i in user_input.ask_utilization_metrics()
     }
 
     max_frequency = report.get_wns(

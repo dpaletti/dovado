@@ -2,13 +2,22 @@ import re
 from pathvalidate import is_valid_filepath
 from os import path
 from pathlib import Path
-import dovado.vhdl_parsing as vhdl
-import dovado.verilog_parsing as verilog
 import dovado.vivado_interaction as vivado
 import dovado.doc_parsing as doc
+import dovado.src_parsing as parsing
 
 
-def request_code_dir():
+def list_rtl_files(src_path):
+    rtl_extensions = ["vhd", "v"]
+    files = []
+    for extension in rtl_extensions:
+        files += [
+            str(pth) for pth in src_path.rglob("*." + extension) if pth.is_file
+        ]
+    return set(files)
+
+
+def ask_code_dir():
     while True:
         default = "./"
         user_input = input(
@@ -19,10 +28,7 @@ def request_code_dir():
             is_valid_filepath(user_input)
             and path.exists(user_input)
             and path.isdir(user_input)
-            and (
-                vhdl.list_files(Path(user_input))
-                or verilog.list_files(Path(user_input))
-            )
+            and (list_rtl_files(Path(user_input)))
         ) or user_input == "":
             return default if user_input == "" else user_input
 
@@ -31,23 +37,16 @@ def request_code_dir():
 
 def top_module_exists(src_folder, module):
 
-    for src in vhdl.list_files(Path(src_folder)):
-        if module in vhdl.list_modules(Path(src).read_text()):
-            return True, src
-
-    for src in verilog.list_files(Path(src_folder)):
-        if module in verilog.list_modules(Path(src).read_text()):
-            return True, src
-    return False, None
+    for src in list_rtl_files(Path(src_folder)):
+        print(parsing.get_modules(Path(src)))
+        if module in parsing.get_modules(Path(src)):
+            return src
+    return None
 
 
 def default_top_module(src_folder):
-    for src in vhdl.list_files(Path(src_folder)):
-        modules = vhdl.list_modules(Path(src).read_text())
-        if modules:
-            return modules[0], src
-    for src in verilog.list_files(Path(src_folder)):
-        modules = verilog.list_modules(Path(src).read_text())
+    for src in list_rtl_files(Path(src_folder)):
+        modules = parsing.get_modules(Path(src))
         if modules:
             return modules[0], src
     print("No module found in the given source files")
@@ -58,14 +57,14 @@ def default_top_module(src_folder):
     )
 
 
-def request_top_module(src_folder):
+def ask_top_module(src_folder):
     default, def_src = default_top_module(src_folder)
     while True:
         user_input = input(
             "Enter top module identifier [default = " + default + "]: "
         )
-        exists, mod_src = top_module_exists(src_folder, user_input)
-        if exists or user_input == "":
+        mod_src = top_module_exists(src_folder, user_input)
+        if mod_src or user_input == "":
             return (
                 (default, def_src)
                 if user_input == ""
@@ -74,7 +73,7 @@ def request_top_module(src_folder):
         print("Module does not exist among the files in the code folder\n")
 
 
-def request_part():
+def ask_part():
     parts = vivado.get_parts()
     default = parts[0]
     while True:
@@ -92,7 +91,7 @@ def request_part():
         print("Part not available.")
 
 
-def request_stop_step():
+def ask_stop_step():
     default = "synthesis"
     while True:
         user_input = input(
@@ -111,7 +110,7 @@ def request_stop_step():
             return default if user_input == "" else user_input
 
 
-def request_incremental_mode(stop_step):
+def ask_incremental_mode(stop_step):
     default = "yes"
     default_second = "yes"
     while True:
@@ -167,7 +166,7 @@ def parse_comma_separated_list(regexp_element, to_parse):
     )
 
 
-def _request_implementation_directives(to_request, incremental_mode):
+def _ask_implementation_directives(to_request, incremental_mode):
     if to_request not in {"place", "route"}:
         raise ValueError(
             "_request_incremental_directives called with " + to_request
@@ -213,7 +212,7 @@ def _request_implementation_directives(to_request, incremental_mode):
             return default if user_input == "" else user_input
 
 
-def request_directives(stop_step, incremental_mode):
+def ask_directives(stop_step, incremental_mode):
     synth_directives_paragraph = doc.get_directives_paragraph("synthesis")
     synth_directives = doc.get_directives(synth_directives_paragraph)
     or_directives = ""
@@ -243,12 +242,12 @@ def request_directives(stop_step, incremental_mode):
     else:
         return (
             input_synth_directives,
-            _request_implementation_directives("place", incremental_mode),
-            _request_implementation_directives("route", incremental_mode),
+            _ask_implementation_directives("place", incremental_mode),
+            _ask_implementation_directives("route", incremental_mode),
         )
 
 
-def request_clock():
+def ask_clock():
     default = "250"
     while True:
         user_input = input(
@@ -266,93 +265,55 @@ def request_clock():
 
 
 def get_default_clock_identifier(src, module):
-    print("Suffix: " + Path(src).suffix)
-    if Path(src).suffix == ".vhd":
-        declarations = vhdl.list_declarations(
-            vhdl.get_entity(Path(src).read_text(), module)
-        )
-    elif Path(src).suffix == ".v":
-        declarations = verilog.list_declarations(
-            verilog.get_module(Path(src).read_text(), module)
-        )
-    else:
-        raise ValueError(
-            "Source file: "
-            + str(src)
-            + " passed to get_default_clock_identifier "
-            + " has unknown extension "
-            + " allowed extensions are .vhd and .v"
-        )
-    return [i for i in declarations if re.match(".*(clk|clock),*", i)]
+    return [
+        i
+        for i in [
+            parsing.get_port_id(j)
+            for j in parsing.get_ports(Path(src), module)
+        ]
+        if re.match(".*(clk|clock),*", i)
+    ]
 
 
 def is_valid_clock(src, module, identifier):
-    if Path(src).suffix == ".vhd":
-        declaration = vhdl.declaration_exists(
-            vhdl.list_declarations(vhdl.get_entity(src, module)), identifier
+    port = parsing.get_port_from_id(
+        identifier, parsing.get_ports(Path(src), module)
+    )
+    if not port:
+        return None, None, None
+    port_direction = parsing.get_port_direction(port)
+    port_type = parsing.get_port_type(port)
+    if (
+        port_direction == "IN" and port_type == "std_logic"
+        if Path(src).suffix == ".vhd"
+        else port_type == "wire"
+    ):
+        return (
+            port,
+            port_direction,
+            port_type,
         )
-        if not declaration:
-            return None, None, None
-        direction = vhdl.get_direction(declaration)
-        port_type = vhdl.get_type(declaration)
-        if direction == "in" and port_type == "std_logic":
-            return (
-                vhdl.sub_declaration_identifier(declaration, identifier),
-                direction,
-                port_type,
-            )
-        return None, direction, port_type
-    if Path(src).suffix == ".v":
-        declaration = verilog.declaration_exists(
-            verilog.list_declarations(
-                verilog.get_module(Path(src).read_text(), module)
-            ),
-            identifier,
-        )
-        if not declaration:
-            return None
-        direction = verilog.get_direction(declaration)
-        port_type = verilog.get_type(declaration)
-        if direction == "input" and port_type == "wire":
-            return (
-                verilog.sub_declaration_identifier(declaration, identifier),
-                direction,
-                port_type,
-            )
-        return None, direction, port_type
+    return None, port_direction, port_type
 
 
 def is_valid_out(src, module, identifier):
-    if Path(src).suffix == ".vhd":
-        declaration = vhdl.declaration_exists(
-            vhdl.list_declarations(
-                vhdl.get_entity(Path(src).read_text(), module), identifier
-            )
+    port = parsing.get_port_from_id(
+        identifier, parsing.get_ports(Path(src), module)
+    )
+    if not port:
+        return None, None, None
+    port_direction = parsing.get_port_direction(port)
+    port_type = parsing.get_port_type(port)
+    if port_direction == "OUT":
+        return (
+            port,
+            port_direction,
+            port_type,
         )
-        if not declaration:
-            return None, None, None
-        direction = vhdl.get_direction(declaration)
-        port_type = vhdl.get_type(declaration)
-        if direction == "out":
-            return declaration, direction, port_type
-        return None, direction, port_type
-    if Path(src).suffix == ".v":
-        declaration = verilog.declaration_exists(
-            verilog.list_declarations(
-                verilog.get_module(Path(src).read_text(), module)
-            ),
-            identifier,
-        )
-        if not declaration:
-            return None
-        direction = verilog.get_direction(declaration)
-        port_type = verilog.get_type(declaration)
-        if direction == "output":
-            return declaration, direction, port_type
-        return None, direction, port_type
+    return None, port_direction, port_type
 
 
-def request_identifiers(src, module):
+def ask_identifiers(src, module):
     while True:
         user_input = input("Enter clock identifier: ")
         clock, clock_direction, clock_port_type = is_valid_clock(
@@ -362,9 +323,9 @@ def request_identifiers(src, module):
             break
         print(
             "Invalid clock identifier: port direction = "
-            + clock_direction
+            + str(clock_direction)
             + " (must be an input port) port type = "
-            + clock_port_type
+            + str(clock_port_type)
             + " (must be binary)\n"
         )
     while True:
@@ -376,12 +337,12 @@ def request_identifiers(src, module):
             return clock, out
         print(
             "Invalid out port identifier: port direction = "
-            + out_direction
+            + str(out_direction)
             + " (must be an output port)"
         )
 
 
-def request_utilization_metrics(available_metrics):
+def ask_utilization_metrics(available_metrics):
     util_indices = dict(
         zip(range(1, len(available_metrics) + 1), iter(available_metrics))
     )
@@ -408,5 +369,6 @@ def request_utilization_metrics(available_metrics):
             return [util_indices[int(i)] for i in set(parsed_list)]
 
         print(
-            "Invalid input, please enter a comma separated list of numbers between 1 and 11"
+            "Invalid input, please enter"
+            + " a comma separated list of numbers between 1 and 11"
         )

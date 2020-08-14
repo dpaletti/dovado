@@ -101,6 +101,14 @@ python-versions = "*"
 version = "1.6"
 
 [[package]]
+category = "main"
+description = ""
+name = "hdlconvertorast"
+optional = false
+python-versions = "*"
+version = "0.2"
+
+[[package]]
 category = "dev"
 description = "A library for property-based testing"
 name = "hypothesis"
@@ -333,7 +341,7 @@ python-versions = "*"
 version = "1.4.1"
 
 [metadata]
-content-hash = "d11a67d4ccb355e60fb5cc68287acbad639a903fb3006c6e71631a5dad498354"
+content-hash = "f75f09ec7dac50183f4cb43da44e7ed1902cfcdeae184a1b652a690b9ea8b225"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -404,6 +412,9 @@ coverage = [
 ]
 hdlconvertor = [
     {file = "hdlConvertor-1.6.tar.gz", hash = "sha256:ff478bea6040361c21e265459caf0303879b1628330de2f7817eec719a7201e1"},
+]
+hdlconvertorast = [
+    {file = "hdlConvertorAst-0.2.tar.gz", hash = "sha256:c5532e59f160da995c1602476dfd09228cefa43e098d7cd3382f8c6ad70515f8"},
 ]
 hypothesis = [
     {file = "hypothesis-5.23.11-py3-none-any.whl", hash = "sha256:c0ed9cbbba273fb4ff4148ff539b73b52d5b6422b1bb86a7901f8cbb43f49db3"},
