@@ -58,16 +58,17 @@ After all the vivado output you should see examples&rsquo; WNS (worst negative s
 
 # Testing
 
-A recap of test coverage can be read by:
-
-    cd html_cov/
-    firefox index.html
-
-if you do not have firefox installed any other browser will do.   
 In order to run tests:
 
     poetry run pytest
 
 All tests will be ran and their respective outcome shown. The coverage in file above will be updated with the latest run.   
 Tests are managed through pytest which is used as a testing library and as a test runner. Hypothesis is a library used for property based testing. Functions which call Vivado are mocked through monkeypatch (from pytest).   
+
+A recap of test coverage can be read by:
+
+    cd html_cov/
+    firefox index.html
+
+if you do not have firefox installed any other browser will do.   
 

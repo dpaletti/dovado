@@ -1,13 +1,14 @@
 .DS_Store
 .idea
 *.log
+*.jou
 tmp/
 
 *.egg
-build
-htmlcov
 *.org
 
 .hypothesis/
 poetry.lock
-src/dovado/src_parsing.py
+htmlcov/
+.Xil/
+.pytest_cache/
