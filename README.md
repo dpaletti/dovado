@@ -62,7 +62,7 @@ In order to run tests:
 
     poetry run pytest
 
-All tests will be ran and their respective outcome shown. The coverage in file above will be updated with the latest run.   
+All tests will be ran and their respective outcome shown.   
 Tests are managed through pytest which is used as a testing library and as a test runner. Hypothesis is a library used for property based testing. Functions which call Vivado are mocked through monkeypatch (from pytest).   
 
 A recap of test coverage can be read by:
