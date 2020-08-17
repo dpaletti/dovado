@@ -72,9 +72,9 @@
     <p id="t19" class="mis show_mis"><span class="n"><a href="#t19">19</a></span><span class="t">    <span class="key">if</span> <span class="key">not</span> <span class="nam">vivado</span><span class="op">.</span><span class="nam">isalive</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t20" class="mis show_mis"><span class="n"><a href="#t20">20</a></span><span class="t">        <span class="key">raise</span> <span class="nam">Exception</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p id="t21" class="pln"><span class="n"><a href="#t21">21</a></span><span class="t">            <span class="str">"Could not start Vivado, is it installed?"</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t22" class="pln"><span class="n"><a href="#t22">22</a></span><span class="t">            <span class="op">+</span> <span class="str">"Is it in your PATH?\n"</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t23" class="pln"><span class="n"><a href="#t23">23</a></span><span class="t">            <span class="op">+</span> <span class="str">"Try running 'vivado -mode tcl' yourself and"</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t24" class="pln"><span class="n"><a href="#t24">24</a></span><span class="t">            <span class="op">+</span> <span class="str">"debug why it does not start"</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t22" class="pln"><span class="n"><a href="#t22">22</a></span><span class="t">            <span class="op">+</span> <span class="str">" Is it in your PATH?\n"</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t23" class="pln"><span class="n"><a href="#t23">23</a></span><span class="t">            <span class="op">+</span> <span class="str">" Try running 'vivado -mode tcl' yourself and"</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t24" class="pln"><span class="n"><a href="#t24">24</a></span><span class="t">            <span class="op">+</span> <span class="str">" debug why it does not start"</span>&nbsp;</span><span class="r"></span></p>
     <p id="t25" class="pln"><span class="n"><a href="#t25">25</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t26" class="pln"><span class="n"><a href="#t26">26</a></span><span class="t">    <span class="key">global</span> <span class="nam">t_vivado_init</span>&nbsp;</span><span class="r"></span></p>
     <p id="t27" class="mis show_mis"><span class="n"><a href="#t27">27</a></span><span class="t">    <span class="key">if</span> <span class="nam">t_vivado_init</span> <span class="key">is</span> <span class="key">not</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -83,7 +83,7 @@
     <p id="t30" class="mis show_mis"><span class="n"><a href="#t30">30</a></span><span class="t">        <span class="nam">t_vivado_init</span> <span class="op">=</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
     <p id="t31" class="pln"><span class="n"><a href="#t31">31</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t32" class="mis show_mis"><span class="n"><a href="#t32">32</a></span><span class="t">    <span class="nam">vivado</span><span class="op">.</span><span class="nam">sendline</span><span class="op">(</span><span class="nam">command</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t33" class="mis show_mis"><span class="n"><a href="#t33">33</a></span><span class="t">    <span class="nam">vivado</span><span class="op">.</span><span class="nam">expect</span><span class="op">(</span><span class="str">"Vivado%"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t33" class="mis show_mis"><span class="n"><a href="#t33">33</a></span><span class="t">    <span class="nam">vivado</span><span class="op">.</span><span class="nam">expect</span><span class="op">(</span><span class="str">"Vivado%"</span><span class="op">,</span> <span class="nam">timeout</span><span class="op">=</span><span class="key">None</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t34" class="mis show_mis"><span class="n"><a href="#t34">34</a></span><span class="t">    <span class="key">return</span> <span class="nam">vivado</span><span class="op">.</span><span class="nam">before</span>&nbsp;</span><span class="r"></span></p>
     <p id="t35" class="pln"><span class="n"><a href="#t35">35</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t36" class="pln"><span class="n"><a href="#t36">36</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -100,7 +100,7 @@
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.2.1</a>,
-            created at 2020-08-10 15:14 +0200
+            created at 2020-08-15 22:14 +0200
         </p>
     </div>
 </div>

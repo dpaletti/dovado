@@ -1,6 +1,7 @@
 {
   "tests/test_src_parsing.py::test__is_parsed": true,
   "tests/test_user_input.py::test__request_implementation_directives": true,
+  "tests/test_user_input.py::test_is_valid_out": true,
   "tests/test_user_input.py::test_request_clock": true,
   "tests/test_user_input.py::test_request_code_dir": true,
   "tests/test_user_input.py::test_request_directives": true,

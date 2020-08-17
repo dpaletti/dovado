@@ -26,7 +26,7 @@ def get_utilisation(
         row = section("tablecell", {"contents": re.compile(" *" + row_name)})[
             0
         ].parent()
-        return float(row[column]["contents"])
+        return float(row[column]["contents"].replace("<", "").replace(">", ""))
     except FileNotFoundError as f:
         raise FileNotFoundError(
             "Wrong path: "
@@ -42,7 +42,7 @@ def get_utilisation(
 def get_wns(report_path):
     try:
         first_line = Path(report_path).open().readline()
-        return float(re.findall(r"\d.\d+", first_line)[0])
+        return float(re.findall(r"[-+]?\d*\.\d*", first_line)[0])
     except FileNotFoundError as f:
         raise FileNotFoundError(
             "Wrong path: "
@@ -51,5 +51,3 @@ def get_wns(report_path):
             + "FileNotFoundError: "
             + str(f)
         )
-    except Exception as e:
-        raise Exception(str(e))

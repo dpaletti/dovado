@@ -37,19 +37,15 @@ def test_top_module_exists():
         test.top_module_exists(
             "examples/verilog_unsigned_adder", "krnl_vadd_rtl_adder"
         )
-        == "examples/verilog_unsigned_adder/unsigned_adder.v"
+        == "examples/verilog_unsigned_adder/unsigned_adder.sv"
     )
 
 
 def test_default_top_module():
-    assert test.default_top_module("examples/vhdl_fifo_memory") == (
-        "fifo_mem",
-        "examples/vhdl_fifo_memory/fifo.vhd",
-    )
     assert test.default_top_module("examples/verilog_unsigned_adder") == (
         "krnl_vadd_rtl_adder",
-        "examples/verilog_unsigned_adder/unsigned_adder.v",
-    )
+        "examples/verilog_unsigned_adder/unsigned_adder.sv",
+    ) or ("box", "examples/verilog_unsigned_adder/box.sv",)
     with pytest.raises(ValueError):
         test.default_top_module("invalid")
 
@@ -150,71 +146,60 @@ def test_ask_incremental_mode():
 def test_parse_comma_separated_list():
     assert test.parse_comma_separated_list(
         "[1-9]|1[0-1]", "1, 2, 3, 4, 11"
-    ) == (True, ["1", "2", "3", "4", "11"],)
-    assert test.parse_comma_separated_list(
+    ) == ["1", "2", "3", "4", "11"]
+    assert not test.parse_comma_separated_list(
         "[1-9]|1[0-1]", "1, 2, 3, 4, 12"
-    ) == (False, None,)
+    )
 
 
+def mock_get_directives_paragraph(param):
+    if param == "place":
+        return version_dependent.place_directives_paragraph
+    elif param == "route":
+        return version_dependent.route_directives_paragraph
+    elif param == "read checkpoint":
+        return version_dependent.read_checkpoint_directives_paragraph
+
+
+def mock_get_directives(param):
+    if param == version_dependent.place_directives_paragraph:
+        return version_dependent.place_directives
+    if param == version_dependent.route_directives_paragraph:
+        return version_dependent.route_directives
+    if param == version_dependent.read_checkpoint_directives_paragraph:
+        return version_dependent.read_checkpoint_directives
+
+
+@patch(
+    "dovado.doc_parsing.get_directives_paragraph",
+    new=mock_get_directives_paragraph,
+)
+@patch("dovado.doc_parsing.get_directives", new=mock_get_directives)
 def test__ask_implementation_directives():
     for to_ask in {"place\n", "route\n"}:
         if to_ask == "place\n":
-            patch_dir_par = (
-                "dovado.doc_parsing.get_directives_paragraph",
-                lambda x: version_dependent.place_directives_paragraph,
-            )
-            patch_dir = (
-                "dovado.doc_parsing.get_directives",
-                lambda x: version_dependent.place_directives,
-            )
-            patch_inc_dir = (
-                "dovado.doc_parsing.get_incremental_directives",
-                lambda x: version_dependent.incremental_place_directives,
-            )
             directives = version_dependent.place_directives
-            incremental_directives = (
-                version_dependent.incremental_place_directives
-            )
         if to_ask == "route\n":
-            patch_dir_par = (
-                "dovado.doc_parsing.get_directives_paragraph",
-                lambda x: version_dependent.route_directives_paragraph,
-            )
-            patch_dir = (
-                "dovado.doc_parsing.get_directives",
-                lambda x: version_dependent.route_directives,
-            )
-            patch_inc_dir = (
-                "dovado.doc_parsing.get_incremental_directives",
-                lambda x: version_dependent.incremental_route_directives,
-            )
             directives = version_dependent.route_directives
-            incremental_directives = (
-                version_dependent.incremental_route_directives
-            )
-        with patch(*patch_dir_par):
-            with patch(*patch_dir):
-                with patch(*patch_inc_dir):
-                    for incremental_mode in [
-                        {"is implementation incremental": True},
-                        {"is implementation incremental": False},
-                    ]:
-                        for answer in (
-                            incremental_directives
-                            if incremental_mode[
-                                "is implementation incremental"
-                            ]
-                            else directives
-                        ):
-                            with patch(
-                                "sys.stdin", io.StringIO("?\n" + str(answer)),
-                            ):
-                                assert (
-                                    test._ask_implementation_directives(
-                                        to_ask.strip(), incremental_mode
-                                    )
-                                    == answer
-                                )
+        incremental_directives = version_dependent.read_checkpoint_directives
+        for incremental_mode in [
+            {"is implementation incremental": True},
+            {"is implementation incremental": False},
+        ]:
+            for answer in (
+                incremental_directives
+                if incremental_mode["is implementation incremental"]
+                else directives
+            ):
+                with patch(
+                    "sys.stdin", io.StringIO("?\n" + str(answer)),
+                ):
+                    assert (
+                        test._ask_implementation_directives(
+                            to_ask.strip(), incremental_mode
+                        )
+                        == answer
+                    )
     with pytest.raises(ValueError):
         test._ask_implementation_directives("invalid", "ignored")
 
@@ -287,46 +272,18 @@ def test_is_valid_clock():
     ) == (None, "OUT", "std_logic_vector")
 
 
-def test_is_valid_out():
-    assert test.is_valid_out(
-        "./examples/vhdl_ripple_borrow_subtractor/rbs.vhd",
-        "rbs",
-        "invalid port",
-    ) == (None, None, None)
-
-    assert set(("OUT", "std_logic_vector",)).issubset(
-        set(
-            test.is_valid_out(
-                "./examples/vhdl_ripple_borrow_subtractor/rbs.vhd",
-                "rbs",
-                "diffN",
-            )
-        )
-    )
-
-    assert test.is_valid_out(
-        "./examples/vhdl_ripple_borrow_subtractor/rbs.vhd", "rbs", "binN",
-    ) == (None, "IN", "std_logic")
-
-
 def test_ask_identifiers():
     with patch("sys.stdin", io.StringIO("invalid\nbinN\ninvalid\ndiffN\n")):
         test_call = test.ask_identifiers(
             "./examples/vhdl_ripple_borrow_subtractor/rbs.vhd", "rbs"
         )
-        assert (
-            str(test_call[0].name) == "binN"
-            and str(test_call[1].name) == "diffN"
-        )
+        assert str(test_call.name) == "binN"
     with patch("sys.stdin", io.StringIO("invalid\naclk\ninvalid\nm_tdata\n")):
         test_call = test.ask_identifiers(
-            "./examples/verilog_unsigned_adder/unsigned_adder.v",
+            "./examples/verilog_unsigned_adder/unsigned_adder.sv",
             "krnl_vadd_rtl_adder",
         )
-        assert (
-            str(test_call[0].name) == "aclk"
-            and str(test_call[1].name) == "m_tdata"
-        )
+        assert str(test_call.name) == "aclk"
 
 
 def test_ask_utilization_metrics():
@@ -337,9 +294,33 @@ def test_ask_utilization_metrics():
             )
         ) == set(["Slice LUTs", "LUT as Logic", "LUT as Memory"])
 
-    with patch("sys.stdin", io.StringIO("1, 12\n\n")):
+    with patch("sys.stdin", io.StringIO("1, 12")):
         assert set(
             test.ask_utilization_metrics(
                 version_dependent.available_utilization_metrics
             )
-        ) == set(["Slice LUTs", "Slice Registers", "Block RAM Tile"])
+        ) == set(["Slice LUTs", "DSPs"])
+
+    with patch(
+        "sys.stdin", io.StringIO("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12")
+    ):
+        assert set(
+            test.ask_utilization_metrics(
+                version_dependent.available_utilization_metrics
+            )
+        ) == set(
+            [
+                "Slice LUTs",
+                "LUT as Logic",
+                "LUT as Memory",
+                "Slice Registers",
+                "Registers as Flip Flop",
+                "Registers as Latch",
+                "F7 Muxes",
+                "F8 Muxes",
+                "Block RAM Tile",
+                "RAMB36/FIFO",
+                "RAMB18",
+                "DSPs",
+            ]
+        )

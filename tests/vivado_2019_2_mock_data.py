@@ -114,6 +114,12 @@ place_directives = [
     "Default",
 ]
 
+read_checkpoint_directives = [
+    "RuntimeOptimized",
+    "TimingClosure",
+    "Quick",
+]
+
 incremental_place_directives = [
     "Explore",
     "Quick",
@@ -125,6 +131,20 @@ incremental_route_directives = [
     "Quick",
     "Default",
 ]
+
+read_checkpoint_directives_paragraph = """
+  -directive [ RuntimeOptimized | TimingClosure | Quick ] - (Optional)
+  Specifies a directive, or mode of operation for the -incremental process.
+
+   *  RuntimeOptimized: The target WNS is the referenced from the incremental
+      DCP. Trade-off timing for faster runtime.
+
+   *  TimingClosure: The target WNS is 0. This mode attempts to meet timing
+      at the expense of runtime.
+
+   *  Quick: Specifies a low effort, non-timing-driven incremental
+      implementation mode with the fastest runtime.
+"""
 
 place_directives_paragraph = """
   -directive <arg> - (Optional) Direct placement to achieve specific design
@@ -1373,5 +1393,189 @@ See Also:
    *  power_opt_design
    *  read_checkpoint
    *  set_property
+   *  write_checkpoint
+"""
+help_read_checkpoint = """
+help read_checkpoint
+read_checkpoint
+
+Description:
+Read a design checkpoint
+
+Syntax:
+read_checkpoint  [-cell <arg>] [-incremental] [-directive <arg>]
+                 [-reuse_objects <args>] [-fix_objects <args>]
+                 [-dcp_cell_list <args>] [-quiet] [-verbose] [<file>]
+
+Usage:
+  Name              Description
+  -----------------------------
+  [-cell]           Replace this cell with the checkpoint. The cell must be a
+                    black box.
+  [-incremental]    Input design checkpoint file to be used for re-using
+                    implementation.
+  [-directive]      Mode of behavior (directive) for this command. Please
+                    refer to Arguments section of this help for values for
+                    this option.
+                    Default: RuntimeOptimized
+  [-reuse_objects]  Reuse only given list of cells, clock regions, SLRs and
+                    Designs
+  [-fix_objects]    Fix only given list of cells, clock regions, SLRs or
+                    Design
+  [-dcp_cell_list]  A list of cell/dcp pairs, e.g. {<cell1> <dcp1> <cell2>
+                    <dcp2>}. The option value should be in curly braces.
+  [-quiet]          Ignore command errors
+  [-verbose]        Suspend message limits during command execution
+  [<file>]          Design checkpoint file
+
+Categories:
+FileIO
+
+Description:
+
+  Reads a design checkpoint file (DCP) that contains the netlist,
+  constraints, and may optionally have the placement and routing information
+  of an implemented design. You can save design checkpoints at any stage in
+  the design using the write_checkpoint command.
+
+  The read_checkpoint command simply reads the associated checkpoint file,
+  without opening a design or project in-memory. To create a project from the
+  imported checkpoint, use the open_checkpoint command instead of
+  read_checkpoint, or use the link_design command after read_checkpoint to
+  open the in-memory design from the checkpoint or checkpoint files currently
+  read.
+
+  Note: When multiple design checkpoints are open in the Vivado tool, you
+  must use the current_project command to switch between the open designs.
+  You can use current_design to check which checkpoint is the active design.
+
+Arguments:
+
+  -cell <arg> - (Optional) Specifies a black box cell in the current design
+  to populate with the netlist data from the checkpoint file being read. This
+  option cannot be used with -incremental, or any of its related options.
+
+  -incremental - (Optional) Load a checkpoint file into an already open
+  design to enable the incremental implementation design flow, where <file>
+  specifies the path and filename of the incremental design checkpoint (DCP)
+  file. In the incremental implementation flow, the placement and routing
+  from the incremental DCP is applied to matching netlist objects in the
+  current design to reuse existing placement and routing. Refer to the Vivado
+  Design Suite User Guide: Implementation (UG904) for more information on
+  incremental implementation.
+
+  Note: The -incremental switch is not intended to merge two DCP files into a
+  single design. It applies the placement and routing of the incremental
+  checkpoint to the netlist objects in the current design.
+
+  After loading an incremental design checkpoint, you can use the
+  report_incremental_reuse command to determine the percentage of physical
+  data reused from the incremental checkpoint, in the current design. The
+  place_design and route_design commands will run incremental place and
+  route, preserving reused placement and routing information and
+  incorporating it into the design solution.
+
+  Reading a design checkpoint with -incremental, loads the physical data into
+  the current in-memory design. To clear out the incremental design data, you
+  must either reload the current design, using open_run to open the synthesis
+  run for instance, or read a new incremental checkpoint to overwrite the one
+  previously loaded.
+
+  -directive [ RuntimeOptimized | TimingClosure | Quick ] - (Optional)
+  Specifies a directive, or mode of operation for the -incremental process.
+
+   *  RuntimeOptimized: The target WNS is the referenced from the incremental
+      DCP. Trade-off timing for faster runtime.
+
+   *  TimingClosure: The target WNS is 0. This mode attempts to meet timing
+      at the expense of runtime.
+
+   *  Quick: Specifies a low effort, non-timing-driven incremental
+      implementation mode with the fastest runtime.
+
+  -reuse_objects <args> - (Optional) For use with the -incremental option, to
+  read and reuse only a portion of the checkpoint file, this option specifies
+  to reuse only the placement and routing data of the specified list of
+  cells, clock regions, and SLRs from the incremental checkpoint.
+
+  Note: When this option is not specified, the whole design will be reused.
+  The -reuse_objects options can be used multiple times to reuse different
+  object types. See examples below.
+
+  -fix_objects - (Optional) When -incremental is specified, mark the
+  placement location of specifed cells as fixed (IS_LOC_FIXED) to prevent
+  changes by the place_design command. This option will fix the placement of
+  the specified list of cells, clock regions, SLRs or the current_design.
+
+  -dcp_cell_list <arg> - (Optional) Lets you specify a list of cell/dcp
+  pairs. This lets you read in multiple DCP files for specified cells in a
+  single run of the read_checkpoint command. The format is specified as a
+  list of cell/DCP pairs enclosed in curly braces: {<cell1> <dcp1> <cell2>
+  <dcp2>}.
+
+  -quiet - (Optional) Execute the command quietly, returning no messages from
+  the command. The command also returns TCL_OK regardless of any errors
+  encountered during execution.
+
+  Note: Any errors encountered on the command-line, while launching the
+  command, will be returned. Only errors occurring inside the command will be
+  trapped.
+
+  -verbose - (Optional) Temporarily override any message limits and return
+  all messages from this command.
+
+  Note: Message limits can be defined with the set_msg_config command.
+
+  <file> - (Required) The path and filename of the checkpoint file to read.
+
+  Note: If the path is not specified as part of the file name, the tool will
+  search for the specified file in the current working directory and then in
+  the directory from which the tool was launched.
+
+Examples:
+
+  The following example imports the specified checkpoint file into the tool,
+  and then links the various design elements to create an in-memory design of
+  the specified name:
+
+    read_checkpoint C:/Data/checkpoint.dcp
+    link_design -name Test1
+
+
+  This example reads a design checkpoint on top of the current design for
+  incremental place and route of the design:
+
+    read_checkpoint -incremental C:/Data/routed.dcp
+
+
+  Reuse and fix the placement and routing associated with the DSPs and Block
+  RAMs:
+
+    read_checkpoint -incremental C:/Data/routed.dcp \
+    -reuse_objects [all_rams] -reuse_objects [all_dsps] -fix_objects [current_design]
+
+
+  Note: The -reuse_objects option could also be written as:
+
+    -reuse_objects [get_cells -hier -filter {PRIMITIVE_TYPE =~ BMEM.*.* || PRIMITIVE_TYPE =~ MULT.dsp.* }]
+
+
+  The following example reuses the placement and routing of the cells inside
+  the hierarchical cpuEngine cell, and fixes the placement of the DSP cells:
+
+    read_checkpoint -incremental C:/Data/routed.dcp -reuse_objects [get_cells cpuEngine] -fix_objects [all_dsps]
+
+
+
+See Also:
+
+   *  all_dsps
+   *  config_implementation
+   *  current_design
+   *  current_project
+   *  get_cells
+   *  link_design
+   *  open_checkpoint
+   *  report_config_implementation
    *  write_checkpoint
 """

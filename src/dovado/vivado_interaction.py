@@ -19,9 +19,9 @@ def execute_command(command):
     if not vivado.isalive():
         raise Exception(
             "Could not start Vivado, is it installed?"
-            + "Is it in your PATH?\n"
-            + "Try running 'vivado -mode tcl' yourself and"
-            + "debug why it does not start"
+            + " Is it in your PATH?\n"
+            + " Try running 'vivado -mode tcl' yourself and"
+            + " debug why it does not start"
         )
     global t_vivado_init
     if t_vivado_init is not None:
@@ -30,7 +30,7 @@ def execute_command(command):
         t_vivado_init = None
 
     vivado.sendline(command)
-    vivado.expect("Vivado%")
+    vivado.expect("Vivado%", timeout=None)
     return vivado.before
 
 

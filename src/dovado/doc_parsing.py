@@ -5,7 +5,7 @@ import dovado.vivado_interaction as vivado
 
 def get_directives_paragraph(command):
 
-    if command not in {"synthesis", "place", "route"}:
+    if command not in {"synthesis", "place", "route", "read checkpoint"}:
         raise ValueError(
             "get_directives_paragraph called with " + str(command)
         )
@@ -13,15 +13,16 @@ def get_directives_paragraph(command):
         help = vivado.get_help("synth_design").strip()
     elif command == "place":
         help = vivado.get_help("place_design").strip()
-    else:
+    elif command == "route":
         help = vivado.get_help("route_design").strip()
-
+    elif command == "read checkpoint":
+        help = vivado.get_help("read_checkpoint").strip()
     help = re.split("(\r\n?|\n)+", help)
     directive_index = help.index(
         [
             i
             for i in [i for i in help if re.search("-directive", i)]
-            if re.search("-directive <arg> -", i)
+            if re.search(r"-directive (\[.*\]|<arg>) -", i)
         ][0]
     )
     help_slice_from_directive = help[directive_index + 1 :]
@@ -30,7 +31,7 @@ def get_directives_paragraph(command):
         for i in [
             i
             for i in help_slice_from_directive
-            if re.search("-[a-zA-Z_]+[ \t]*(<arg>)?[ \t]*-[ \t]*", i)
+            if re.search("-[a-zA-Z_]+[ \t]*(<arg>|<args>)?[ \t]*-[ \t]*", i)
         ]
         if i.strip()[0] == "-"
     ]
@@ -53,12 +54,3 @@ def get_directives(directives_paragraph):
 
 def get_note(par):
     return par[re.search("[ \t]*Note:[ \t]*", par).start() :]
-
-
-def get_incremental_directives(directives_paragraph):
-    note = get_note(directives_paragraph)
-    or_regexp = ""
-    for i in get_directives(directives_paragraph):
-        or_regexp += i + "|"
-    or_regexp = or_regexp[0 : len(or_regexp) - 1]
-    return re.findall(or_regexp, note)

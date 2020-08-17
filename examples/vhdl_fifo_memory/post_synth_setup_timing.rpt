@@ -1,4 +1,4 @@
-Slack (MET) :             6.486ns  (required time - arrival time)
+Slack (MET) :             -6.486ns  (required time - arrival time)
   Source:                 write_pointer_unit/write_addr_reg[0]/C
                             (rising edge-triggered cell FDCE clocked by clk  {rise@0.000ns fall@5.000ns period=10.000ns})
   Destination:            memory_array_unit/data_out2_reg_0_15_0_5/RAMA/WE

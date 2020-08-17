@@ -1,0 +1,24 @@
++--------------------------+--------------------------+----------------------------------------------------------------------------------------------------------+
+|       Launch Clock       |      Capture Clock       |                                                 Pin                                                      |
++--------------------------+--------------------------+----------------------------------------------------------------------------------------------------------+
+|                      clk |                      clk |                                                  BOXED/TiReXCORE/CONTROL_PATH/curr_character_reg_reg[8]/D|
+|                      clk |                      clk |                                                              BOXED/TiReXCORE/CONTROL_PATH/sel_fd_reg[0]/D|
+|                      clk |                      clk |                                                  BOXED/TiReXCORE/CONTROL_PATH/curr_character_reg_reg[3]/D|
+|                      clk |                      clk |                                              BOXED/TiReXCORE/CONTROL_PATH/addr_instruction_2_reg_reg[1]/D|
+|                      clk |                      clk |                                                              BOXED/TiReXCORE/CONTROL_PATH/match_acc_reg/D|
+|                      clk |                      clk |                                                BOXED/TiReXCORE/CONTROL_PATH/enable_comparators_i_reg[2]/D|
+|                      clk |                      clk |                                              BOXED/TiReXCORE/CONTROL_PATH/data_offset_last_match_reg[2]/D|
+|                      clk |                      clk |                                                BOXED/TiReXCORE/CONTROL_PATH/enable_comparators_i_reg[3]/D|
+|                      clk |                      clk |                                                BOXED/TiReXCORE/CONTROL_PATH/FSM_sequential_state_reg[0]/D|
+|                      clk |                      clk |                                                                BOXED/TiReXCORE/CONTROL_PATH/stall_i_reg/D|
+|                      clk |                      clk |                                              BOXED/TiReXCORE/CONTROL_PATH/data_offset_last_match_reg[0]/D|
+|                      clk |                      clk |                                                               BOXED/TiReXCORE/CONTROL_PATH/stack_we_reg/D|
+|                      clk |                      clk |                                                         BOXED/TiReXCORE/CONTROL_PATH/op_code_reg_reg[6]/D|
+|                      clk |                      clk |                                              BOXED/TiReXCORE/CONTROL_PATH/data_offset_last_match_reg[1]/D|
+|                      clk |                      clk |                                                            BOXED/TiReXCORE/CONTROL_PATH/stack_instr_reg/D|
+|                      clk |                      clk |                                                         BOXED/TiReXCORE/CONTROL_PATH/reload_bram_reg[1]/D|
+|                      clk |                      clk |                                                    BOXED/TiReXCORE/CONTROL_PATH/where_complete_i_reg[2]/D|
+|                      clk |                      clk |                                                    BOXED/TiReXCORE/CONTROL_PATH/where_complete_i_reg[0]/D|
+|                      clk |                      clk |                                                    BOXED/TiReXCORE/CONTROL_PATH/where_complete_i_reg[1]/D|
+|                      clk |                      clk |                                                             BOXED/TiReXCORE/CONTROL_PATH/complete_i_reg/D|
++--------------------------+--------------------------+----------------------------------------------------------------------------------------------------------+

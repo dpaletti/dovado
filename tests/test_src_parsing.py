@@ -7,7 +7,7 @@ def test_parse():
     test.parse(Path("./examples/vhdl_ripple_borrow_subtractor/rbs.vhd"))
     assert test.parsed
     assert test.parsed_src_path
-    test.parse(Path("./examples/verilog_unsigned_adder/unsigned_adder.v"))
+    test.parse(Path("./examples/verilog_unsigned_adder/unsigned_adder.sv"))
     assert test.parsed
     assert test.parsed_src_path
     with pytest.raises(ValueError):
@@ -22,13 +22,11 @@ def test_get_modules():
         Path("./examples/vhdl_ripple_borrow_subtractor/rbs.vhd")
     ) == ["rbs"]
     assert test.get_modules(
-        Path("./examples/verilog_unsigned_adder/unsigned_adder.v")
+        Path("./examples/verilog_unsigned_adder/unsigned_adder.sv")
     ) == ["krnl_vadd_rtl_adder"]
     assert test.get_modules(
-        Path("./examples/verilog_unsigned_adder/unsigned_adder.v")
+        Path("./examples/verilog_unsigned_adder/unsigned_adder.sv")
     ) == ["krnl_vadd_rtl_adder"]
-    with pytest.raises(ValueError):
-        test.get_modules(Path("./tests/resources/vhdl_no_modules.vhd"))
 
 
 def test_get_parameters():
@@ -42,7 +40,7 @@ def test_get_parameters():
     assert [
         i.name
         for i in test.get_parameters(
-            Path("./examples/verilog_unsigned_adder/unsigned_adder.v"),
+            Path("./examples/verilog_unsigned_adder/unsigned_adder.sv"),
             "krnl_vadd_rtl_adder",
         )
     ] == ["C_DATA_WIDTH", "C_NUM_CHANNELS"]

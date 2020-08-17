@@ -4,6 +4,12 @@ TCL_DIR: "tcl/"
 # Directory holding xdc files
 XDC_DIR: "xdc/"
 
+# Directory holding vhdl files
+VHDL_DIR: "vhdl/"
+
+# Directory holding verilog files
+VERILOG_DIR: "verilog/"
+
 # Constraint file for setting master clock frequency
 # with blank clock to be filled
 CONSTRAINT_FRAME: "constraint_frame.xdc"
@@ -23,6 +29,18 @@ IMPLEMENTATION_FRAME: "implementation_frame.tcl"
 
 # TCL script with all fields filled with user input
 IMPLEMENTATION: "implementation.tcl"
+
+# Vhdl file with fields to be filled for boxing
+VHDL_BOX_FRAME: "box_frame.vhd"
+
+# Vhdl file with all fields filled
+VHDL_BOX: "box.vhd"
+
+# Verilgo file with fields to be filled for boxing
+VERILOG_BOX_FRAME: "box_frame.sv"
+
+# Verilog file with all fields filled
+VERILOG_BOX: "box.sv"
 
 # Placeholder inside the two above files
 # to be swapped with user input

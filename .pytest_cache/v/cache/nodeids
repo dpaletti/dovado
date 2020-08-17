@@ -3,6 +3,8 @@
   "tests/test_doc_parsing.py::test_get_directives_paragraph",
   "tests/test_doc_parsing.py::test_get_incremental_directives",
   "tests/test_doc_parsing.py::test_get_note",
+  "tests/test_frame_handling.py::test_fill",
+  "tests/test_main.py::test_synthesis_incremental",
   "tests/test_report_parsing.py::test_get_utilisation",
   "tests/test_report_parsing.py::test_get_wns",
   "tests/test_src_parsing.py::test__is_parsed",

@@ -8,7 +8,7 @@ import dovado.src_parsing as parsing
 
 
 def list_rtl_files(src_path):
-    rtl_extensions = ["vhd", "v"]
+    rtl_extensions = ["vhd", "v", "sv"]
     files = []
     for extension in rtl_extensions:
         files += [
@@ -23,7 +23,6 @@ def ask_code_dir():
         user_input = input(
             "Enter path to code folder" + " [default = " + "./" + "]: "
         )
-        print("User input: " + user_input)
         if (
             is_valid_filepath(user_input)
             and path.exists(user_input)
@@ -38,7 +37,6 @@ def ask_code_dir():
 def top_module_exists(src_folder, module):
 
     for src in list_rtl_files(Path(src_folder)):
-        print(parsing.get_modules(Path(src)))
         if module in parsing.get_modules(Path(src)):
             return src
     return None
@@ -96,8 +94,8 @@ def ask_stop_step():
     while True:
         user_input = input(
             "Would you like to get utilization and frequency after logical"
-            + " synthesis or after place and route?"
-            + "(allowed answers = synthesis/place and route)"
+            + " synthesis or after implementation?"
+            + "(allowed answers = synthesis/implementation)"
             + "[default = "
             + default
             + "]: "
@@ -150,22 +148,6 @@ def ask_incremental_mode(stop_step):
             }
 
 
-def parse_comma_separated_list(regexp_element, to_parse):
-    return (
-        (False, None)
-        if not re.fullmatch(
-            "^("
-            + regexp_element
-            + ")"
-            + "(([ \t]*,[ \t]*)("
-            + regexp_element
-            + "))*$",
-            to_parse,
-        )
-        else (True, [i for i in re.sub(r"[ \t]*", "", to_parse).split(",")],)
-    )
-
-
 def _ask_implementation_directives(to_request, incremental_mode):
     if to_request not in {"place", "route"}:
         raise ValueError(
@@ -175,8 +157,8 @@ def _ask_implementation_directives(to_request, incremental_mode):
     default = "Default"
     directives_paragraph = doc.get_directives_paragraph(to_request)
     directives = doc.get_directives(directives_paragraph)
-    incremental_directives = doc.get_incremental_directives(
-        directives_paragraph
+    incremental_directives = doc.get_directives(
+        doc.get_directives_paragraph("read checkpoint")
     )
     while True:
         user_input = input(
@@ -192,10 +174,8 @@ def _ask_implementation_directives(to_request, incremental_mode):
             if incremental_mode["is implementation incremental"]:
                 print(
                     "Available directives are only the ones compatible"
-                    + " with incremental mode thus: "
+                    + " with read_checkpoint thus: "
                     + str(incremental_directives)
-                    + "\n here a recap of all the available directives "
-                    + directives_paragraph
                 )
             else:
                 print("Available directives: " + directives_paragraph)
@@ -296,23 +276,6 @@ def is_valid_clock(src, module, identifier):
     return None, port_direction, port_type
 
 
-def is_valid_out(src, module, identifier):
-    port = parsing.get_port_from_id(
-        identifier, parsing.get_ports(Path(src), module)
-    )
-    if not port:
-        return None, None, None
-    port_direction = parsing.get_port_direction(port)
-    port_type = parsing.get_port_type(port)
-    if port_direction == "OUT":
-        return (
-            port,
-            port_direction,
-            port_type,
-        )
-    return None, port_direction, port_type
-
-
 def ask_identifiers(src, module):
     while True:
         user_input = input("Enter clock identifier: ")
@@ -320,7 +283,7 @@ def ask_identifiers(src, module):
             src, module, user_input
         )
         if clock:
-            break
+            return clock
         print(
             "Invalid clock identifier: port direction = "
             + str(clock_direction)
@@ -328,18 +291,22 @@ def ask_identifiers(src, module):
             + str(clock_port_type)
             + " (must be binary)\n"
         )
-    while True:
-        user_input = input("Enter out port identifier: ")
-        out, out_direction, out_port_type = is_valid_out(
-            src, module, user_input
+
+
+def parse_comma_separated_list(regexp_element, to_parse):
+    return (
+        None
+        if not re.fullmatch(
+            "^("
+            + regexp_element
+            + ")"
+            + "(([ \t]*,[ \t]*)("
+            + regexp_element
+            + "))*$",
+            to_parse,
         )
-        if out:
-            return clock, out
-        print(
-            "Invalid out port identifier: port direction = "
-            + str(out_direction)
-            + " (must be an output port)"
-        )
+        else [i for i in re.sub(r"[ \t]*", "", to_parse).split(",")]
+    )
 
 
 def ask_utilization_metrics(available_metrics):
@@ -351,24 +318,22 @@ def ask_utilization_metrics(available_metrics):
     for (k, v) in util_indices.items():
         info_prompt += "(" + str(k) + ") " + v + "\n"
 
-    print("Percentage Utilisation indices available:\n" + info_prompt)
+    print(info_prompt)
     default = "1, 4, 9"
     while True:
         user_input = input(
             "Enter a comma-separated list of percentage "
-            + "utilisation indices [default = +"
+            + "utilisation indices [default = "
             + default
             + "]: "
         )
         if user_input == "":
             user_input = default
-        is_compliant, parsed_list = parse_comma_separated_list(
-            "[1-9]|1[0-1]", user_input
-        )
-        if is_compliant:
+        parsed_list = parse_comma_separated_list("[1-9]|1[0-2]", user_input)
+        if parsed_list:
             return [util_indices[int(i)] for i in set(parsed_list)]
 
         print(
             "Invalid input, please enter"
-            + " a comma separated list of numbers between 1 and 11"
+            + " a comma separated list of numbers between 1 and 12"
         )
