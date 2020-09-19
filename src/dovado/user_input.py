@@ -293,11 +293,11 @@ def ask_identifiers(src, module):
         )
 
 
-def ask_parameters(src, module):
+def ask_parameters(src, module, stop_step, top_suffix):
     while True:
         user_input = input(
             "Enter a comma separated list"
-            + "of parameters to optimize [example: N, M, a]: "
+            + "of parameters to optimize [example: firstParam, N, width]: "
         )
         param_list = parse_comma_separated_list(r"\w+", user_input)
         available_param_list = [

@@ -5,8 +5,12 @@ from hdlConvertorAst.hdlAst import (
     HdlModuleDec,
     HdlImport,
     HdlAll,
+    HdlValueInt,
 )
 from hdlConvertor._hdlConvertor import ParseException
+from hdlConvertorAst.to.vhdl.vhdl2008 import ToVhdl2008
+from hdlConvertorAst.to.verilog.verilog2005 import ToVerilog2005
+
 
 parsed_src_path = None
 parsed = None
@@ -89,6 +93,26 @@ def get_parameters(src_path, module):
             return o.params
         if isinstance(o, HdlModuleDef) and o.dec and o.dec.name == module:
             return o.dec.params
+
+
+def set_parameter(src_path, out_path, module, parameter, value):
+    if not _is_parsed(src_path):
+        parse(src_path)
+    for o in parsed.objs:
+        if isinstance(o, HdlModuleDec) and o.name == module:
+            for param in o.params:
+                if param.name == parameter.name:
+                    param.value = HdlValueInt(value, None, None)
+
+        if isinstance(o, HdlModuleDef) and o.dec and o.dec.name == module:
+            for param in o.dec.params:
+                if param.name == parameter.name:
+                    param.value = HdlValueInt(value, None, None)
+        with open(out_path, "w") as f:
+            if out_path.suffix == ".vhd":
+                ToVhdl2008(f).visit_HdlContext(parsed)
+            else:
+                ToVerilog2005(f).visit_HdlContext(parsed)
 
 
 def get_ports(src_path, module):
