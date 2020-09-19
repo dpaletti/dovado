@@ -13,7 +13,13 @@ def fill(frame_path, replacements, placeholder, out_path):
 
 
 def fill_box(
-    frame_path, top_src, top_module, clock_port, placeholder, out_path,
+    frame_path,
+    top_src,
+    top_module,
+    parameters,
+    clock_port,
+    placeholder,
+    out_path,
 ):
     top_suffix = Path(top_src).suffix
     frame_suffix = Path(frame_path).suffix
@@ -27,11 +33,23 @@ def fill_box(
         )
     if top_suffix == ".vhd":
         _vhdl_fill_box(
-            frame_path, top_src, top_module, clock_port, placeholder, out_path,
+            frame_path,
+            top_src,
+            top_module,
+            parameters,
+            clock_port,
+            placeholder,
+            out_path,
         )
     elif top_suffix == ".sv" or top_suffix == ".v":
         _verilog_fill_box(
-            frame_path, top_src, top_module, clock_port, placeholder, out_path,
+            frame_path,
+            top_src,
+            top_module,
+            parameters,
+            clock_port,
+            placeholder,
+            out_path,
         )
     else:
         raise ValueError(
@@ -40,7 +58,13 @@ def fill_box(
 
 
 def _vhdl_fill_box(
-    frame_path, top_src, top_module, clock_port, placeholder, out_path,
+    frame_path,
+    top_src,
+    top_module,
+    parameters,
+    clock_port,
+    placeholder,
+    out_path,
 ):
     libraries, imports = parsing.get_imports(Path(top_src))
     input_mapping = [
@@ -65,6 +89,10 @@ def _vhdl_fill_box(
             + ["use " + imp + ";\n" for imp in imports]
         ),
         "Work." + top_module,
+        "generic map("  # missing actual params list
+        + "example_parameter ==> "
+        + placeholder
+        + +")",  # TODO params must be so that an intermediate file is created with blanks for values to fill for mapping
         parsing.get_port_id(clock_port),
         "".join(input_mapping),
     ]
@@ -72,7 +100,13 @@ def _vhdl_fill_box(
 
 
 def _verilog_fill_box(
-    frame_path, top_src, top_module, clock_port, placeholder, out_path,
+    frame_path,
+    top_src,
+    top_module,
+    parameters,
+    clock_port,
+    placeholder,
+    out_path,
 ):
     input_mapping = [
         parsing.get_port_id(port) + " ('1),\n"
@@ -89,6 +123,7 @@ def _verilog_fill_box(
 
     replacements = [
         top_module,
+        "parameter example_parameter = " + placeholder,
         parsing.get_port_id(clock_port),
         "".join(input_mapping),
     ]

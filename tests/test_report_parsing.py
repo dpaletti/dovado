@@ -6,74 +6,18 @@ import pytest
 def test_get_utilisation():
     assert (
         test.get_utilisation(
-            version_dependent.available_utilization_metrics,
-            version_dependent.utilization_titles,
             "./examples/vhdl_fifo_memory/post_synth_util.xml",
-            "Util%",
+            "Slice Logic",
             "LUT as Logic",
         )
         == 0.03
     )
     assert (
         test.get_utilisation(
-            version_dependent.available_utilization_metrics,
-            version_dependent.utilization_titles,
-            "./examples/vhdl_fifo_memory/post_synth_util.xml",
-            "Util%",
-            "DSPs",
+            "./examples/vhdl_fifo_memory/post_synth_util.xml", "DSP", "DSPs",
         )
         == 0.00
     )
-    with pytest.raises(ValueError):
-        test.get_utilisation(
-            ["wrong_metrics"],
-            ["wrong titles", "wronger"],
-            "ignored",
-            "ignored",
-            "ignored",
-        )
-
-    with pytest.raises(FileNotFoundError):
-        test.get_utilisation(
-            version_dependent.available_utilization_metrics,
-            version_dependent.utilization_titles,
-            "./non_existent_file",
-            "Ignored",
-            "Ignored",
-        )
-
-    with pytest.raises(Exception):
-        test.get_utilisation(
-            version_dependent.available_utilization_metrics,
-            version_dependent.utilization_titles,
-            "",
-            "Ignored",
-            "Ignored",
-        )
-    with pytest.raises(Exception):
-        test.get_utilisation(
-            version_dependent.available_utilization_metrics,
-            version_dependent.utilization_titles,
-            "",
-            "Wrong Column",
-            "DSPs",
-        )
-    with pytest.raises(Exception):
-        test.get_utilisation(
-            version_dependent.available_utilization_metrics,
-            version_dependent.utilization_titles,
-            "./examples/vhdl_fifo_memory/post_synth_util.xml",
-            "Wrong Column",
-            "DSPs",
-        )
-    with pytest.raises(Exception):
-        test.get_utilisation(
-            version_dependent.available_utilization_metrics,
-            version_dependent.utilization_titles,
-            "./examples/vhdl_fifo_memory/post_synth_util.xml",
-            "Util%",
-            "Wrong Row",
-        )
 
 
 def test_get_wns():

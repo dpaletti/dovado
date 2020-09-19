@@ -61,6 +61,14 @@ SYNTHESIS_TIMING: "post_synth_setup_timing.rpt"
 # After Implementation Timing (setup) Report Name 
 IMPLEMENTATION_TIMING: "post_impl_setup_timing.rpt"
 
+# Utilization reports table are parsed only if they contain all and only the following columns
+UTILIZATION_COLUMNS:
+  [ "Site Type",
+    "Used",
+    "Available",
+    "Util%"
+]
+
 # Utilization metrics available from Vivado "report_utilization" tcl command
 # Should not be changed unless the actual names in the report change
 UTILIZATION_METRICS:

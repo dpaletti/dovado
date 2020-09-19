@@ -11,15 +11,15 @@
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="Slice LUTs" halign="1" type="string"/>
-        <tablecell class="" contents="4023" halign="4" type="string"/>
+        <tablecell class="" contents="3917" halign="4" type="string"/>
         <tablecell class="" contents="41000" halign="4" type="string"/>
-        <tablecell class="" contents="9.81" halign="4" type="string"/>
+        <tablecell class="" contents="9.55" halign="4" type="string"/>
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="  LUT as Logic" halign="1" type="string"/>
-        <tablecell class="" contents="4023" halign="4" type="string"/>
+        <tablecell class="" contents="3917" halign="4" type="string"/>
         <tablecell class="" contents="41000" halign="4" type="string"/>
-        <tablecell class="" contents="9.81" halign="4" type="string"/>
+        <tablecell class="" contents="9.55" halign="4" type="string"/>
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="  LUT as Memory" halign="1" type="string"/>
@@ -29,15 +29,15 @@
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="Slice Registers" halign="1" type="string"/>
-        <tablecell class="" contents="1466" halign="4" type="string"/>
+        <tablecell class="" contents="1458" halign="4" type="string"/>
         <tablecell class="" contents="82000" halign="4" type="string"/>
-        <tablecell class="" contents="1.79" halign="4" type="string"/>
+        <tablecell class="" contents="1.78" halign="4" type="string"/>
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="  Register as Flip Flop" halign="1" type="string"/>
-        <tablecell class="" contents="1466" halign="4" type="string"/>
+        <tablecell class="" contents="1458" halign="4" type="string"/>
         <tablecell class="" contents="82000" halign="4" type="string"/>
-        <tablecell class="" contents="1.79" halign="4" type="string"/>
+        <tablecell class="" contents="1.78" halign="4" type="string"/>
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="  Register as Latch" halign="1" type="string"/>
@@ -47,15 +47,15 @@
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="F7 Muxes" halign="1" type="string"/>
-        <tablecell class="" contents="713" halign="4" type="string"/>
+        <tablecell class="" contents="730" halign="4" type="string"/>
         <tablecell class="" contents="20500" halign="4" type="string"/>
-        <tablecell class="" contents="3.48" halign="4" type="string"/>
+        <tablecell class="" contents="3.56" halign="4" type="string"/>
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="F8 Muxes" halign="1" type="string"/>
-        <tablecell class="" contents="265" halign="4" type="string"/>
+        <tablecell class="" contents="277" halign="4" type="string"/>
         <tablecell class="" contents="10250" halign="4" type="string"/>
-        <tablecell class="" contents="2.59" halign="4" type="string"/>
+        <tablecell class="" contents="2.70" halign="4" type="string"/>
       </tablerow>
     </table>
     <section class="" title="Summary of Registers by Type">
@@ -109,7 +109,7 @@
           <tablecell class="" contents="Set" halign="4" type="string"/>
         </tablerow>
         <tablerow class="" suppressoutput="0" wordwrap="0">
-          <tablecell class="" contents="1423" halign="1" type="string"/>
+          <tablecell class="" contents="1415" halign="1" type="string"/>
           <tablecell class="" contents="Yes" halign="4" type="string"/>
           <tablecell class="" contents="-" halign="4" type="string"/>
           <tablecell class="" contents="Reset" halign="4" type="string"/>
@@ -141,43 +141,43 @@
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="Slice" halign="1" type="string"/>
-        <tablecell class="" contents="1326" halign="4" type="string"/>
+        <tablecell class="" contents="1345" halign="4" type="string"/>
         <tablecell class="" contents="10250" halign="4" type="string"/>
-        <tablecell class="" contents="12.94" halign="4" type="string"/>
+        <tablecell class="" contents="13.12" halign="4" type="string"/>
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="  SLICEL" halign="1" type="string"/>
-        <tablecell class="" contents="778" halign="4" type="string"/>
+        <tablecell class="" contents="794" halign="4" type="string"/>
         <tablecell class="" contents="" halign="0" type="string"/>
         <tablecell class="" contents="" halign="0" type="string"/>
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="  SLICEM" halign="1" type="string"/>
-        <tablecell class="" contents="548" halign="4" type="string"/>
+        <tablecell class="" contents="551" halign="4" type="string"/>
         <tablecell class="" contents="" halign="0" type="string"/>
         <tablecell class="" contents="" halign="0" type="string"/>
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="LUT as Logic" halign="1" type="string"/>
-        <tablecell class="" contents="4023" halign="4" type="string"/>
+        <tablecell class="" contents="3917" halign="4" type="string"/>
         <tablecell class="" contents="41000" halign="4" type="string"/>
-        <tablecell class="" contents="9.81" halign="4" type="string"/>
+        <tablecell class="" contents="9.55" halign="4" type="string"/>
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="  using O5 output only" halign="1" type="string"/>
-        <tablecell class="" contents="3" halign="4" type="string"/>
+        <tablecell class="" contents="4" halign="4" type="string"/>
         <tablecell class="" contents="" halign="4" type="string"/>
         <tablecell class="" contents="" halign="0" type="string"/>
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="  using O6 output only" halign="1" type="string"/>
-        <tablecell class="" contents="3820" halign="4" type="string"/>
+        <tablecell class="" contents="3689" halign="4" type="string"/>
         <tablecell class="" contents="" halign="4" type="string"/>
         <tablecell class="" contents="" halign="0" type="string"/>
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="  using O5 and O6" halign="1" type="string"/>
-        <tablecell class="" contents="200" halign="4" type="string"/>
+        <tablecell class="" contents="224" halign="4" type="string"/>
         <tablecell class="" contents="" halign="4" type="string"/>
         <tablecell class="" contents="" halign="0" type="string"/>
       </tablerow>
@@ -201,31 +201,31 @@
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="Slice Registers" halign="1" type="string"/>
-        <tablecell class="" contents="1466" halign="4" type="string"/>
+        <tablecell class="" contents="1458" halign="4" type="string"/>
         <tablecell class="" contents="82000" halign="4" type="string"/>
-        <tablecell class="" contents="1.79" halign="4" type="string"/>
+        <tablecell class="" contents="1.78" halign="4" type="string"/>
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="  Register driven from within the Slice" halign="1" type="string"/>
-        <tablecell class="" contents="525" halign="4" type="string"/>
+        <tablecell class="" contents="494" halign="4" type="string"/>
         <tablecell class="" contents="" halign="0" type="string"/>
         <tablecell class="" contents="" halign="0" type="string"/>
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="  Register driven from outside the Slice" halign="1" type="string"/>
-        <tablecell class="" contents="941" halign="4" type="string"/>
+        <tablecell class="" contents="964" halign="4" type="string"/>
         <tablecell class="" contents="" halign="0" type="string"/>
         <tablecell class="" contents="" halign="0" type="string"/>
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="    LUT in front of the register is unused" halign="1" type="string"/>
-        <tablecell class="" contents="462" halign="4" type="string"/>
+        <tablecell class="" contents="486" halign="4" type="string"/>
         <tablecell class="" contents="" halign="4" type="string"/>
         <tablecell class="" contents="" halign="0" type="string"/>
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="    LUT in front of the register is used" halign="1" type="string"/>
-        <tablecell class="" contents="479" halign="4" type="string"/>
+        <tablecell class="" contents="478" halign="4" type="string"/>
         <tablecell class="" contents="" halign="4" type="string"/>
         <tablecell class="" contents="" halign="0" type="string"/>
       </tablerow>

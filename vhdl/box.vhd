@@ -33,4 +33,5 @@ data_data_in => std_logic_vector'((others => '1')),
 data_we => '1'
 
     );
+
 end architecture box_arch;

@@ -25,7 +25,7 @@ set outputDir vivado_out/
 file mkdir $outputDir
 
 # Design Sources and Constraints
-set src ../xohw17_tirex_public/srcs/design
+set src ../xohw17_tirex_public/srcs/design/
 set xdcFile xdc/constraint.xdc
 read_all_files $src
 read_xdc $xdcFile
@@ -35,13 +35,13 @@ read_vhdl -library bftLib vhdl/box.vhd
 
 # Run synthesis and write checkpoint
 #! read_checkpoint -incremental $outputDir/post_synth.dcp ;# to be turned on for incremental runs (#! is stripped eventually)
-synth_design -top box  -part xc7k70tfbv676-1 -directive runtimeoptimized
-write_checkpoint  -force $outputDir/post_synth.dcp ;# either -incremental_synth or nothing
+synth_design -top box  -part xc7k70tfbv676-1 -directive default
+write_checkpoint -incremental_synth -force $outputDir/post_synth.dcp ;# either -incremental_synth or nothing
 
 # Run implementation
 opt_design
-#! read_checkpoint -incremental  $outputDir/post_place.dcp ;#here goes directive
-place_design -directive RuntimeOptimized ;#here goes directive
+#! read_checkpoint -incremental -directive  $outputDir/post_place.dcp ;#here goes directive
+place_design   ;#here goes directive
 
 # Optimizations in case of timing violations
 if {[get_property slack [get_timing_paths -max_paths 1 -nworst 1 -setup]] < 0} {
@@ -51,8 +51,8 @@ phys_opt_design
 
 write_checkpoint -force $outputDir/post_place.dcp
 
-#! read_checkpoint -incremental  $outputDir/post_route.dcp ;#here goes directive
-route_design -directive RuntimeOptimized ;#here goes directive
+#! read_checkpoint -incremental -directive  $outputDir/post_route.dcp ;#here goes directive
+route_design   ;#here goes directive
 write_checkpoint -force $outputDir/post_route.dcp
 
 report_timing -no_header -file $outputDir/post_impl_setup_timing.rpt

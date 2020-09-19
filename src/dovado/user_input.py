@@ -73,7 +73,7 @@ def ask_top_module(src_folder):
 
 def ask_part():
     parts = vivado.get_parts()
-    default = parts[0]
+    default = list(parts.keys())[0]
     while True:
         user_input = input(
             "Enter part (input ? to have a list of available parts)"
@@ -293,6 +293,35 @@ def ask_identifiers(src, module):
         )
 
 
+def ask_parameters(src, module):
+    while True:
+        user_input = input(
+            "Enter a comma separated list"
+            + "of parameters to optimize [example: N, M, a]: "
+        )
+        param_list = parse_comma_separated_list(r"\w+", user_input)
+        available_param_list = [
+            i.name for i in parsing.get_parameters(Path(src), module)
+        ]
+        if param_list and all(i in available_param_list for i in param_list):
+            return param_list
+        if not param_list:
+            print("Malformed list, try again\n")
+        else:
+            print(
+                "The following parameters could not be found among "
+                + "the ones declared in "
+                + src
+                + " at module "
+                + module
+                + ": "
+                + str([i for i in param_list if i not in available_param_list])
+                + "\nAvailable parameters are "
+                + str(parsing.get_parameters(Path(src), module))
+                + "\n"
+            )
+
+
 def parse_comma_separated_list(regexp_element, to_parse):
     return (
         None
@@ -309,14 +338,17 @@ def parse_comma_separated_list(regexp_element, to_parse):
     )
 
 
-def ask_utilization_metrics(available_metrics):
-    util_indices = dict(
-        zip(range(1, len(available_metrics) + 1), iter(available_metrics))
-    )
+def ask_utilization_metrics(util_indices):
 
     info_prompt = "Percentage Utilisation indices available:\n"
-    for (k, v) in util_indices.items():
-        info_prompt += "(" + str(k) + ") " + v + "\n"
+    i = 0
+    counter_dict = {}
+    for section in util_indices.keys():
+        info_prompt += section + "\n"
+        for metric in util_indices[section]:
+            i = i + 1
+            counter_dict[i] = (section, metric)
+            info_prompt += "\t(" + str(i) + ") " + metric + "\n"
 
     print(info_prompt)
     default = "1, 4, 9"
@@ -329,11 +361,14 @@ def ask_utilization_metrics(available_metrics):
         )
         if user_input == "":
             user_input = default
-        parsed_list = parse_comma_separated_list("[1-9]|1[0-2]", user_input)
-        if parsed_list:
-            return [util_indices[int(i)] for i in set(parsed_list)]
-
-        print(
-            "Invalid input, please enter"
-            + " a comma separated list of numbers between 1 and 12"
-        )
+        parsed_list = parse_comma_separated_list(r"\d+", user_input)
+        try:
+            if parsed_list and max([int(i) for i in parsed_list]) < len(
+                counter_dict
+            ):
+                return [counter_dict[int(i)] for i in set(parsed_list)]
+        except Exception:
+            print(
+                "Invalid input, please enter"
+                + " a comma separated list of numbers between 1 and 12"
+            )

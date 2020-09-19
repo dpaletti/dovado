@@ -3,40 +3,67 @@ from bs4 import BeautifulSoup
 from pathlib import Path
 
 
-def get_utilisation(
-    utilization_metrics, titles, report_path, column_name, row_name
-):
-    if len(utilization_metrics) != len(titles):
-        raise ValueError(
-            "Length mismatch between utilization_metrics and titles"
-            + "\nUtilization: "
-            + str(utilization_metrics)
-            + "\nTitles: "
-            + str(titles)
-        )
-    row_name_to_title = dict(zip(utilization_metrics, titles))
+def _represents_float(s):
     try:
-        report = BeautifulSoup(Path(report_path).open(), "lxml-xml")
-        section = report("section", {"title": row_name_to_title[row_name]})[0]
-        rows = section("tablerow")
-        header = rows[0]
-        column = header("tableheader").index(
-            header("tableheader", {"contents": column_name})[0]
-        )
-        row = section("tablecell", {"contents": re.compile(" *" + row_name)})[
-            0
-        ].parent()
-        return float(row[column]["contents"].replace("<", "").replace(">", ""))
-    except FileNotFoundError as f:
-        raise FileNotFoundError(
-            "Wrong path: "
-            + report_path
-            + "\n"
-            + "FileNotFoundError: "
-            + str(f)
-        )
-    except Exception as e:
-        raise Exception(str(e))
+        float(s)
+        return True
+    except ValueError:
+        return False
+
+
+def _get_percentage_util(columns, row):
+    column_number = 0
+    for column in columns:
+        if column.get("contents") == "Util%":
+            column_number = columns.index(column)
+            break
+    siebling = row
+    if column_number > 0:
+        for i in range(0, column_number - 1):
+            siebling = siebling.findNext("tablecell")
+    return siebling.findNext("tablecell").get("contents")
+
+
+def get_available_indices(report_path):
+    report = BeautifulSoup(Path(report_path).open(), "lxml-xml")
+    indices = {}
+    sections_partial = report.find_all("section")
+    sections = []
+    sections.extend(sections_partial)
+    for section in sections:
+
+        for nested_section in section.find_all("section"):
+            nested_section.decompose()
+
+        columns = []
+        rows = []
+
+        for column in (
+            section.find("tablerow").find_all("tableheader")
+            if section.find("tablerow")
+            else []
+        ):
+            columns.append(column.get("contents").strip())
+        if "Util%" in columns:
+            for row in section.find_all("tablerow"):
+                if row.find("tablecell") and _represents_float(
+                    _get_percentage_util(section.find_all("tableheader"), row)
+                ):
+                    rows.append(row.find("tablecell").get("contents").strip())
+            indices[section.get("title")] = rows
+
+    return indices
+
+
+def get_utilisation(report_path, section_name, row_name):
+    report = BeautifulSoup(Path(report_path).open(), "lxml-xml")
+    section = report.find("section", {"title": section_name})
+    columns = section.find_all("tableheader")
+    row = section.find(
+        "tablecell",
+        {"contents": re.compile("[ \t\r\n]*" + row_name + r"(\*)?[ \t\r\n]*")},
+    )
+    return float(_get_percentage_util(columns, row))
 
 
 def get_wns(report_path):

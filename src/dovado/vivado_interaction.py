@@ -35,9 +35,16 @@ def execute_command(command):
 
 
 def get_parts():
-    return re.sub("get_parts\r\n", "", execute_command("get_parts")).split(
+    parts = re.sub("get_parts\r\n", "", execute_command("get_parts")).split(
         " "
     )[1:-1]
+    family = re.sub(
+        "[get_parts]\r\n",
+        "",
+        execute_command("get_property FAMILY [get_parts]"),
+    ).split(" ")[3:-1]
+    family[0] = family[0][len("[get_parts]\r\n") :]
+    return dict(zip(parts, family))
 
 
 def get_help(command):

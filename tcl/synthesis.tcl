@@ -25,14 +25,14 @@ set outputDir vivado_out/
 file mkdir $outputDir
 
 # Design Sources and Constraints
-set src ../xohw17_tirex_public/srcs/design
+set src ./examples/vhdl_fifo_memory/
 set xdcFile xdc/constraint.xdc
 read_all_files $src
 read_xdc $xdcFile
 
 # Run synthesis and write checkpoint
 #! read_checkpoint -incremental $outputDir/post_synth.dcp ;# to be turned on for incremental runs (#! is stripped eventually)
-synth_design -top Tile  -part xc7k70tfbv676-1 -directive default
+synth_design -top fifo_mem  -part xa7s15cpga196-2I -directive default
 write_checkpoint -incremental_synth -force $outputDir/post_synth.dcp ;# either -incremental_synth or nothing
 
 report_timing -no_header -file $outputDir/post_synth_setup_timing.rpt ;# -setup is default behavior

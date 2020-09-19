@@ -4,7 +4,8 @@ library ieee;
 use ieee.std_logic_1164.all;
 
 entity rbs is			-- entity declaration, ripple borrow subtractor RBS
-  generic (Nbit_rbs : integer); 	-- generic parameter modelling the number of bits to substract
+  generic (Nbit_rbs : integer;
+		   fake: natural); 	-- generic parameter modelling the number of bits to substract
 	port (
 		minN : in std_logic_vector(Nbit_rbs - 1 downto 0); 	-- vector minuend
 		subN : in std_logic_vector(Nbit_rbs - 1 downto 0); 	-- vector subtrahend

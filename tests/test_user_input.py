@@ -289,38 +289,25 @@ def test_ask_identifiers():
 def test_ask_utilization_metrics():
     with patch("sys.stdin", io.StringIO("1, 2, 3, 3, 1")):
         assert set(
-            test.ask_utilization_metrics(
-                version_dependent.available_utilization_metrics
-            )
-        ) == set(["Slice LUTs", "LUT as Logic", "LUT as Memory"])
+            test.ask_utilization_metrics(version_dependent.utilization_metrics)
+        ) == set(
+            [
+                ("Slice Logic", "Slice LUTs*"),
+                ("Slice Logic", "LUT as Memory"),
+                ("Slice Logic", "LUT as Logic"),
+            ]
+        )
 
     with patch("sys.stdin", io.StringIO("1, 12")):
         assert set(
-            test.ask_utilization_metrics(
-                version_dependent.available_utilization_metrics
-            )
-        ) == set(["Slice LUTs", "DSPs"])
+            test.ask_utilization_metrics(version_dependent.utilization_metrics)
+        ) == set([("Slice Logic", "Slice LUTs*"), ("Memory", "RAMB36/FIFO*")])
 
+
+def test_ask_parameters():
     with patch(
-        "sys.stdin", io.StringIO("1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12")
+        "sys.stdin", io.StringIO("invalid\nMalformed,,List\nNbit_rbs, fake\n"),
     ):
-        assert set(
-            test.ask_utilization_metrics(
-                version_dependent.available_utilization_metrics
-            )
-        ) == set(
-            [
-                "Slice LUTs",
-                "LUT as Logic",
-                "LUT as Memory",
-                "Slice Registers",
-                "Registers as Flip Flop",
-                "Registers as Latch",
-                "F7 Muxes",
-                "F8 Muxes",
-                "Block RAM Tile",
-                "RAMB36/FIFO",
-                "RAMB18",
-                "DSPs",
-            ]
-        )
+        assert test.ask_parameters(
+            "examples/vhdl_ripple_borrow_subtractor/rbs.vhd", "rbs"
+        ) == ["Nbit_rbs", "fake"]

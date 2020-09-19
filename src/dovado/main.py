@@ -1,7 +1,8 @@
 import dovado.user_input as user_input
-import dovado.report_parsing as report
 import dovado.vivado_interaction as vivado
 import dovado.frame_handling as frame
+from dovado.evaluation_setup import EvaluationSetup
+from dovado.point_evaluation import evaluate
 import yaml
 from pathlib import Path
 
@@ -62,100 +63,28 @@ def main():
     ) = user_input.ask_directives(STOP_STEP, INCREMENTAL_MODE)
 
     # Clock given in Mhz
-    CLOCK = user_input.ask_clock()
+    TARGET_CLOCK = user_input.ask_clock()
 
     # Swapping out placeholder in constraint file
     frame.fill(
         CONFIG["XDC_DIR"] + CONFIG["CONSTRAINT_FRAME"],
-        [str(1000 / CLOCK)],
+        [str(1000 / TARGET_CLOCK)],
         CONFIG["PLACEHOLDER"],
         CONFIG["XDC_DIR"] + CONFIG["CONSTRAINT"],
     )
 
-    SYNTHESIS_REPLACEMENTS = [
-        CONFIG["VIVADO_OUTPUT_DIR"],
+    evaluation_setup = EvaluationSetup(
         SRC_FOLDER,
-        CONFIG["XDC_DIR"] + CONFIG["CONSTRAINT"],
         TOP_MODULE,
         SYNTHESIS_PART,
         SYNTHESIS_DIRECTIVE,
-        "-incremental_synth"
-        if INCREMENTAL_MODE["is synthesis incremental"]
-        else "",
-    ]
-
-    IMPLEMENTATION_REPLACEMENTS = (
-        []
-        if STOP_STEP == "synthesis"
-        else (
-            [
-                "",
-                "-directive " + PLACE_DIRECTIVE,
-                "",
-                "-directive " + ROUTE_DIRECTIVE,
-            ]
-            if not INCREMENTAL_MODE["is implementation incremental"]
-            else [
-                "-directive " + PLACE_DIRECTIVE,
-                " ",
-                "-directive " + ROUTE_DIRECTIVE,
-                " ",
-            ]
-        )
+        INCREMENTAL_MODE,
+        STOP_STEP,
+        TOP_SUFFIX,
+        TARGET_CLOCK,
     )
 
-    REPLACEMENT = (
-        SYNTHESIS_REPLACEMENTS
-        if STOP_STEP == "synthesis"
-        else SYNTHESIS_REPLACEMENTS[:3]
-        + [
-            "read_vhdl -library bftLib vhdl/box.vhd"
-            if TOP_SUFFIX == ".vhd"
-            else "read_verilog verilog/box.vs"
-        ]
-        + SYNTHESIS_REPLACEMENTS[3:]
-        + IMPLEMENTATION_REPLACEMENTS
-    )
+    design_point = evaluate("placeholder for design point", evaluation_setup)
 
-    # Swapping out placeholders in TCL scripts
-    frame.fill(
-        CONFIG["TCL_DIR"] + CONFIG[STOP_STEP.upper() + "_FRAME"],
-        REPLACEMENT
-        + [
-            CONFIG[STOP_STEP.upper() + "_TIMING"],
-            CONFIG[STOP_STEP.upper() + "_UTILISATION"],
-        ],
-        CONFIG["PLACEHOLDER"],
-        CONFIG["TCL_DIR"] + CONFIG[STOP_STEP.upper()],
-    )
-
-    # Calling vivado to evaluate the script
-    # Output of the command is ignored, it is in the return value
-    vivado_out = vivado.execute_command(
-        "source " + CONFIG["TCL_DIR"] + CONFIG[STOP_STEP.upper()]
-    )
-    print(vivado_out)
-
-    utilization_metrics = {
-        i: report.get_utilisation(
-            CONFIG["UTILIZATION_METRICS"],
-            CONFIG["UTILIZATION_SECTION_TITLES"],
-            CONFIG["VIVADO_OUTPUT_DIR"]
-            + CONFIG[STOP_STEP.upper() + "_UTILISATION"],
-            "Util%",
-            i,
-        )
-        for i in user_input.ask_utilization_metrics(
-            CONFIG["UTILIZATION_METRICS"]
-        )
-    }
-
-    max_frequency = 1000 / (
-        (1 / 1000 * CLOCK)
-        - report.get_wns(
-            CONFIG["VIVADO_OUTPUT_DIR"] + CONFIG[STOP_STEP.upper() + "_TIMING"]
-        )
-    )
-
-    print("Utilization metrics: " + str(utilization_metrics))
-    print("Max frequency: " + str(max_frequency) + " Mhz")
+    print("Utilization metrics: " + str(design_point.utilisation))
+    print("Max frequency: " + str(design_point.max_frequency) + " Mhz")
