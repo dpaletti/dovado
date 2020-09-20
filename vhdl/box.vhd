@@ -15,7 +15,27 @@ architecture box_arch of box is
   attribute DONT_TOUCH : string;
   attribute DONT_TOUCH of BOXED : label is "TRUE";
 begin
-  BOXED:  entity Work.Tile port map(
+  BOXED:  entity Work.Tile
+    generic map(
+AddressWidthInstr => 4,
+AddressWidthData => 6,
+CharacterNumber => 14,
+OpCodeBus => 10,
+OpCodeWidth => 6,
+InternalOpBus => 2,
+DataWidth => 8,
+ClusterWidth => 4,
+NCluster => 4,
+CounterWidth => 3,
+BufferAddressWidth => 3,
+StackDataWidth => 24,
+ExternalBusWidthData => 128,
+InternalBusWidthData => 56,
+ExternalBusWidthInstr => 32,
+RamWidthInstr => 38,
+RamWidthData => 8
+)
+    port map(
     clk => clk,
     -- remaining input ports are attached to internal clocks
     rst => '1',

@@ -57,6 +57,34 @@ def fill_box(
         )
 
 
+def _vhdl_parameter_map(parameters):
+    parameter_section = "generic map(\n"
+    for parameter in parameters[:-1]:
+        parameter_section += (
+            parameter.name
+            + " => "
+            + (
+                str(parameter.value)
+                if not parameter.value.base
+                else str(int(parameter.value.val[1:], parameter.value.base,))
+            ).strip()
+            + ",\n"
+        )
+    parameter_section += (
+        parameters[-1].name
+        + " => "
+        + (
+            str(parameters[-1].value)
+            if not parameters[-1].value.base
+            else str(
+                int(parameters[-1].value.val[1:], parameters[-1].value.base,)
+            )
+        )
+        + ")"
+    )
+    return parameter_section
+
+
 def _vhdl_fill_box(
     frame_path,
     top_src,
@@ -89,14 +117,31 @@ def _vhdl_fill_box(
             + ["use " + imp + ";\n" for imp in imports]
         ),
         "Work." + top_module,
-        "generic map("  # missing actual params list
-        + "example_parameter ==> "
-        + placeholder
-        + +")",  # TODO params must be so that an intermediate file is created with blanks for values to fill for mapping
+        _vhdl_parameter_map(parameters),
         parsing.get_port_id(clock_port),
         "".join(input_mapping),
     ]
     fill(frame_path, replacements, placeholder, out_path)
+
+
+def _verilog_parameter_map(parameters):
+    parameter_section = "#(\n"
+    for parameter in parameters[:-1]:
+        parameter_section += (
+            "."
+            + parameter.name
+            + "("
+            + str(int(str(parameter.value.val), parameter.value.base))
+            + "),\n"
+        )
+    parameter_section += (
+        "."
+        + parameters[-1].name
+        + "("
+        + str(int(str(parameters[-1].value.val), parameters[-1].value.base,))
+        + ")\n);\n"
+    )
+    return parameter_section
 
 
 def _verilog_fill_box(
@@ -123,7 +168,7 @@ def _verilog_fill_box(
 
     replacements = [
         top_module,
-        "parameter example_parameter = " + placeholder,
+        _verilog_parameter_map(parameters),
         parsing.get_port_id(clock_port),
         "".join(input_mapping),
     ]

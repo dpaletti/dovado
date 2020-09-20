@@ -3,6 +3,7 @@ import dovado.vivado_interaction as vivado
 import dovado.frame_handling as frame
 from dovado.evaluation_setup import EvaluationSetup
 from dovado.point_evaluation import evaluate
+from dovado.src_parsing import get_parameters
 import yaml
 from pathlib import Path
 
@@ -38,6 +39,7 @@ def main():
             else CONFIG["VERILOG_DIR"] + CONFIG["VERILOG_BOX_FRAME"],
             TOP_SRC,
             TOP_MODULE,
+            get_parameters(Path(TOP_SRC), TOP_MODULE),
             CLOCK_PORT,
             CONFIG["PLACEHOLDER"],
             CONFIG["VHDL_DIR"] + CONFIG["VHDL_BOX"]
@@ -86,5 +88,8 @@ def main():
 
     design_point = evaluate("placeholder for design point", evaluation_setup)
 
-    print("Utilization metrics: " + str(design_point.utilisation))
-    print("Max frequency: " + str(design_point.max_frequency) + " Mhz")
+    if design_point:
+        print("Utilization metrics: " + str(design_point.utilisation))
+        print("Max frequency: " + str(design_point.max_frequency) + " Mhz")
+    else:
+        print("Failed sourcing tcl script")

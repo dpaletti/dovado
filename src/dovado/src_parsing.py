@@ -6,6 +6,7 @@ from hdlConvertorAst.hdlAst import (
     HdlImport,
     HdlAll,
     HdlValueInt,
+    HdlCompInst,
 )
 from hdlConvertor._hdlConvertor import ParseException
 from hdlConvertorAst.to.vhdl.vhdl2008 import ToVhdl2008
@@ -95,24 +96,63 @@ def get_parameters(src_path, module):
             return o.dec.params
 
 
+def write_to_file(out_path):
+    with open(out_path, "w") as f:
+        if out_path.suffix == ".vhd":
+            ToVhdl2008(f).visit_HdlContext(parsed)
+        else:
+            ToVerilog2005(f).visit_HdlContext(parsed)
+    global parsed_src_path
+    parsed_src_path = out_path
+
+
 def set_parameter(src_path, out_path, module, parameter, value):
+    # value must be base 10
     if not _is_parsed(src_path):
         parse(src_path)
     for o in parsed.objs:
         if isinstance(o, HdlModuleDec) and o.name == module:
             for param in o.params:
                 if param.name == parameter.name:
-                    param.value = HdlValueInt(value, None, None)
+                    param.value = HdlValueInt(
+                        value, None, None
+                    )  # here we force base 10
 
         if isinstance(o, HdlModuleDef) and o.dec and o.dec.name == module:
             for param in o.dec.params:
                 if param.name == parameter.name:
                     param.value = HdlValueInt(value, None, None)
-        with open(out_path, "w") as f:
-            if out_path.suffix == ".vhd":
-                ToVhdl2008(f).visit_HdlContext(parsed)
-            else:
-                ToVerilog2005(f).visit_HdlContext(parsed)
+
+    write_to_file(out_path)
+
+
+def map_parameter(src_path, out_path, module, parameter, value):
+    print(parameter)
+    if not _is_parsed(src_path):
+        parse(src_path)
+    for o in parsed.objs:
+        if isinstance(o, HdlModuleDef):
+            for module_definition in o.objs:
+                if (
+                    isinstance(module_definition, HdlCompInst)
+                    and module_definition.param_map
+                ):
+                    for param in module_definition.param_map:
+                        if str(param.ops[0]) == str(parameter.name):
+                            param.ops[1] = HdlValueInt(value, None, None)
+                            write_to_file(out_path)
+                            return
+        if isinstance(o, HdlModuleDec):
+            for module_definition in o.objs:
+                if (
+                    isinstance(module_definition, HdlCompInst)
+                    and module_definition.param_map
+                ):
+                    for param in module_definition.param_map:
+                        if str(param.ops[0]) == str(parameter.name):
+                            param.ops[1] = HdlValueInt(value, None, None)
+                            write_to_file(out_path)
+                            return
 
 
 def get_ports(src_path, module):

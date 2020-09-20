@@ -10,7 +10,9 @@ architecture box_arch of box is
   attribute DONT_TOUCH : string;
   attribute DONT_TOUCH of BOXED : label is "TRUE";
 begin
-  BOXED:  entity ____ ____ port map(
+  BOXED:  entity ____
+    ____
+    port map(
     ____ => clk,
     -- remaining input ports are attached to internal clocks
     ____

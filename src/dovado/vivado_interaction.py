@@ -34,6 +34,11 @@ def execute_command(command):
     return vivado.before
 
 
+def source(tcl_script):
+    vivado_out = execute_command("source " + tcl_script)
+    return vivado_out, not re.findall("ERROR:", vivado_out)
+
+
 def get_parts():
     parts = re.sub("get_parts\r\n", "", execute_command("get_parts")).split(
         " "

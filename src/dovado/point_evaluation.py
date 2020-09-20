@@ -78,36 +78,39 @@ def evaluate(design_point, evaluation_setup):
 
     # Calling vivado to evaluate the script
     # Output of the command is ignored, it is in the return value
-    vivado_out = vivado.execute_command(
-        "source "
-        + CONFIG["TCL_DIR"]
-        + CONFIG[evaluation_setup.stop_step.upper()]
+    vivado_out, success = vivado.source(
+        CONFIG["TCL_DIR"] + CONFIG[evaluation_setup.stop_step.upper()]
     )
     print(vivado_out)
-
-    return DesignPoint(
-        utilisation={
-            i: report.get_utilisation(
-                CONFIG["VIVADO_OUTPUT_DIR"]
-                + CONFIG[evaluation_setup.stop_step.upper() + "_UTILISATION"],
-                i[0],
-                i[1],
-            )
-            for i in user_input.ask_utilization_metrics(
-                report.get_available_indices(
+    return (
+        None
+        if not success
+        else DesignPoint(
+            utilisation={
+                i: report.get_utilisation(
                     CONFIG["VIVADO_OUTPUT_DIR"]
                     + CONFIG[
                         evaluation_setup.stop_step.upper() + "_UTILISATION"
-                    ]
+                    ],
+                    i[0],
+                    i[1],
                 )
-            )
-        },
-        max_frequency=1000
-        / (
-            (1 / 1000 * evaluation_setup.target_clock)
-            - report.get_wns(
-                CONFIG["VIVADO_OUTPUT_DIR"]
-                + CONFIG[evaluation_setup.stop_step.upper() + "_TIMING"]
-            )
-        ),
+                for i in user_input.ask_utilization_metrics(
+                    report.get_available_indices(
+                        CONFIG["VIVADO_OUTPUT_DIR"]
+                        + CONFIG[
+                            evaluation_setup.stop_step.upper() + "_UTILISATION"
+                        ]
+                    )
+                )
+            },
+            max_frequency=1000
+            / (
+                (1 / 1000 * evaluation_setup.target_clock)
+                - report.get_wns(
+                    CONFIG["VIVADO_OUTPUT_DIR"]
+                    + CONFIG[evaluation_setup.stop_step.upper() + "_TIMING"]
+                )
+            ),
+        )
     )
