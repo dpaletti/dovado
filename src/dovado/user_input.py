@@ -5,6 +5,9 @@ from pathlib import Path
 import dovado.vivado_interaction as vivado
 import dovado.doc_parsing as doc
 import dovado.src_parsing as parsing
+import yaml
+
+CONFIG = yaml.safe_load(Path("config.yaml").open())
 
 
 def list_rtl_files(src_path):
@@ -37,7 +40,11 @@ def ask_code_dir():
 def top_module_exists(src_folder, module):
 
     for src in list_rtl_files(Path(src_folder)):
-        if module in parsing.get_modules(Path(src)):
+        if (
+            module in parsing.get_modules(Path(src))
+            and src != src_folder + CONFIG["VHDL_LOCAL_SRC"]
+            and src != src_folder + CONFIG["VERILOG_LOCAL_SRC"]
+        ):
             return src
     return None
 
@@ -370,5 +377,5 @@ def ask_utilization_metrics(util_indices):
         except Exception:
             print(
                 "Invalid input, please enter"
-                + " a comma separated list of numbers between 1 and 12"
+                + " a comma separated list of integer numbers"
             )

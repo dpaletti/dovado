@@ -1,8 +1,7 @@
 import dovado.user_input as user_input
 import dovado.vivado_interaction as vivado
 import dovado.frame_handling as frame
-from dovado.evaluation_setup import EvaluationSetup
-from dovado.point_evaluation import evaluate
+from dovado.point_evaluation import evaluate, get_max_frequency
 from dovado.src_parsing import get_parameters
 import yaml
 from pathlib import Path
@@ -28,6 +27,16 @@ def main():
     # STOP_STEP can take the following values:
     #  "synthesis", "implementation"
     STOP_STEP = user_input.ask_stop_step()
+
+    # A local copy of the top module source file is needed
+    # in order to update the parameters in place
+    if STOP_STEP == "synthesis":
+        with Path(
+            SRC_FOLDER + CONFIG["VHDL_LOCAL_SRC"]
+            if TOP_SUFFIX == ".vhd"
+            else SRC_FOLDER + CONFIG["VERILOG_LOCAL_SRC"]
+        ).open("w+") as f:
+            f.write(Path(TOP_SRC).read_text())
 
     # Clock and out are needed for boxing the component
     # to avoid overflowing pins
@@ -74,9 +83,9 @@ def main():
         CONFIG["PLACEHOLDER"],
         CONFIG["XDC_DIR"] + CONFIG["CONSTRAINT"],
     )
-
-    evaluation_setup = EvaluationSetup(
+    frame.fill_tcl(
         SRC_FOLDER,
+        TOP_SRC,
         TOP_MODULE,
         SYNTHESIS_PART,
         SYNTHESIS_DIRECTIVE,
@@ -84,12 +93,25 @@ def main():
         STOP_STEP,
         TOP_SUFFIX,
         TARGET_CLOCK,
+        PLACE_DIRECTIVE,
+        ROUTE_DIRECTIVE,
     )
 
-    design_point = evaluate("placeholder for design point", evaluation_setup)
+    # TODO remove this example code
+    parameters = get_parameters(Path(TOP_SRC), TOP_MODULE)
+    first = parameters[0]
+    parameters = {parameter: parameter.value for parameter in parameters}
+    parameters[first] = 8
+    design_point = evaluate(
+        parameters, STOP_STEP, TOP_SUFFIX, TOP_MODULE, SRC_FOLDER
+    )
 
     if design_point:
         print("Utilization metrics: " + str(design_point.utilisation))
-        print("Max frequency: " + str(design_point.max_frequency) + " Mhz")
+        print(
+            "Max frequency: "
+            + str(get_max_frequency(design_point.wns, TARGET_CLOCK))
+            + " Mhz"
+        )
     else:
         print("Failed sourcing tcl script")

@@ -7,6 +7,8 @@ from hdlConvertorAst.hdlAst import (
     HdlAll,
     HdlValueInt,
     HdlCompInst,
+    HdlOp,
+    HdlValueId,
 )
 from hdlConvertor._hdlConvertor import ParseException
 from hdlConvertorAst.to.vhdl.vhdl2008 import ToVhdl2008
@@ -99,6 +101,18 @@ def get_parameters(src_path, module):
 def write_to_file(out_path):
     with open(out_path, "w") as f:
         if out_path.suffix == ".vhd":
+            # explicit conversion of all instantiations to direct instantiations
+            # mandatory for Vivado compatibility
+            for o in parsed.objs:
+                if isinstance(o, HdlModuleDef):
+                    for def_obj in o.objs:
+                        if isinstance(def_obj, HdlCompInst) and isinstance(
+                            def_obj.module_name, HdlOp
+                        ):
+                            def_obj.module_name.ops[0] = HdlValueId(
+                                "entity work"
+                            )
+
             ToVhdl2008(f).visit_HdlContext(parsed)
         else:
             ToVerilog2005(f).visit_HdlContext(parsed)
@@ -106,7 +120,7 @@ def write_to_file(out_path):
     parsed_src_path = out_path
 
 
-def set_parameter(src_path, out_path, module, parameter, value):
+def set_parameter(src_path, module, parameter, value):
     # value must be base 10
     if not _is_parsed(src_path):
         parse(src_path)
@@ -123,10 +137,10 @@ def set_parameter(src_path, out_path, module, parameter, value):
                 if param.name == parameter.name:
                     param.value = HdlValueInt(value, None, None)
 
-    write_to_file(out_path)
+    write_to_file(src_path)
 
 
-def map_parameter(src_path, out_path, module, parameter, value):
+def map_parameter(src_path, module, parameter, value):
     print(parameter)
     if not _is_parsed(src_path):
         parse(src_path)
@@ -140,7 +154,7 @@ def map_parameter(src_path, out_path, module, parameter, value):
                     for param in module_definition.param_map:
                         if str(param.ops[0]) == str(parameter.name):
                             param.ops[1] = HdlValueInt(value, None, None)
-                            write_to_file(out_path)
+                            write_to_file(src_path)
                             return
         if isinstance(o, HdlModuleDec):
             for module_definition in o.objs:
@@ -151,7 +165,7 @@ def map_parameter(src_path, out_path, module, parameter, value):
                     for param in module_definition.param_map:
                         if str(param.ops[0]) == str(parameter.name):
                             param.ops[1] = HdlValueInt(value, None, None)
-                            write_to_file(out_path)
+                            write_to_file(src_path)
                             return
 
 

@@ -30,6 +30,14 @@ IMPLEMENTATION_FRAME: "implementation_frame.tcl"
 # TCL script with all fields filled with user input
 IMPLEMENTATION: "implementation.tcl"
 
+# Local copy of VHDL top module source where parameters are changed in place.
+# This is used if stop step is synthesis
+VHDL_LOCAL_SRC: "dovado_work_file.vhd"
+
+# Local copy of (System)Verilog top module source where parameters are changed in place.
+# This is used if stop step is synthesis
+VERILOG_LOCAL_SRC: "dovado_work_file.sv"
+
 # Vhdl file with fields to be filled for boxing
 VHDL_BOX_FRAME: "box_frame.vhd"
 
@@ -60,43 +68,3 @@ SYNTHESIS_TIMING: "post_synth_setup_timing.rpt"
 
 # After Implementation Timing (setup) Report Name 
 IMPLEMENTATION_TIMING: "post_impl_setup_timing.rpt"
-
-# Utilization reports table are parsed only if they contain all and only the following columns
-UTILIZATION_COLUMNS:
-  [ "Site Type",
-    "Used",
-    "Available",
-    "Util%"
-]
-
-# Utilization metrics available from Vivado "report_utilization" tcl command
-# Should not be changed unless the actual names in the report change
-UTILIZATION_METRICS:
-  [ "Slice LUTs",
-    "LUT as Logic",
-    "LUT as Memory",
-    "Slice Registers",
-    "Registers as Flip Flop",
-    "Registers as Latch",
-    "F7 Muxes",
-    "F8 Muxes",
-    "Block RAM Tile",
-    "RAMB36/FIFO",
-    "RAMB18",
-    "DSPs"]
-  
-# Section titles from "report_utilization" must have same length of UTILIZATION_METRICS
-# Should not be changed unless the actual names in the report change
-UTILIZATION_SECTION_TITLES:
-  [ "Slice Logic",
-    "Slice Logic",
-    "Slice Logic",
-    "Slice Logic",
-    "Slice Logic",
-    "Slice Logic",
-    "Slice Logic",
-    "Slice Logic",
-    "Memory",
-    "Memory",
-    "Memory",
-    "DSP"]

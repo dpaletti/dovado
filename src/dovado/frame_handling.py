@@ -1,6 +1,10 @@
 import re
 from pathlib import Path
 import dovado.src_parsing as parsing
+import dovado.frame_handling as frame
+import yaml
+
+CONFIG = yaml.safe_load(Path("config.yaml").open())
 
 
 def fill(frame_path, replacements, placeholder, out_path):
@@ -10,6 +14,80 @@ def fill(frame_path, replacements, placeholder, out_path):
         Path(frame_path).open("r").read(),
     )
     Path(out_path).write_text(out)
+
+
+def fill_tcl(
+    src_folder,
+    top_src,
+    top_module,
+    synthesis_part,
+    synthesis_directive,
+    incremental_mode,
+    stop_step,
+    top_suffix,
+    target_clock,
+    place_directive="",
+    route_directive="",
+):
+    SYNTHESIS_REPLACEMENTS = [
+        CONFIG["VIVADO_OUTPUT_DIR"],
+        src_folder,
+        CONFIG["XDC_DIR"] + CONFIG["CONSTRAINT"],
+        ("read_vhdl -library bftLib " + src_folder + CONFIG["VHDL_LOCAL_SRC"])
+        if top_suffix == ".vhd"
+        else ("read_verilog " + src_folder + CONFIG["VERILOG_LOCAL_SRC"]),
+        top_src,
+        top_module,
+        synthesis_part,
+        synthesis_directive,
+        "-incremental_synth"
+        if incremental_mode["is synthesis incremental"]
+        else "",
+    ]
+
+    IMPLEMENTATION_REPLACEMENTS = (
+        []
+        if stop_step == "synthesis"
+        else (
+            [
+                "",
+                "-directive " + place_directive,
+                "",
+                "-directive " + route_directive,
+            ]
+            if not incremental_mode["is implementation incremental"]
+            else [
+                "-directive " + place_directive,
+                " ",
+                "-directive " + route_directive,
+                " ",
+            ]
+        )
+    )
+
+    REPLACEMENT = (
+        SYNTHESIS_REPLACEMENTS
+        if stop_step == "synthesis"
+        else SYNTHESIS_REPLACEMENTS[:3]
+        + [
+            "read_vhdl -library bftLib vhdl/box.vhd"
+            if top_suffix == ".vhd"
+            else "read_verilog verilog/box.vs"
+        ]
+        + SYNTHESIS_REPLACEMENTS[3:]
+        + IMPLEMENTATION_REPLACEMENTS
+    )
+
+    frame.fill(
+        CONFIG["TCL_DIR"] + CONFIG[stop_step.upper() + "_FRAME"],
+        REPLACEMENT
+        + [
+            CONFIG[stop_step.upper() + "_TIMING"],
+            CONFIG[stop_step.upper() + "_UTILISATION"],
+        ],
+        CONFIG["PLACEHOLDER"],
+        CONFIG["TCL_DIR"] + CONFIG[stop_step.upper()],
+    )
 
 
 def fill_box(
