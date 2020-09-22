@@ -32,11 +32,9 @@ IMPLEMENTATION: "implementation.tcl"
 
 # Local copy of VHDL top module source where parameters are changed in place.
 # This is used if stop step is synthesis
+# Reverse parsing does not work for (System)Verilog so no such file
+# exists for the (System)Verilog case which is instead always boxed
 VHDL_LOCAL_SRC: "dovado_work_file.vhd"
-
-# Local copy of (System)Verilog top module source where parameters are changed in place.
-# This is used if stop step is synthesis
-VERILOG_LOCAL_SRC: "dovado_work_file.sv"
 
 # Vhdl file with fields to be filled for boxing
 VHDL_BOX_FRAME: "box_frame.vhd"

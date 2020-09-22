@@ -70,7 +70,13 @@ def get_utilisation(report_path, section_name, row_name):
 def get_wns(report_path):
     try:
         first_line = Path(report_path).open().readline()
-        return float(re.findall(r"([-+]?(\d*\.\d*|inf))", first_line)[0][0])
+        try:
+            return float(
+                re.findall(r"([-+]?(\d*\.\d*|inf))", first_line)[0][0]
+            )
+        except Exception:
+            return math.inf
+
     except FileNotFoundError as f:
         raise FileNotFoundError(
             "Wrong path: "

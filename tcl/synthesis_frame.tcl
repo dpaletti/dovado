@@ -27,9 +27,9 @@ file mkdir $outputDir
 # Design Sources and Constraints
 set src ____
 set xdcFile ____
-#____
+____
 read_all_files $src
-set_property IS_ENABLED 0 [get_files ____]
+____
 read_xdc $xdcFile
 
 # Run synthesis and write checkpoint

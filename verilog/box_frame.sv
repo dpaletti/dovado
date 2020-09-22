@@ -1,6 +1,6 @@
 module box
 (
- input wire clk,
+ input wire clk
 );
    
    (* dont_touch  = "true" *) ____ ____ boxed // at line beginning goes the name of the module

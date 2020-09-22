@@ -33,10 +33,12 @@ def fill_tcl(
         CONFIG["VIVADO_OUTPUT_DIR"],
         src_folder,
         CONFIG["XDC_DIR"] + CONFIG["CONSTRAINT"],
-        ("read_vhdl -library bftLib " + src_folder + CONFIG["VHDL_LOCAL_SRC"])
+        ("# no other file to read")
         if top_suffix == ".vhd"
-        else ("read_verilog " + src_folder + CONFIG["VERILOG_LOCAL_SRC"]),
-        top_src,
+        else ("read_verilog " + CONFIG["VERILOG_DIR"] + CONFIG["VERILOG_BOX"]),
+        ("set_property IS_ENABLED 0 [get_files " + top_src + "]")
+        if top_suffix == ".vhd"
+        else "# no disabling needed",
         top_module,
         synthesis_part,
         synthesis_directive,
@@ -70,9 +72,15 @@ def fill_tcl(
         if stop_step == "synthesis"
         else SYNTHESIS_REPLACEMENTS[:3]
         + [
-            "read_vhdl -library bftLib vhdl/box.vhd"
+            (
+                "read_vhdl -library bftLib "
+                + CONFIG["VHDL_DIR"]
+                + CONFIG["VHDL_BOX"]
+            )
             if top_suffix == ".vhd"
-            else "read_verilog verilog/box.vs"
+            else (
+                "read_verilog " + CONFIG["VERILOG_DIR"] + CONFIG["VERILOG_BOX"]
+            )
         ]
         + SYNTHESIS_REPLACEMENTS[3:]
         + IMPLEMENTATION_REPLACEMENTS
@@ -100,15 +108,6 @@ def fill_box(
     out_path,
 ):
     top_suffix = Path(top_src).suffix
-    frame_suffix = Path(frame_path).suffix
-    if top_suffix != frame_suffix:
-        raise ValueError(
-            "Source and Frame must have same extension "
-            + " Source suffix: "
-            + top_suffix
-            + " Frame suffix: "
-            + frame_suffix
-        )
     if top_suffix == ".vhd":
         _vhdl_fill_box(
             frame_path,
@@ -217,7 +216,7 @@ def _verilog_parameter_map(parameters):
         + parameters[-1].name
         + "("
         + str(int(str(parameters[-1].value.val), parameters[-1].value.base,))
-        + ")\n);\n"
+        + ")\n)\n"
     )
     return parameter_section
 
@@ -232,7 +231,7 @@ def _verilog_fill_box(
     out_path,
 ):
     input_mapping = [
-        parsing.get_port_id(port) + " ('1),\n"
+        "." + parsing.get_port_id(port) + " ('1),\n"
         for port in parsing.get_ports(Path(top_src), top_module)
         if (
             parsing.get_port_direction(port) == "IN"

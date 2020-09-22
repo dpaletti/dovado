@@ -30,7 +30,9 @@ def main():
 
     # A local copy of the top module source file is needed
     # in order to update the parameters in place
-    if STOP_STEP == "synthesis":
+    if STOP_STEP == "synthesis" and not (
+        TOP_SUFFIX == ".v" or TOP_SUFFIX == ".sv"
+    ):
         with Path(
             SRC_FOLDER + CONFIG["VHDL_LOCAL_SRC"]
             if TOP_SUFFIX == ".vhd"
@@ -40,7 +42,9 @@ def main():
 
     # Clock and out are needed for boxing the component
     # to avoid overflowing pins
-    if STOP_STEP == "implementation":
+    # And to deal with incorrect reverse parsing from the HDLConv library
+    # when dealing with (System)Verilog source code
+    else:
         CLOCK_PORT = user_input.ask_identifiers(TOP_SRC, TOP_MODULE)
         frame.fill_box(
             CONFIG["VHDL_DIR"] + CONFIG["VHDL_BOX_FRAME"]
@@ -55,6 +59,7 @@ def main():
             if TOP_SUFFIX == ".vhd"
             else CONFIG["VERILOG_DIR"] + CONFIG["VERILOG_BOX"],
         )
+        SRC_MODULE = TOP_MODULE
         TOP_MODULE = "box"
 
     # INCREMENTAL_MODE has the following structure:
@@ -98,10 +103,8 @@ def main():
     )
 
     # TODO remove this example code
-    parameters = get_parameters(Path(TOP_SRC), TOP_MODULE)
-    first = parameters[0]
-    parameters = {parameter: parameter.value for parameter in parameters}
-    parameters[first] = 8
+    parameters = get_parameters(Path(TOP_SRC), SRC_MODULE)
+    parameters = {parameter: int(parameter.value) for parameter in parameters}
     design_point = evaluate(
         parameters, STOP_STEP, TOP_SUFFIX, TOP_MODULE, SRC_FOLDER
     )

@@ -43,7 +43,6 @@ def top_module_exists(src_folder, module):
         if (
             module in parsing.get_modules(Path(src))
             and src != src_folder + CONFIG["VHDL_LOCAL_SRC"]
-            and src != src_folder + CONFIG["VERILOG_LOCAL_SRC"]
         ):
             return src
     return None

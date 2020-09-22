@@ -1,13 +1,13 @@
-Slack (VIOLATED) :        -5.172ns  (required time - arrival time)
-  Source:                 TiReXCORE/CONTROL_PATH/STACK_BUFFER/buf_reg[5][1]/C
-                            (rising edge-triggered cell FDCE clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
-  Destination:            TiReXCORE/CONTROL_PATH/curr_character_i_reg[11]/D
-                            (rising edge-triggered cell FDCE clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+Slack (MET) :             0.672ns  (required time - arrival time)
+  Source:                 boxed/count_reg[26]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            boxed/count_delay_reg[0]/R
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
   Path Group:             clk
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            4.000ns  (clk rise@4.000ns - clk rise@0.000ns)
-  Data Path Delay:        9.029ns  (logic 2.011ns (22.273%)  route 7.018ns (77.727%))
-  Logic Levels:           18  (CARRY4=3 LUT3=1 LUT4=1 LUT5=2 LUT6=10 MUXF7=1)
+  Data Path Delay:        2.778ns  (logic 0.542ns (19.510%)  route 2.236ns (80.490%))
+  Logic Levels:           3  (LUT4=1 LUT5=2)
   Clock Path Skew:        -0.145ns (DCD - SCD + CPR)
     Destination Clock Delay (DCD):    1.860ns = ( 5.860 - 4.000 ) 
     Source Clock Delay      (SCD):    2.117ns
@@ -26,51 +26,18 @@ Slack (VIOLATED) :        -5.172ns  (required time - arrival time)
                          IBUF (Prop_ibuf_I_O)         0.830     0.830 r  clk_IBUF_inst/O
                          net (fo=1, unplaced)         0.584     1.413    clk_IBUF
                          BUFG (Prop_bufg_I_O)         0.120     1.533 r  clk_IBUF_BUFG_inst/O
-                         net (fo=1456, unplaced)      0.584     2.117    TiReXCORE/CONTROL_PATH/STACK_BUFFER/clk_IBUF_BUFG
-                         FDCE                                         r  TiReXCORE/CONTROL_PATH/STACK_BUFFER/buf_reg[5][1]/C
+                         net (fo=59, unplaced)        0.584     2.117    boxed/clk
+                         FDRE                                         r  boxed/count_reg[26]/C
   -------------------------------------------------------------------    -------------------
-                         FDCE (Prop_fdce_C_Q)         0.269     2.386 r  TiReXCORE/CONTROL_PATH/STACK_BUFFER/buf_reg[5][1]/Q
-                         net (fo=1, unplaced)         0.658     3.044    TiReXCORE/CONTROL_PATH/STACK_BUFFER/buf_reg[5]_5[1]
-                         LUT6 (Prop_lut6_I0_O)        0.153     3.197 r  TiReXCORE/CONTROL_PATH/STACK_BUFFER/ram_addr[1]_i_6/O
-                         net (fo=1, unplaced)         0.664     3.861    TiReXCORE/CONTROL_PATH/STACK_BUFFER/ram_addr[1]_i_6_n_0
-                         LUT6 (Prop_lut6_I0_O)        0.053     3.914 r  TiReXCORE/CONTROL_PATH/STACK_BUFFER/ram_addr[1]_i_3/O
-                         net (fo=124, unplaced)       0.626     4.540    TiReXCORE/CONTROL_PATH/STACK_BUFFER/buf_reg[2][1]_0
-                         LUT3 (Prop_lut3_I0_O)        0.053     4.593 r  TiReXCORE/CONTROL_PATH/STACK_BUFFER/reload_bram_OBUF[0]_inst_i_902/O
-                         net (fo=88, unplaced)        0.557     5.150    RAMDATA/reload_bram_OBUF[0]_inst_i_386_1
-                         LUT6 (Prop_lut6_I2_O)        0.053     5.203 r  RAMDATA/reload_bram_OBUF[0]_inst_i_541/O
-                         net (fo=1, unplaced)         0.000     5.203    RAMDATA/reload_bram_OBUF[0]_inst_i_541_n_0
-                         MUXF7 (Prop_muxf7_I1_O)      0.145     5.348 r  RAMDATA/reload_bram_OBUF[0]_inst_i_289/O
-                         net (fo=3, unplaced)         0.538     5.886    RAMDATA/reload_bram_OBUF[0]_inst_i_289_n_0
-                         LUT6 (Prop_lut6_I1_O)        0.150     6.036 r  RAMDATA/reload_bram_OBUF[0]_inst_i_294/O
-                         net (fo=1, unplaced)         0.340     6.376    TiReXCORE/CONTROL_PATH/reload_bram_OBUF[0]_inst_i_46_3
-                         LUT5 (Prop_lut5_I4_O)        0.053     6.429 f  TiReXCORE/CONTROL_PATH/reload_bram_OBUF[0]_inst_i_125/O
-                         net (fo=1, unplaced)         0.664     7.093    TiReXCORE/CONTROL_PATH/reload_bram_OBUF[0]_inst_i_125_n_0
-                         LUT6 (Prop_lut6_I1_O)        0.053     7.146 f  TiReXCORE/CONTROL_PATH/reload_bram_OBUF[0]_inst_i_46/O
-                         net (fo=2, unplaced)         0.472     7.618    TiReXCORE/CONTROL_PATH/STACK_BUFFER/reload_bram_OBUF[0]_inst_i_4_1
-                         LUT6 (Prop_lut6_I0_O)        0.053     7.671 r  TiReXCORE/CONTROL_PATH/STACK_BUFFER/reload_bram_OBUF[0]_inst_i_14/O
-                         net (fo=1, unplaced)         0.521     8.192    TiReXCORE/CONTROL_PATH/STACK_BUFFER/reload_bram_OBUF[0]_inst_i_14_n_0
-                         LUT6 (Prop_lut6_I2_O)        0.053     8.245 r  TiReXCORE/CONTROL_PATH/STACK_BUFFER/reload_bram_OBUF[0]_inst_i_4/O
-                         net (fo=3, unplaced)         0.479     8.724    TiReXCORE/CONTROL_PATH/STACK_BUFFER/reload_bram_OBUF[0]_inst_i_4_n_0
-                         LUT5 (Prop_lut5_I1_O)        0.053     8.777 r  TiReXCORE/CONTROL_PATH/STACK_BUFFER/reload_bram_OBUF[0]_inst_i_2/O
-                         net (fo=49, unplaced)        0.422     9.199    TiReXCORE/CONTROL_PATH/STACK_BUFFER/reload_bram_OBUF[0]_inst_i_2_n_0
-                         LUT6 (Prop_lut6_I0_O)        0.053     9.252 r  TiReXCORE/CONTROL_PATH/STACK_BUFFER/data_offset_last_match[1]_i_2/O
-                         net (fo=5, unplaced)         0.368     9.620    TiReXCORE/CONTROL_PATH/STACK_BUFFER/ex_data_offset[1]
-                         LUT4 (Prop_lut4_I0_O)        0.053     9.673 r  TiReXCORE/CONTROL_PATH/STACK_BUFFER/curr_character_reg[3]_i_10/O
-                         net (fo=1, unplaced)         0.000     9.673    TiReXCORE/CONTROL_PATH/STACK_BUFFER/curr_character_reg[3]_i_10_n_0
-                         CARRY4 (Prop_carry4_S[1]_CO[3])
-                                                      0.324     9.997 r  TiReXCORE/CONTROL_PATH/STACK_BUFFER/curr_character_reg_reg[3]_i_8/CO[3]
-                         net (fo=1, unplaced)         0.000     9.997    TiReXCORE/CONTROL_PATH/STACK_BUFFER/curr_character_reg_reg[3]_i_8_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.058    10.055 r  TiReXCORE/CONTROL_PATH/STACK_BUFFER/curr_character_reg_reg[7]_i_5/CO[3]
-                         net (fo=1, unplaced)         0.000    10.055    TiReXCORE/CONTROL_PATH/STACK_BUFFER/curr_character_reg_reg[7]_i_5_n_0
-                         CARRY4 (Prop_carry4_CI_O[3])
-                                                      0.187    10.242 r  TiReXCORE/CONTROL_PATH/STACK_BUFFER/curr_character_reg_reg[11]_i_5/O[3]
-                         net (fo=2, unplaced)         0.369    10.611    TiReXCORE/CONTROL_PATH/STACK_BUFFER_n_115
-                         LUT6 (Prop_lut6_I5_O)        0.142    10.753 r  TiReXCORE/CONTROL_PATH/curr_character_i[11]_i_2/O
-                         net (fo=1, unplaced)         0.340    11.093    TiReXCORE/CONTROL_PATH/STACK_BUFFER/curr_character_i_reg[11]
-                         LUT6 (Prop_lut6_I2_O)        0.053    11.146 r  TiReXCORE/CONTROL_PATH/STACK_BUFFER/curr_character_i[11]_i_1/O
-                         net (fo=1, unplaced)         0.000    11.146    TiReXCORE/CONTROL_PATH/curr_character_i[11]
-                         FDCE                                         r  TiReXCORE/CONTROL_PATH/curr_character_i_reg[11]/D
+                         FDRE (Prop_fdre_C_Q)         0.269     2.386 f  boxed/count_reg[26]/Q
+                         net (fo=2, unplaced)         0.543     2.929    boxed/count_reg_n_0_[26]
+                         LUT4 (Prop_lut4_I1_O)        0.167     3.096 f  boxed/count[27]_i_9/O
+                         net (fo=1, unplaced)         0.340     3.436    boxed/count[27]_i_9_n_0
+                         LUT5 (Prop_lut5_I4_O)        0.053     3.489 f  boxed/count[27]_i_5/O
+                         net (fo=4, unplaced)         0.688     4.177    boxed/count[27]_i_5_n_0
+                         LUT5 (Prop_lut5_I0_O)        0.053     4.230 r  boxed/count_delay[0]_i_1/O
+                         net (fo=28, unplaced)        0.665     4.895    boxed/count_delay[0]_i_1_n_0
+                         FDRE                                         r  boxed/count_delay_reg[0]/R
   -------------------------------------------------------------------    -------------------
 
                          (clock clk rise edge)        4.000     4.000 r  
@@ -79,16 +46,16 @@ Slack (VIOLATED) :        -5.172ns  (required time - arrival time)
                          IBUF (Prop_ibuf_I_O)         0.754     4.754 r  clk_IBUF_inst/O
                          net (fo=1, unplaced)         0.554     5.308    clk_IBUF
                          BUFG (Prop_bufg_I_O)         0.113     5.421 r  clk_IBUF_BUFG_inst/O
-                         net (fo=1456, unplaced)      0.439     5.860    TiReXCORE/CONTROL_PATH/clk_IBUF_BUFG
-                         FDCE                                         r  TiReXCORE/CONTROL_PATH/curr_character_i_reg[11]/C
+                         net (fo=59, unplaced)        0.439     5.860    boxed/clk
+                         FDRE                                         r  boxed/count_delay_reg[0]/C
                          clock pessimism              0.112     5.972    
                          clock uncertainty           -0.035     5.937    
-                         FDCE (Setup_fdce_C_D)        0.037     5.974    TiReXCORE/CONTROL_PATH/curr_character_i_reg[11]
+                         FDRE (Setup_fdre_C_R)       -0.370     5.567    boxed/count_delay_reg[0]
   -------------------------------------------------------------------
-                         required time                          5.974    
-                         arrival time                         -11.146    
+                         required time                          5.567    
+                         arrival time                          -4.895    
   -------------------------------------------------------------------
-                         slack                                 -5.172    
+                         slack                                  0.672    
 
 
 

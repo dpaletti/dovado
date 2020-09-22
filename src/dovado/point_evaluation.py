@@ -16,17 +16,17 @@ class DesignPoint:
 
 
 def evaluate(parameters, stop_step, top_suffix, top_module, src_folder):
-    if stop_step == "synthesis":
+    if stop_step == "synthesis" and not (
+        top_suffix == ".sv" or top_suffix == ".v"
+    ):
         for parameter, value in parameters.items():
             src.set_parameter(
-                Path(src_folder + CONFIG["VHDL_LOCAL_SRC"])
-                if top_suffix == ".vhd"
-                else Path(src_folder + CONFIG["VERILOG_LOCAL_SRC"]),
+                Path(src_folder + CONFIG["VHDL_LOCAL_SRC"]),
                 top_module,
                 parameter,
                 value,
             )
-    if stop_step == "implementation":
+    else:
         for parameter, value in parameters.items():
             src.map_parameter(
                 Path(CONFIG["VHDL_DIR"] + CONFIG["VHDL_BOX"])
