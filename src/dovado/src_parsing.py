@@ -13,6 +13,7 @@ from hdlConvertorAst.hdlAst import (
 from hdlConvertor._hdlConvertor import ParseException
 from hdlConvertorAst.to.vhdl.vhdl2008 import ToVhdl2008
 from hdlConvertorAst.to.verilog.verilog2005 import ToVerilog2005
+import io
 
 
 parsed_src_path = None
@@ -131,7 +132,23 @@ def write_to_file(out_path, no_touch=False):
                                 "entity work"
                             )
 
-            ToVhdl2008(f).visit_HdlContext(parsed)
+            if not no_touch:
+                ToVhdl2008(f).visit_HdlContext(parsed)
+            else:
+                stream = io.StringIO()
+                ToVhdl2008(stream).visit_HdlContext(parsed)
+                lines = [line for line in stream.getvalue().split("\n")]
+                index = None
+                for line in lines:
+                    if line.lower() == "architecture box_arch of box is":
+                        index = lines.index(line)
+                if index:
+                    lines.insert(index + 1, "attribute DONT_TOUCH : string;")
+                    lines.insert(
+                        index + 2,
+                        'attribute DONT_TOUCH of BOXED : label is "TRUE";',
+                    )
+                f.write("\n".join(lines))
         else:
             if no_touch:
                 _add_dont_touch()

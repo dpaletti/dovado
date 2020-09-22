@@ -82,7 +82,7 @@ def fill_tcl(
                 "read_verilog " + CONFIG["VERILOG_DIR"] + CONFIG["VERILOG_BOX"]
             )
         ]
-        + SYNTHESIS_REPLACEMENTS[3:]
+        + SYNTHESIS_REPLACEMENTS[5:]
         + IMPLEMENTATION_REPLACEMENTS
     )
 
@@ -137,6 +137,12 @@ def fill_box(
 def _vhdl_parameter_map(parameters):
     parameter_section = "generic map(\n"
     for parameter in parameters[:-1]:
+        if not parameter.value:
+            raise Exception(
+                "Please provide default values for all parameters, "
+                + str(parameter.name)
+                + " does not have one."
+            )
         parameter_section += (
             parameter.name
             + " => "

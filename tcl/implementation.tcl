@@ -25,7 +25,7 @@ set outputDir vivado_out/
 file mkdir $outputDir
 
 # Design Sources and Constraints
-set src ../xohw17_tirex_public/srcs/design/
+set src examples/vhdl_ripple_borrow_subtractor/
 set xdcFile xdc/constraint.xdc
 read_all_files $src
 read_xdc $xdcFile
@@ -40,7 +40,7 @@ write_checkpoint -incremental_synth -force $outputDir/post_synth.dcp ;# either -
 
 # Run implementation
 opt_design
-#! read_checkpoint -incremental -directive  $outputDir/post_place.dcp ;#here goes directive
+#! read_checkpoint -incremental -directive Default $outputDir/post_place.dcp ;#here goes directive
 place_design   ;#here goes directive
 
 # Optimizations in case of timing violations
@@ -51,7 +51,7 @@ phys_opt_design
 
 write_checkpoint -force $outputDir/post_place.dcp
 
-#! read_checkpoint -incremental -directive  $outputDir/post_route.dcp ;#here goes directive
+#! read_checkpoint -incremental -directive Default $outputDir/post_route.dcp ;#here goes directive
 route_design   ;#here goes directive
 write_checkpoint -force $outputDir/post_route.dcp
 

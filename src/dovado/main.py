@@ -103,7 +103,9 @@ def main():
     )
 
     # TODO remove this example code
-    parameters = get_parameters(Path(TOP_SRC), SRC_MODULE)
+    parameters = get_parameters(
+        Path(TOP_SRC), SRC_MODULE if TOP_MODULE == "box" else TOP_MODULE
+    )
     parameters = {parameter: int(parameter.value) for parameter in parameters}
     design_point = evaluate(
         parameters, STOP_STEP, TOP_SUFFIX, TOP_MODULE, SRC_FOLDER

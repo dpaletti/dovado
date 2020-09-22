@@ -1,57 +1,20 @@
--- libraries read from the module to be boxed
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.std_logic_unsigned.all;
-use work.GenericsPack.all;
-use work.OpCodePack.all;
-
-entity box is
-  port (
-    clk: in std_logic
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+ENTITY box IS
+    PORT(
+        clk : IN std_logic
     );
-end entity box;
+END ENTITY;
 
-architecture box_arch of box is
-  attribute DONT_TOUCH : string;
-  attribute DONT_TOUCH of BOXED : label is "TRUE";
-begin
-  BOXED:  entity Work.Tile
-    generic map(
-AddressWidthInstr => 4,
-AddressWidthData => 6,
-CharacterNumber => 14,
-OpCodeBus => 10,
-OpCodeWidth => 6,
-InternalOpBus => 2,
-DataWidth => 8,
-ClusterWidth => 4,
-NCluster => 4,
-CounterWidth => 3,
-BufferAddressWidth => 3,
-StackDataWidth => 24,
-ExternalBusWidthData => 128,
-InternalBusWidthData => 56,
-ExternalBusWidthInstr => 32,
-RamWidthInstr => 38,
-RamWidthData => 8
-)
-    port map(
-    clk => clk,
-    -- remaining input ports are attached to internal clocks
-    rst => '1',
-addr_start_instr => std_logic_vector'((others => '1')),
-first_character => std_logic_vector'((others => '1')),
-ending_character => std_logic_vector'((others => '1')),
-reload_complete => '1',
-src_en => '1',
-instr_address_wr => std_logic_vector'((others => '1')),
-instr_data_in => std_logic_vector'((others => '1')),
-instr_we_data => '1',
-instr_we_opcode => '1',
-data_address_wr => std_logic_vector'((others => '1')),
-data_data_in => std_logic_vector'((others => '1')),
-data_we => '1'
-
+ARCHITECTURE box_arch OF box IS
+attribute DONT_TOUCH : string;
+attribute DONT_TOUCH of BOXED : label is "TRUE";
+BEGIN
+    BOXED: entity work.rbs GENERIC MAP(
+        Nbit_rbs => 4
+    ) PORT MAP(
+        binN => clk,
+        minN => std_logic_vector'(OTHERS => '1'),
+        subN => std_logic_vector'(OTHERS => '1')
     );
-
-end architecture box_arch;
+END ARCHITECTURE;
