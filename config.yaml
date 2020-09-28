@@ -66,3 +66,10 @@ SYNTHESIS_TIMING: "post_synth_setup_timing.rpt"
 
 # After Implementation Timing (setup) Report Name 
 IMPLEMENTATION_TIMING: "post_impl_setup_timing.rpt"
+
+# N-parameter to choose which example to calculate the distance from
+N: 3
+
+# Threshold distance for which a design point is added to the examples
+# for the estimator
+THRESHOLD: 1
