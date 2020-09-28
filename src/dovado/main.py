@@ -1,7 +1,7 @@
 import dovado.user_input as user_input
 import dovado.vivado_interaction as vivado
 import dovado.frame_handling as frame
-from dovado.point_evaluation import evaluate, get_max_frequency
+from dovado.point_evaluation import evaluate, setup_evaluation
 from dovado.src_parsing import get_parameters
 import yaml
 from pathlib import Path
@@ -107,16 +107,14 @@ def main():
         Path(TOP_SRC), SRC_MODULE if TOP_MODULE == "box" else TOP_MODULE
     )
     parameters = {parameter: int(parameter.value) for parameter in parameters}
-    design_point = evaluate(
-        parameters, STOP_STEP, TOP_SUFFIX, TOP_MODULE, SRC_FOLDER
-    )
 
-    if design_point:
-        print("Utilization metrics: " + str(design_point.utilisation))
-        print(
-            "Max frequency: "
-            + str(get_max_frequency(design_point.wns, TARGET_CLOCK))
-            + " Mhz"
-        )
+    setup_evaluation(
+        STOP_STEP, TOP_SUFFIX, TOP_MODULE, SRC_FOLDER, TARGET_CLOCK
+    )
+    design_value = evaluate(parameters)
+
+    if design_value:
+        print("Utilization metrics: " + str(design_value.utilisation))
+        print("Max frequency: " + design_value.max_frequency + " Mhz")
     else:
         print("Failed sourcing tcl script")

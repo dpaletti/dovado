@@ -6,19 +6,13 @@ Home-page: https://github.com/DPaletti/dovado
 Author: Daniele Paletti
 License: UNKNOWN
 Description: 
-        # Table of Contents
         
-        1.  [State of the Project](#org53204d2)
-        2.  [How to inspect the project](#orgbfc95b5)
-            1.  [Install Poetry](#orgef87212)
-            2.  [Run an example](#orgc4e4952)
+        # DoVado
         
-        Advanced Computer Architectures (ACA) Research project 2020.
-        A CLI tool for RTL Design Space Exploration on top of Vivado.
+        Advanced Computer Architectures (ACA) Research project 2020.   
+        A CLI tool for RTL Design Space Exploration on top of Vivado.   
         &ldquo;Do&rsquo; vado?&rdquo; is an italian slang expression for &ldquo;Dove vado?&rdquo; which means &ldquo;Where do I go?&rdquo;
         
-        
-        <a id="org53204d2"></a>
         
         # State of the Project
         
@@ -26,15 +20,11 @@ Description:
         Given an input RTL file after-synthesis utilization and timing are extracted.
         
         
-        <a id="orgbfc95b5"></a>
-        
         # How to inspect the project
         
         This project uses [Poetry](https://python-poetry.org/) for managing dependences and python versions in order to avoid conflicting versions on different machines.
         Following instructions are tested on a Linux machine but should work on OSX with minor (or none) modifications.
         
-        
-        <a id="orgef87212"></a>
         
         ## Install Poetry
         
@@ -51,15 +41,13 @@ Description:
         If this does not work add the poetry installation directory to the PATH ([instructions](https://docs.oracle.com/cd/E19062-01/sun.mgmt.ctr36/819-5418/gaznb/index.html) for Linux)
         
         
-        <a id="orgc4e4952"></a>
-        
         ## Run an example
         
         Clone this repository to your local machine:
         
             git clone https://github.com/DPaletti/dovado.git
         
-        Now position at the project root:
+        Now position at the project root (from now on all commands assume you are at project root):
         
             cd dovado
         
@@ -73,6 +61,23 @@ Description:
         
         Doing so all the program prompts are automatically answered with each line in input (one line = one answer), open it to see the answers.
         After all the vivado output you should see examples&rsquo; WNS (worst negative slack) and LUT (lookup table) percentage utilization
+        
+        
+        # Testing
+        
+        In order to run tests:
+        
+            poetry run pytest
+        
+        All tests will be ran and their respective outcome shown.   
+        Tests are managed through pytest which is used as a testing library and as a test runner. Hypothesis is a library used for property based testing. Functions which call Vivado are mocked through monkeypatch (from pytest).   
+        
+        A recap of test coverage can be read by:
+        
+            cd html_cov/
+            firefox index.html
+        
+        if you do not have firefox installed any other browser will do.   
         
         
 Platform: UNKNOWN

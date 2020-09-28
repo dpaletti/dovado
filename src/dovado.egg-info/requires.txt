@@ -1,4 +1,9 @@
 BeautifulSoup4<5.0.0,>=4.9.1
+allensdk<3.0.0,>=2.2.0
+hdlConvertorAst<0.3,>=0.2
+hdlconvertor<2.0,>=1.6
 lxml<5.0.0,>=4.5.2
 pathvalidate<3.0.0,>=2.3.0
+pexpect<5.0.0,>=4.8.0
 pyyaml<6.0.0,>=5.3.1
+scikit-learn<0.24.0,>=0.23.2
