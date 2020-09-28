@@ -115,6 +115,10 @@ def main():
 
     if design_value:
         print("Utilization metrics: " + str(design_value.utilisation))
+<<<<<<< HEAD
         print("Max frequency: " + design_value.wns + " Mhz")
+=======
+        print("Max frequency: " + design_value.max_frequency + " Mhz")
+>>>>>>> 152bfadcbc10eb9f4fb12ac863c0fde763d2e5d4
     else:
         print("Failed sourcing tcl script")
