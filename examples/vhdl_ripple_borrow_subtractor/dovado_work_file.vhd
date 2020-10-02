@@ -2,7 +2,7 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 ENTITY rbs IS
     GENERIC(
-        Nbit_rbs : integer := 4
+        Nbit_rbs : integer := 5
     );
     PORT(
         minN : IN std_logic_vector(Nbit_rbs - 1 DOWNTO 0);

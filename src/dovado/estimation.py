@@ -1,7 +1,79 @@
-from dovado.fitness import Example, examples
-from sklearn.kernel_regressor import
+from statsmodels.nonparametric.kernel_regression import KernelReg
+from typing import Dict, Tuple, List
+from dovado.point_evaluation import evaluate, DesignValue, get_metric
+from random import randint, shuffle
+from dataclasses import dataclass
+import dovado.global_user_selections as gus
+import numpy as np
 
 
-def estimate(design_point):
+@dataclass
+class Example:
+    design_point: Dict[str, int]
+    design_value: DesignValue
 
-    print()
+
+examples: List[Example] = []
+examples_updated = True
+
+
+def add_example(example: Example):
+    global examples
+    global examples_updated
+    examples.append(example)
+    shuffle(examples)
+    examples_updated = True
+
+
+def generate_dataset(
+    size: int,
+    parameters_range: Dict[str, Tuple[int, int]],
+    free_parameters: List[str],
+):
+    for i in range(0, size):
+        design_point = {}
+        for k in free_parameters:
+            design_point[k] = randint(
+                parameters_range[k][0], parameters_range[k][1]
+            )
+        design_value = evaluate(design_point)
+        add_example(Example(design_point, design_value))
+
+
+def get_dependent_variable(examples: List[Example], metric: str) -> np.ndarray:
+    dependent_variable = []
+    for example in examples:
+        dependent_variable.append(get_metric(example.design_value, metric))
+    return np.array(dependent_variable)
+
+
+def get_independent_variables(
+    examples: List[Example], free_parameters: List[str]
+) -> np.ndarray:
+    independent_variables = []
+    for parameter in free_parameters:
+        parameter_accumulator = []
+        for example in examples:
+            parameter_accumulator.append(example.design_point[parameter])
+        independent_variables.append(parameter_accumulator)
+    return np.array(independent_variables)
+
+
+estimator = None
+
+
+def estimate(design_point: List[float], metric: str):
+    global estimator
+    global examples_updated
+    if examples_updated:
+        independent_variables = get_independent_variables(
+            examples, gus.FREE_PARAMETERS
+        )
+        estimator = KernelReg(
+            get_dependent_variable(examples, metric),
+            independent_variables,
+            "c" * len(independent_variables),
+        )
+        examples_updated = False
+    estimate, _ = estimator.fit(np.array(design_point))
+    return estimate[0]

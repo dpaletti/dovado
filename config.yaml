@@ -67,6 +67,9 @@ SYNTHESIS_TIMING: "post_synth_setup_timing.rpt"
 # After Implementation Timing (setup) Report Name 
 IMPLEMENTATION_TIMING: "post_impl_setup_timing.rpt"
 
+# Maximum integer value considered for RTL parameters
+INTEGER_HIGH: 2147483647
+
 # N-parameter to choose which example to calculate the distance from
 N: 3
 

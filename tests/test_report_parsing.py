@@ -22,10 +22,10 @@ def test_get_utilisation():
 
 def test_get_wns():
     assert (
-        test.get_wns("./examples/vhdl_fifo_memory/post_synth_setup_timing.rpt")
+        -test.get_wns(
+            "./examples/vhdl_fifo_memory/post_synth_setup_timing.rpt"
+        )
         == -6.486
     )
     with pytest.raises(FileNotFoundError):
         test.get_wns("./wrong_file")
-    with pytest.raises(Exception):
-        test.get_wns("./examples/vhdl_fifo_memory/fifo.vhd")

@@ -1,7 +1,8 @@
 import re
 from bs4 import BeautifulSoup
 from pathlib import Path
-import math
+import numpy as np
+from typing import Union
 
 
 def _represents_float(s):
@@ -67,7 +68,7 @@ def get_utilisation(report_path, section_name, row_name):
     return float(_get_percentage_util(columns, row))
 
 
-def get_wns(report_path):
+def get_wns(report_path) -> float:
     try:
         first_line = Path(report_path).open().readline()
         try:
@@ -75,7 +76,7 @@ def get_wns(report_path):
                 re.findall(r"([-+]?(\d*\.\d*|inf))", first_line)[0][0]
             )
         except Exception:
-            return math.inf
+            return np.inf
 
     except FileNotFoundError as f:
         raise FileNotFoundError(

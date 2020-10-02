@@ -4,6 +4,7 @@ import tests.vivado_2019_2_mock_data as version_dependent
 from pathlib import Path
 from unittest.mock import patch
 import pytest
+from dovado.src_parsing import StopStep, IsIncremental, ImplementationStep
 
 
 def test_ask_code_dir():
@@ -101,14 +102,16 @@ def test_ask_stop_step():
             "sys.stdin", io.StringIO("wrong stop step\n" + answer),
         ):
             assert (
-                test.ask_stop_step() == answer.strip()
+                test.ask_stop_step() == StopStep.SYNTHESIS
+                if answer.strip() == "synthesis"
+                else StopStep.IMPLEMENTATION
                 if answer != "\n"
-                else test.ask_stop_step() == "synthesis"
+                else test.ask_stop_step() == StopStep.SYNTHESIS
             )
 
 
 def test_ask_incremental_mode():
-    for stop_step in {"synthesis", "implementation"}:
+    for stop_step in StopStep:
         for answers in {
             ("yes\n", "yes\n"),
             ("no\n", "no\n"),
@@ -116,31 +119,35 @@ def test_ask_incremental_mode():
             ("no\n", "yes\n"),
             ("\n", "\n"),
         }:
-            if stop_step == "synthesis":
+            if stop_step is StopStep.SYNTHESIS:
                 with patch(
                     "sys.stdin",
                     io.StringIO("wrong stop step\n" + answers[0] + ""),
                 ):
-                    assert test.ask_incremental_mode(stop_step) == {
-                        "is synthesis incremental": True
+                    assert test.ask_incremental_mode(
+                        stop_step
+                    ) == IsIncremental(
+                        True
                         if answers[0].strip() == "yes" or answers[0] == "\n"
-                        else False,
-                    }
-            elif stop_step == "implementation":
+                        else False
+                    )
+            elif stop_step is StopStep.IMPLEMENTATION:
                 with patch(
                     "sys.stdin",
                     io.StringIO(
                         "wrong stop step\n" + answers[0] + answers[1] + ""
                     ),
                 ):
-                    assert test.ask_incremental_mode(stop_step) == {
-                        "is synthesis incremental": True
+                    assert test.ask_incremental_mode(
+                        stop_step
+                    ) == IsIncremental(
+                        True
                         if answers[0].strip() == "yes" or answers[0] == "\n"
                         else False,
-                        "is implementation incremental": True
+                        True
                         if answers[1].strip() == "yes" or answers[1] == "\n"
                         else False,
-                    }
+                    )
 
 
 def test_parse_comma_separated_list():
@@ -176,19 +183,19 @@ def mock_get_directives(param):
 )
 @patch("dovado.doc_parsing.get_directives", new=mock_get_directives)
 def test__ask_implementation_directives():
-    for to_ask in {"place\n", "route\n"}:
-        if to_ask == "place\n":
+    for to_ask in ImplementationStep:
+        if to_ask is ImplementationStep.PLACE:
             directives = version_dependent.place_directives
-        if to_ask == "route\n":
+        if to_ask is ImplementationStep.ROUTE:
             directives = version_dependent.route_directives
         incremental_directives = version_dependent.read_checkpoint_directives
         for incremental_mode in [
-            {"is implementation incremental": True},
-            {"is implementation incremental": False},
+            IsIncremental(True, True),
+            IsIncremental(True, False),
         ]:
             for answer in (
                 incremental_directives
-                if incremental_mode["is implementation incremental"]
+                if incremental_mode.implementation
                 else directives
             ):
                 with patch(
@@ -196,7 +203,7 @@ def test__ask_implementation_directives():
                 ):
                     assert (
                         test._ask_implementation_directives(
-                            to_ask.strip(), incremental_mode
+                            to_ask, incremental_mode
                         )
                         == answer
                     )
@@ -217,20 +224,18 @@ def test__ask_implementation_directives():
 )
 def test_ask_directives():
     with patch("sys.stdin", io.StringIO("runtimeoptimized")):
-        assert test.ask_directives("synthesis", {"ignored": "ignored"}) == (
-            "runtimeoptimized",
-            None,
-            None,
-        )
+        assert test.ask_directives(
+            StopStep.SYNTHESIS, IsIncremental(None, None)
+        ) == ("runtimeoptimized", None, None,)
     with patch("sys.stdin", io.StringIO("invalid\n\n")):
-        assert test.ask_directives("synthesis", {"ignored": "ignored"}) == (
-            "default",
-            None,
-            None,
-        )
+        assert test.ask_directives(
+            StopStep.SYNTHESIS, IsIncremental(None, None)
+        ) == ("default", None, None,)
     with patch("sys.stdin", io.StringIO("invalid\n?\n\n")):
-        incremental_mode = {"is implementation incremental": True}
-        assert test.ask_directives("implementation", incremental_mode) == (
+        incremental_mode = IsIncremental(True, True)
+        assert test.ask_directives(
+            StopStep.IMPLEMENTATION, incremental_mode
+        ) == (
             "default",
             test._ask_implementation_directives("place", incremental_mode),
             test._ask_implementation_directives("route", incremental_mode),
@@ -306,8 +311,9 @@ def test_ask_utilization_metrics():
 
 def test_ask_parameters():
     with patch(
-        "sys.stdin", io.StringIO("invalid\nMalformed,,List\nNbit_rbs, fake\n"),
+        "sys.stdin",
+        io.StringIO("invalid\nMalformed,,List\nNbit_rbs\n fake\n"),
     ):
         assert test.ask_parameters(
             "examples/vhdl_ripple_borrow_subtractor/rbs.vhd", "rbs"
-        ) == ["Nbit_rbs", "fake"]
+        ) == ["Nbit_rbs"]

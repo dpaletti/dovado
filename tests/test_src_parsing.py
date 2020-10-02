@@ -47,6 +47,6 @@ def test_get_parameters():
     assert (
         test.get_parameters(
             Path("./examples/vhdl_fifo_memory/fifo.vhd"), "fifo_mem"
-        )
-        == []
+        )[0].name
+        == "fake"
     )

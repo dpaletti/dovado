@@ -95,7 +95,7 @@ def ask_part():
         print("Part not available.")
 
 
-def ask_stop_step():
+def ask_stop_step() -> parsing.StopStep:
     default = "synthesis"
     while True:
         user_input = input(
@@ -111,10 +111,15 @@ def ask_stop_step():
             or user_input == "implementation"
             or user_input == ""
         ):
-            return default if user_input == "" else user_input
+            stop_step = default if user_input == "" else user_input
+            return (
+                parsing.StopStep.SYNTHESIS
+                if stop_step == "synthesis"
+                else parsing.StopStep.IMPLEMENTATION
+            )
 
 
-def ask_incremental_mode(stop_step):
+def ask_incremental_mode(stop_step) -> parsing.IsIncremental:
     default = "yes"
     default_second = "yes"
     while True:
@@ -125,10 +130,10 @@ def ask_incremental_mode(stop_step):
         if user_input == "yes" or user_input == "no" or user_input == "":
             user_input = default if user_input == "" else user_input
             break
-    if stop_step == "synthesis":
-        return {
-            "is synthesis incremental": True if user_input == "yes" else False,
-        }
+    if stop_step is parsing.StopStep.SYNTHESIS:
+        return parsing.IsIncremental(
+            synthesis=True if user_input == "yes" else False
+        )
     while True:
         user_second_input = input(
             "Do you want to run implementation in incremental mode?"
@@ -144,24 +149,25 @@ def ask_incremental_mode(stop_step):
                 if user_second_input == ""
                 else user_second_input
             )
-            return {
-                "is synthesis incremental": True
-                if user_input == "yes"
-                else False,
-                "is implementation incremental": True
-                if user_second_input == "yes"
-                else False,
-            }
+            return parsing.IsIncremental(
+                synthesis=True if user_input == "yes" else False,
+                implementation=True if user_second_input == "yes" else False,
+            )
 
 
-def _ask_implementation_directives(to_request, incremental_mode):
-    if to_request not in {"place", "route"}:
+def _ask_implementation_directives(
+    to_request: parsing.ImplementationStep,
+    incremental_mode: parsing.IsIncremental,
+):
+    if not isinstance(to_request, parsing.ImplementationStep):
         raise ValueError(
-            "_request_incremental_directives called with " + to_request
+            "_request_incremental_directives called with " + str(to_request)
         )
 
     default = "Default"
-    directives_paragraph = doc.get_directives_paragraph(to_request)
+    directives_paragraph = doc.get_directives_paragraph(
+        to_request.name.lower()
+    )
     directives = doc.get_directives(directives_paragraph)
     incremental_directives = doc.get_directives(
         doc.get_directives_paragraph("read checkpoint")
@@ -169,7 +175,7 @@ def _ask_implementation_directives(to_request, incremental_mode):
     while True:
         user_input = input(
             "What directive do you want to give to the "
-            + to_request
+            + str(to_request)
             + ' step? Input"?"'
             + " to get help on available directives."
             + " [default = "
@@ -177,7 +183,7 @@ def _ask_implementation_directives(to_request, incremental_mode):
             + "]: "
         )
         if user_input == "?":
-            if incremental_mode["is implementation incremental"]:
+            if incremental_mode.implementation:
                 print(
                     "Available directives are only the ones compatible"
                     + " with read_checkpoint thus: "
@@ -190,7 +196,7 @@ def _ask_implementation_directives(to_request, incremental_mode):
             user_input
             in (
                 incremental_directives
-                if incremental_mode["is implementation incremental"]
+                if incremental_mode.implementation
                 else directives
             )
             or user_input == ""
@@ -198,7 +204,7 @@ def _ask_implementation_directives(to_request, incremental_mode):
             return default if user_input == "" else user_input
 
 
-def ask_directives(stop_step, incremental_mode):
+def ask_directives(stop_step, incremental_mode: parsing.IsIncremental):
     synth_directives_paragraph = doc.get_directives_paragraph("synthesis")
     synth_directives = doc.get_directives(synth_directives_paragraph)
     or_directives = ""
@@ -223,13 +229,17 @@ def ask_directives(stop_step, incremental_mode):
         if user_input in synth_directives:
             input_synth_directives = user_input
             break
-    if stop_step == "synthesis":
+    if stop_step is parsing.StopStep.SYNTHESIS:
         return input_synth_directives, None, None
     else:
         return (
             input_synth_directives,
-            _ask_implementation_directives("place", incremental_mode),
-            _ask_implementation_directives("route", incremental_mode),
+            _ask_implementation_directives(
+                parsing.ImplementationStep.PLACE, incremental_mode
+            ),
+            _ask_implementation_directives(
+                parsing.ImplementationStep.ROUTE, incremental_mode
+            ),
         )
 
 
@@ -299,10 +309,52 @@ def ask_identifiers(src, module):
         )
 
 
-def ask_parameters(src, module, stop_step, top_suffix):
+def ask_parameters_range(param_list):
+    shortcut = "_"
+    print(
+        "For each parameter specify a range e.g.'0 100' ,\n"
+        + "a shorthand for the maximum integer value is int_high so "
+        + "'-int_high int_high' specifies the whole integer range while "
+        + "'0 int_high' specifies a natural for example. \n"
+        + "Enter "
+        + shortcut
+        + " at any point to fix all unspecified ranges to "
+        + "'-int_high int_high'"
+    )
+    param_range_accumulator = []
+    i = 0
+    while i < len(param_list):
+        user_input = input("Enter range for " + param_list[i] + ": ")
+        if user_input == shortcut:
+            return dict(
+                zip(
+                    param_list,
+                    param_range_accumulator
+                    + (
+                        [(-CONFIG["INTEGER_HIGH"], CONFIG["INTEGER_HIGH"])]
+                        * (len(param_list) - len(param_range_accumulator))
+                    ),
+                )
+            )
+        splitted_input = user_input.strip().split()
+        if len(splitted_input) > 2:
+            print("Please input only two integers separated by a whitespace")
+            continue
+        try:
+            param_range_accumulator.append(
+                (int(splitted_input[0]), int(splitted_input[1]))
+            )
+            i = i + 1
+        except Exception:
+            print("Could not parse input as a pair of integers ")
+
+    return dict(zip(param_list, param_range_accumulator))
+
+
+def ask_parameters(src, module):
     while True:
         user_input = input(
-            "Enter a comma separated list"
+            "Enter a comma separated list "
             + "of parameters to optimize [example: firstParam, N, width]: "
         )
         param_list = parse_comma_separated_list(r"\w+", user_input)
@@ -310,9 +362,11 @@ def ask_parameters(src, module, stop_step, top_suffix):
             i.name for i in parsing.get_parameters(Path(src), module)
         ]
         if param_list and all(i in available_param_list for i in param_list):
-            return param_list
+            return [
+                i for i in available_param_list if i in param_list
+            ]  # return ordered list
         if not param_list:
-            print("Malformed list, try again\n")
+            print("Malformed list: " + user_input + "\ntry again\n")
         else:
             print(
                 "The following parameters could not be found among "
@@ -323,7 +377,7 @@ def ask_parameters(src, module, stop_step, top_suffix):
                 + ": "
                 + str([i for i in param_list if i not in available_param_list])
                 + "\nAvailable parameters are "
-                + str(parsing.get_parameters(Path(src), module))
+                + str(available_param_list)
                 + "\n"
             )
 

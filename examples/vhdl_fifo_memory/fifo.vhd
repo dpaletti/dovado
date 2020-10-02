@@ -6,6 +6,7 @@ USE IEEE.Std_logic_1164.all;
 -- fpga4student.com
 -- VHDL code for FIFO memory
 entity fifo_mem is
+  generic(fake: positive := 4);
    port(
       data_out : out std_logic_vector(7 downto 0);
       fifo_full, fifo_empty, fifo_threshold,

@@ -24,7 +24,7 @@ def fill_tcl(
     synthesis_directive,
     incremental_mode,
     stop_step,
-    top_suffix,
+    top_lang,
     target_clock,
     place_directive="",
     route_directive="",
@@ -34,22 +34,20 @@ def fill_tcl(
         src_folder,
         CONFIG["XDC_DIR"] + CONFIG["CONSTRAINT"],
         ("# no other file to read")
-        if top_suffix == ".vhd"
+        if top_lang is parsing.RTL.VHDL
         else ("read_verilog " + CONFIG["VERILOG_DIR"] + CONFIG["VERILOG_BOX"]),
         ("set_property IS_ENABLED 0 [get_files " + top_src + "]")
-        if top_suffix == ".vhd"
+        if top_lang is parsing.RTL.VHDL
         else "# no disabling needed",
         top_module,
         synthesis_part,
         synthesis_directive,
-        "-incremental_synth"
-        if incremental_mode["is synthesis incremental"]
-        else "",
+        "-incremental_synth" if incremental_mode.synthesis else "",
     ]
 
     IMPLEMENTATION_REPLACEMENTS = (
         []
-        if stop_step == "synthesis"
+        if stop_step is parsing.StopStep.SYNTHESIS
         else (
             [
                 "",
@@ -57,7 +55,7 @@ def fill_tcl(
                 "",
                 "-directive " + route_directive,
             ]
-            if not incremental_mode["is implementation incremental"]
+            if not incremental_mode.implementation
             else [
                 "-directive " + place_directive,
                 " ",
@@ -69,7 +67,7 @@ def fill_tcl(
 
     REPLACEMENT = (
         SYNTHESIS_REPLACEMENTS
-        if stop_step == "synthesis"
+        if stop_step is parsing.StopStep.SYNTHESIS
         else SYNTHESIS_REPLACEMENTS[:3]
         + [
             (
@@ -77,7 +75,7 @@ def fill_tcl(
                 + CONFIG["VHDL_DIR"]
                 + CONFIG["VHDL_BOX"]
             )
-            if top_suffix == ".vhd"
+            if top_lang is parsing.RTL.VHDL
             else (
                 "read_verilog " + CONFIG["VERILOG_DIR"] + CONFIG["VERILOG_BOX"]
             )
@@ -87,14 +85,14 @@ def fill_tcl(
     )
 
     frame.fill(
-        CONFIG["TCL_DIR"] + CONFIG[stop_step.upper() + "_FRAME"],
+        CONFIG["TCL_DIR"] + CONFIG[stop_step.name + "_FRAME"],
         REPLACEMENT
         + [
-            CONFIG[stop_step.upper() + "_TIMING"],
-            CONFIG[stop_step.upper() + "_UTILISATION"],
+            CONFIG[stop_step.name + "_TIMING"],
+            CONFIG[stop_step.name + "_UTILISATION"],
         ],
         CONFIG["PLACEHOLDER"],
-        CONFIG["TCL_DIR"] + CONFIG[stop_step.upper()],
+        CONFIG["TCL_DIR"] + CONFIG[stop_step.name],
     )
 
 

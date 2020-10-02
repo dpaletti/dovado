@@ -14,7 +14,35 @@ from hdlConvertor._hdlConvertor import ParseException
 from hdlConvertorAst.to.vhdl.vhdl2008 import ToVhdl2008
 from hdlConvertorAst.to.verilog.verilog2005 import ToVerilog2005
 import io
+import yaml
+from pathlib import Path
+from enum import Enum, auto
+from dataclasses import dataclass
 
+
+class RTL(Enum):
+    VHDL = auto()
+    VERILOG = auto()
+    SYSTEM_VERILOG = auto()
+
+
+class StopStep(Enum):
+    SYNTHESIS = auto()
+    IMPLEMENTATION = auto()
+
+
+class ImplementationStep(Enum):
+    PLACE = auto()
+    ROUTE = auto()
+
+
+@dataclass
+class IsIncremental:
+    synthesis: bool = True
+    implementation: bool = True
+
+
+CONFIG = yaml.safe_load(Path("config.yaml").open())
 
 parsed_src_path = None
 parsed = None
@@ -34,8 +62,10 @@ def parse(src_path):
                 hierarchyOnly=False,
                 debug=True,
             )
-        except ParseException:
-            raise ValueError("Could not parse " + src_path_string + " as VHDL")
+        except ParseException as e:
+            raise ValueError(
+                "Could not parse " + src_path_string + " as VHDL\n" + str(e)
+            )
     elif src_path.suffix == ".v":
         try:
             parsed = HdlConvertor().parse(
@@ -45,12 +75,13 @@ def parse(src_path):
                 hierarchyOnly=False,
                 debug=True,
             )
-        except ParseException:
+        except ParseException as e:
             raise ValueError(
                 "Could not parse "
                 + str(src_path)
                 + " as Verilog, .v files must be Verilog,"
-                + " SystemVerilog files must be .sv"
+                + " SystemVerilog files must be .sv\n"
+                + str(e)
             )
     elif src_path.suffix == ".sv":
         try:
@@ -76,6 +107,22 @@ def _is_parsed(src_path):
     return True
 
 
+def is_to_box(src_path, stop_step):
+    if stop_step is not StopStep.SYNTHESIS:
+        return True
+    if src_path.suffix == ".sv" or ".v":
+        return True
+    if not _is_parsed(src_path):
+        parse(src_path)
+    out_path = "vhdl/local_test_copy.vhd"
+    write_to_file(out_path)
+    try:
+        parse(out_path)
+        return False
+    except Exception:
+        return False
+
+
 def get_modules(src_path):
     if not _is_parsed(src_path):
         parse(src_path)
@@ -97,6 +144,31 @@ def get_parameters(src_path, module):
             return o.params
         if isinstance(o, HdlModuleDef) and o.dec and o.dec.name == module:
             return o.dec.params
+
+
+def get_parameter_range(parameter):
+    # this method only works with VHDL parameters
+    if isinstance(parameter.type, HdlOp):
+        # case in which a range is specified
+        if parameter.type.ops[1].fn.name != "TO":
+            raise Exception(
+                "Only 'to' is supported as an operation"
+                + " for parameter range specification, input: "
+                + str(parameter.type.ops[1].fn)
+            )
+        return tuple(parameter.type.ops[1].ops)
+    try:
+        return {
+            "integer": (-CONFIG["INTEGER_HIGH"], CONFIG["INTEGER_HIGH"]),
+            "natural": (0, CONFIG["INTEGER_HIGH"]),
+            "positive": (1, CONFIG["INTEGER_HIGH"]),
+            "signed": (-CONFIG["INTEGER_HIGH"], CONFIG["INTEGER_HIGH"]),
+            "unsigned": (0, CONFIG["INTEGER_HIGH"]),
+        }[str(parameter.type).lower()]
+    except Exception as e:
+        raise Exception(
+            "Unsupported type: " + str(parameter.type).lower() + "\n" + str(e)
+        )
 
 
 added = False
@@ -157,6 +229,21 @@ def write_to_file(out_path, no_touch=False):
     parsed_src_path = out_path
 
 
+def get_parameter_on_name(src_path, module, parameter):
+    if not _is_parsed(src_path):
+        parse(src_path)
+    for o in parsed.objs:
+        if isinstance(o, HdlModuleDec) and o.name == module:
+            for param in o.params:
+                if param.name == parameter:
+                    return param
+
+        if isinstance(o, HdlModuleDef) and o.dec and o.dec.name == module:
+            for param in o.dec.params:
+                if param.name == parameter:
+                    return param
+
+
 def set_parameter(src_path, module, parameter, value):
     # value must be base 10
     if not _is_parsed(src_path):
@@ -186,7 +273,7 @@ def map_parameter(src_path, module, parameter, value):
                     and module_definition.param_map
                 ):
                     for param in module_definition.param_map:
-                        if str(param.ops[0]) == str(parameter.name):
+                        if str(param.ops[0]) == parameter:
                             param.ops[1] = HdlValueInt(value, None, None)
                             write_to_file(src_path, no_touch=True)
                             return
@@ -197,7 +284,7 @@ def map_parameter(src_path, module, parameter, value):
                     and module_definition.param_map
                 ):
                     for param in module_definition.param_map:
-                        if str(param.ops[0]) == str(parameter.name):
+                        if str(param.ops[0]) == parameter:
                             param.ops[1] = HdlValueInt(value, None, None)
                             write_to_file(src_path, no_touch=True)
                             return
