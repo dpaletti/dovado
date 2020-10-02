@@ -44,10 +44,10 @@ def test_evaluate():
                         test.EvaluationSetup(
                             StopStep.SYNTHESIS,
                             RTL.VHDL,
-                            True,
+                            False,
                             "rbs",
-                            "examples/vhdl_ripple_borrow_subtractor",
-                            "rbs.vhd",
+                            "examples/vhdl_fifo_memory",
+                            "fifo.vhd",
                             250,
                         ),
                     ):

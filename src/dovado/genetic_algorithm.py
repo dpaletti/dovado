@@ -11,12 +11,13 @@ from pymoo.optimize import minimize
 import numpy as np
 import dovado.global_user_selections as gus
 from dovado.fitness import fitness
+import pickle
 
 
 class MyProblem(Problem):
     def __init__(self):
         super().__init__(
-            n_var=len(gus.FREE_PARAMETERS_RANGE.keys()),
+            n_var=len(gus.FREE_PARAMETERS_RANGE),
             n_obj=len(gus.METRICS),
             n_constr=0,
             xl=[
@@ -33,11 +34,11 @@ class MyProblem(Problem):
 
     def _evaluate(self, x, out, *args, **kwargs):
         out["F"] = np.column_stack(
-            [fitness(x, metric) for metric in gus.METRICS]
+            [fitness(tuple(x), metric) for metric in gus.METRICS]
         )
 
 
-def optimize():
+def optimize(execution_time: str) -> np.ndarray:
     problem = MyProblem()
 
     algorithm = NSGA2(
@@ -49,7 +50,7 @@ def optimize():
         eliminate_duplicates=True,
     )
 
-    termination = get_termination("time", "00:10:00")
+    termination = get_termination("time", execution_time)
     res = minimize(
         problem,
         algorithm,
@@ -58,4 +59,8 @@ def optimize():
         save_history=True,
         verbose=True,
     )
-    return res.pf
+    with open("objs.pkl", "wb") as f:
+        pickle.dump([res, algorithm], f)
+    # with open('objs.pkl', 'rb') as f:
+    #     obj0, obj1, obj2 = pickle.load(f)
+    return res.F[-1]

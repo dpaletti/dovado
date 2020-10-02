@@ -147,7 +147,7 @@ def main():
         TARGET_CLOCK,
     )
 
-    result = optimize()
+    result = optimize("00:00:10")
     print("Optimization Result: " + result)
 
     # parameters = get_parameters(

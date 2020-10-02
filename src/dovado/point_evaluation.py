@@ -4,7 +4,6 @@ from pathlib import Path
 from dataclasses import dataclass
 import dovado.vivado_interaction as vivado
 import dovado.report_parsing as report
-import dovado.user_input as user_input
 import dovado.src_parsing as src
 import numpy as np
 import dovado.global_user_selections as gus
@@ -26,7 +25,7 @@ class EvaluationSetup:
 
 @dataclass
 class DesignValue:
-    utilisation: Dict[str, float]
+    utilisation: Dict[Tuple[str, str], float]
     negative_max_frequency: float
 
 

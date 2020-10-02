@@ -23,10 +23,14 @@ def test_top_module_exists():
     assert (
         test.top_module_exists("examples/vhdl_fifo_memory", "fifo_mem")
         == "examples/vhdl_fifo_memory/fifo.vhd"
+        or test.top_module_exists("examples/vhdl_fifo_memory", "fifo_mem")
+        == "examples/vhdl_fifo_memory/dovado_work_file.vhd"
     )
     assert (
         test.top_module_exists("examples/vhdl_fifo_memory", "memory_array")
         == "examples/vhdl_fifo_memory/fifo.vhd"
+        or test.top_module_exists("examples/vhdl_fifo_memory", "memory_array")
+        == "examples/vhdl_fifo_memory/dovado_work_file.vhd"
     )
     assert (
         test.top_module_exists("examples/vhdl_fifo_memory", "invalid") == None

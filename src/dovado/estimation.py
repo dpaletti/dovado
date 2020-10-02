@@ -40,7 +40,9 @@ def generate_dataset(
         add_example(Example(design_point, design_value))
 
 
-def get_dependent_variable(examples: List[Example], metric: str) -> np.ndarray:
+def get_dependent_variable(
+    examples: List[Example], metric: Tuple[str, str]
+) -> np.ndarray:
     dependent_variable = []
     for example in examples:
         dependent_variable.append(get_metric(example.design_value, metric))
@@ -62,7 +64,7 @@ def get_independent_variables(
 estimator = None
 
 
-def estimate(design_point: List[float], metric: str):
+def estimate(design_point: List[float], metric: Tuple[str, str]):
     global estimator
     global examples_updated
     if examples_updated:

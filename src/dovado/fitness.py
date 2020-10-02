@@ -14,13 +14,9 @@ CONFIG = yaml.safe_load(Path("config.yaml").open())
 
 
 @lru_cache
-def fitness(design_point: Tuple[int], metric: str):
+def fitness(design_point: Tuple[int], metric: Tuple[str, str]):
     # design_point is a Tuple because lists are unhashable
     # while caching is allowed only with hashable parameters
-    print(
-        "Distance: "
-        + str(_nth_nearest_distance(design_point, es.examples, CONFIG["N"]))
-    )
     if (
         _nth_nearest_distance(design_point, es.examples, CONFIG["N"]) == 0
     ) or (
@@ -28,7 +24,7 @@ def fitness(design_point: Tuple[int], metric: str):
         > CONFIG["THRESHOLD"]
     ):
         full_design_value = pe.evaluate(design_point)
-        design_value = pe.get_metric(full_design_value, "metric_1")
+        design_value = pe.get_metric(full_design_value, metric)
         if (
             _nth_nearest_distance(design_point, es.examples, CONFIG["N"])
             > CONFIG["THRESHOLD"]
@@ -41,6 +37,9 @@ def fitness(design_point: Tuple[int], metric: str):
             )
     else:
         design_value = es.estimate(design_point, metric)
+    print("design_point: " + str(design_point))
+    print("metric: " + str(metric))
+    print("Design Value: " + str(design_value))
     return design_value
 
 
