@@ -34,14 +34,20 @@ is_evaluation_setup = False
 
 
 def setup_evaluation(
-    stop_step, top_lang, to_box, top_module, src_folder, target_clock
+    stop_step, top_lang, to_box, top_module, src_folder, top_src, target_clock
 ):
     global is_evaluation_setup
     if is_evaluation_setup:
         return
     global evaluation_setup
     evaluation_setup = EvaluationSetup(
-        stop_step, top_lang, to_box, top_module, src_folder, target_clock
+        stop_step,
+        top_lang,
+        to_box,
+        top_module,
+        src_folder,
+        top_src,
+        target_clock,
     )
     is_evaluation_setup = True
 
@@ -56,10 +62,7 @@ def evaluate(design_point: Tuple[int]) -> DesignValue:
                 ),
                 evaluation_setup.top_module,
                 src.get_parameter_on_name(
-                    Path.joinpath(
-                        Path(evaluation_setup.src_folder),
-                        evaluation_setup.top_src,
-                    ),
+                    Path(evaluation_setup.top_src),
                     evaluation_setup.top_module,
                     parameter,
                 ),
@@ -73,10 +76,7 @@ def evaluate(design_point: Tuple[int]) -> DesignValue:
                 else Path(CONFIG["VERILOG_DIR"] + CONFIG["VERILOG_BOX"]),
                 evaluation_setup.top_module,
                 src.get_parameter_on_name(
-                    Path.joinpath(
-                        Path(evaluation_setup.src_folder),
-                        evaluation_setup.top_src,
-                    ),
+                    Path(evaluation_setup.top_src),
                     evaluation_setup.top_module,
                     parameter,
                 ),
@@ -87,7 +87,10 @@ def evaluate(design_point: Tuple[int]) -> DesignValue:
     )
     print(vivado_out)
     return (
-        DesignValue(np.inf, np.inf)
+        DesignValue(
+            utilisation={i: np.inf for i in gus.METRICS},
+            negative_max_frequency=np.inf,
+        )
         if not success
         else DesignValue(
             utilisation={
@@ -122,7 +125,10 @@ def get_metric(design_value, metric):
     else:
         try:
             return design_value.utilisation[metric]
-        except Exception:
+        except Exception as e:
             raise Exception(
-                "Invalid metric passed to the fitness function: " + str(metric)
+                "Invalid metric passed to the fitness function: "
+                + str(metric)
+                + "\n"
+                + str(e)
             )

@@ -9,7 +9,12 @@ t_vivado_init = None
 def start():
     global vivado
     global t_vivado_init
-    vivado = pexpect.spawnu("vivado -mode tcl -nolog -nojournal")
+    vivado = pexpect.spawnu(
+        "vivado -mode tcl -nolog -nojournal",
+        encoding="utf-8",
+        codec_errors="ignore",
+    )
+
     t_vivado_init = threading.Thread(target=vivado.expect, args=("Vivado%",))
     t_vivado_init.start()
     return vivado

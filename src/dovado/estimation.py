@@ -9,7 +9,7 @@ import numpy as np
 
 @dataclass
 class Example:
-    design_point: Dict[str, int]
+    design_point: List[int]
     design_value: DesignValue
 
 
@@ -23,6 +23,7 @@ def add_example(example: Example):
     examples.append(example)
     shuffle(examples)
     examples_updated = True
+    print("EXAMPLES: " + str(examples))
 
 
 def generate_dataset(
@@ -31,12 +32,12 @@ def generate_dataset(
     free_parameters: List[str],
 ):
     for i in range(0, size):
-        design_point = {}
+        design_point = []
         for k in free_parameters:
-            design_point[k] = randint(
-                parameters_range[k][0], parameters_range[k][1]
+            design_point.append(
+                randint(parameters_range[k][0], parameters_range[k][1])
             )
-        design_value = evaluate(design_point)
+        design_value = evaluate(tuple(design_point))
         add_example(Example(design_point, design_value))
 
 

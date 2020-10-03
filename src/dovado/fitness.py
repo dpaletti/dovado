@@ -29,12 +29,7 @@ def fitness(design_point: Tuple[int], metric: Tuple[str, str]):
             _nth_nearest_distance(design_point, es.examples, CONFIG["N"])
             > CONFIG["THRESHOLD"]
         ):
-            es.add_example(
-                es.Example(
-                    dict(zip(gus.FREE_PARAMETERS, design_point)),
-                    full_design_value,
-                )
-            )
+            es.add_example(es.Example(design_point, full_design_value,))
     else:
         design_value = es.estimate(design_point, metric)
     print("design_point: " + str(design_point))
@@ -64,9 +59,8 @@ def _nth_nearest_distance(
 ) -> float:
     distances = []
     for example in examples:
-        distances.append(
-            _distance(design_point, list(example.design_point.values()))
-        )
+        distances.append(_distance(design_point, example.design_point))
+
     try:
         return nlargest(n, distances)[n]
     except Exception:

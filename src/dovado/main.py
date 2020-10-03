@@ -7,12 +7,14 @@ from dovado.genetic_algorithm import optimize
 from dovado.src_parsing import (
     get_parameters,
     get_parameter_range,
+    get_parameter_on_name,
     is_to_box,
     RTL,
 )
 import dovado.global_user_selections as gus
 import dovado.report_parsing as report
 import dovado.point_evaluation as pe
+import dovado.estimation as es
 import yaml
 from pathlib import Path
 
@@ -75,7 +77,6 @@ def main():
             if TOP_SUFFIX == ".vhd"
             else CONFIG["VERILOG_DIR"] + CONFIG["VERILOG_BOX"],
         )
-        TOP_MODULE = "box"
 
     INCREMENTAL_MODE = user_input.ask_incremental_mode(STOP_STEP)
 
@@ -112,23 +113,11 @@ def main():
         PLACE_DIRECTIVE,
         ROUTE_DIRECTIVE,
     )
+    print("\nTOP_SRC: " + str(TOP_SRC) + "\nTOP_MODULE: " + str(TOP_MODULE))
     gus.set_free_parameters(user_input.ask_parameters(TOP_SRC, TOP_MODULE))
-    if TOP_LANG is RTL.VERILOG or TOP_LANG is RTL.SYSTEM_VERILOG:
-        gus.set_free_parameters_range(
-            user_input.ask_parameters_range(gus.FREE_PARAMETERS)
-        )
-    else:
-        gus.set_free_parameters_range(
-            dict(
-                zip(
-                    gus.FREE_PARAMETERS,
-                    [
-                        get_parameter_range(param)
-                        for param in gus.FREE_PARAMETERS
-                    ],
-                )
-            )
-        )
+    gus.set_free_parameters_range(
+        user_input.ask_parameters_range(gus.FREE_PARAMETERS)
+    )
     gus.set_metrics(
         user_input.ask_utilization_metrics(
             report.get_available_indices(
@@ -146,9 +135,14 @@ def main():
         TOP_SRC,
         TARGET_CLOCK,
     )
+    es.generate_dataset(
+        CONFIG["INITIAL_SAMPLES"],
+        gus.FREE_PARAMETERS_RANGE,
+        gus.FREE_PARAMETERS,
+    )
 
     result = optimize("00:00:10")
-    print("Optimization Result: " + result)
+    print("Optimization Result: " + str(result))
 
     # parameters = get_parameters(
     #     Path(TOP_SRC), SRC_MODULE if TOP_MODULE == "box" else TOP_MODULE
