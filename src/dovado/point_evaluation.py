@@ -7,6 +7,8 @@ import dovado.report_parsing as report
 import dovado.src_parsing as src
 import numpy as np
 import dovado.global_user_selections as gus
+from dovado.frame_handling import setup_incremental
+from dovado.src_parsing import IsIncremental
 from typing import Tuple, Dict
 
 CONFIG = yaml.safe_load(Path("config.yaml").open())
@@ -21,6 +23,7 @@ class EvaluationSetup:
     src_folder: str
     top_src: str
     target_clock: float
+    is_incremental: IsIncremental
 
 
 @dataclass
@@ -34,7 +37,14 @@ is_evaluation_setup = False
 
 
 def setup_evaluation(
-    stop_step, top_lang, to_box, top_module, src_folder, top_src, target_clock
+    stop_step,
+    top_lang,
+    to_box,
+    top_module,
+    src_folder,
+    top_src,
+    target_clock,
+    is_incremental,
 ):
     global is_evaluation_setup
     if is_evaluation_setup:
@@ -48,12 +58,18 @@ def setup_evaluation(
         src_folder,
         top_src,
         target_clock,
+        is_incremental,
     )
     is_evaluation_setup = True
+    print("Evaluation Setup: " + str(evaluation_setup))
+
+
+is_first_evaluation = True
 
 
 @lru_cache
 def evaluate(design_point: Tuple[int]) -> DesignValue:
+    global is_first_evaluation
     if not evaluation_setup.is_boxed:
         for parameter, value in zip(gus.FREE_PARAMETERS, design_point):
             src.set_parameter(
@@ -61,11 +77,7 @@ def evaluate(design_point: Tuple[int]) -> DesignValue:
                     Path(evaluation_setup.src_folder), CONFIG["VHDL_LOCAL_SRC"]
                 ),
                 evaluation_setup.top_module,
-                src.get_parameter_on_name(
-                    Path(evaluation_setup.top_src),
-                    evaluation_setup.top_module,
-                    parameter,
-                ),
+                parameter,
                 value,
             )
     else:
@@ -74,18 +86,18 @@ def evaluate(design_point: Tuple[int]) -> DesignValue:
                 Path(CONFIG["VHDL_DIR"] + CONFIG["VHDL_BOX"])
                 if evaluation_setup.top_lang is src.RTL.VHDL
                 else Path(CONFIG["VERILOG_DIR"] + CONFIG["VERILOG_BOX"]),
-                evaluation_setup.top_module,
-                src.get_parameter_on_name(
-                    Path(evaluation_setup.top_src),
-                    evaluation_setup.top_module,
-                    parameter,
-                ),
+                "box",
+                parameter,
                 value,
             )
     vivado_out, success = vivado.source(
         CONFIG["TCL_DIR"] + CONFIG[evaluation_setup.stop_step.name]
     )
     print(vivado_out)
+    if is_first_evaluation:
+        is_first_evaluation = False
+        setup_incremental(evaluation_setup.is_incremental)
+
     return (
         DesignValue(
             utilisation={i: np.inf for i in gus.METRICS},

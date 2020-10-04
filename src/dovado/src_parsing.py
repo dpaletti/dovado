@@ -263,6 +263,16 @@ def set_parameter(src_path, module, parameter, value):
 
 
 def map_parameter(src_path, module, parameter, value):
+    print(
+        "MAPPING PARAMETER: "
+        + str(src_path)
+        + "  "
+        + str(module)
+        + "  "
+        + str(parameter)
+        + "  "
+        + str(value)
+    )
     if not _is_parsed(src_path):
         parse(src_path)
     for o in parsed.objs:

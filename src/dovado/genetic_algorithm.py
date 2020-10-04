@@ -34,7 +34,10 @@ class MyProblem(Problem):
 
     def _evaluate(self, x, out, *args, **kwargs):
         out["F"] = np.column_stack(
-            [fitness(tuple(x), metric) for metric in gus.METRICS]
+            [
+                fitness(tuple(x), metric)
+                for metric in (gus.METRICS + ["max_frequency"])
+            ]
         )
 
 

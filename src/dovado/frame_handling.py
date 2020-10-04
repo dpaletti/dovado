@@ -20,6 +20,7 @@ def fill_tcl(
     src_folder,
     top_src,
     top_module,
+    is_boxed,
     synthesis_part,
     synthesis_directive,
     incremental_mode,
@@ -33,13 +34,17 @@ def fill_tcl(
         CONFIG["VIVADO_OUTPUT_DIR"],
         src_folder,
         CONFIG["XDC_DIR"] + CONFIG["CONSTRAINT"],
-        ("# no other file to read")
+        (
+            "read_vhdl -library bftLib "
+            + CONFIG["VHDL_DIR"]
+            + CONFIG["VHDL_BOX"]
+        )
         if top_lang is parsing.RTL.VHDL
         else ("read_verilog " + CONFIG["VERILOG_DIR"] + CONFIG["VERILOG_BOX"]),
         ("set_property IS_ENABLED 0 [get_files " + top_src + "]")
         if top_lang is parsing.RTL.VHDL
         else "# no disabling needed",
-        top_module,
+        top_module if not is_boxed else "box",
         synthesis_part,
         synthesis_directive,
         "-incremental_synth" if incremental_mode.synthesis else "",
@@ -105,13 +110,19 @@ def fill_box(
     placeholder,
     out_path,
 ):
+    full_parameters = []
+    for param in parameters:
+        full_parameters.append(
+            parsing.get_parameter_on_name(Path(top_src), top_module, param)
+        )
+
     top_suffix = Path(top_src).suffix
     if top_suffix == ".vhd":
         _vhdl_fill_box(
             frame_path,
             top_src,
             top_module,
-            parameters,
+            full_parameters,
             clock_port,
             placeholder,
             out_path,
@@ -121,7 +132,7 @@ def fill_box(
             frame_path,
             top_src,
             top_module,
-            parameters,
+            full_parameters,
             clock_port,
             placeholder,
             out_path,
@@ -141,28 +152,41 @@ def _vhdl_parameter_map(parameters):
                 + str(parameter.name)
                 + " does not have one."
             )
+        try:
+            parameter_section += (
+                parameter.name
+                + " => "
+                + (
+                    str(parameter.value)
+                    if not parameter.value.base
+                    else str(
+                        int(parameter.value.val[1:], parameter.value.base,)
+                    )
+                ).strip()
+                + ",\n"
+            )
+        except Exception:
+            print("Skipping unsupported parameter: " + str(parameter))
+            continue
+    try:
         parameter_section += (
-            parameter.name
+            parameters[-1].name
             + " => "
             + (
-                str(parameter.value)
-                if not parameter.value.base
-                else str(int(parameter.value.val[1:], parameter.value.base,))
-            ).strip()
-            + ",\n"
-        )
-    parameter_section += (
-        parameters[-1].name
-        + " => "
-        + (
-            str(parameters[-1].value)
-            if not parameters[-1].value.base
-            else str(
-                int(parameters[-1].value.val[1:], parameters[-1].value.base,)
+                str(parameters[-1].value)
+                if not parameters[-1].value.base
+                else str(
+                    int(
+                        parameters[-1].value.val[1:],
+                        parameters[-1].value.base,
+                    )
+                )
             )
+            + ")"
         )
-        + ")"
-    )
+    except Exception:
+        print("Skipping unsupported parameter: " + str(parameter))
+        parameter_section += ")"
     return parameter_section
 
 
@@ -255,3 +279,18 @@ def _verilog_fill_box(
     ]
 
     fill(frame_path, replacements, placeholder, out_path)
+
+
+def setup_incremental(is_incremental: parsing.IsIncremental):
+    if not is_incremental.synthesis and not is_incremental.implementation:
+        return
+    if is_incremental.synthesis:
+        path = CONFIG["TCL_DIR"] + CONFIG["SYNTHESIS"]
+        synthesis = Path(path).read_text()
+        synthesis = synthesis.replace("#! ", "")
+        Path(path).write_text(synthesis)
+    if is_incremental.implementation:
+        path = CONFIG["TCL_DIR"] + CONFIG["IMPLEMENTATION"]
+        implementation = Path(path).read_text()
+        implementation = implementation.replace("#! ", "")
+        Path(path).write_text(implementation)

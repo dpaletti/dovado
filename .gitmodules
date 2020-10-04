@@ -1,0 +1,3 @@
+[submodule "examples/potato"]
+	path = examples/potato
+	url = https://github.com/skordal/potato

@@ -1,6 +1,7 @@
 from statsmodels.nonparametric.kernel_regression import KernelReg
 from typing import Dict, Tuple, List
 from dovado.point_evaluation import evaluate, DesignValue, get_metric
+import dovado.global_user_selections as gus
 from random import randint, shuffle
 from dataclasses import dataclass
 import dovado.global_user_selections as gus
@@ -57,7 +58,9 @@ def get_independent_variables(
     for parameter in free_parameters:
         parameter_accumulator = []
         for example in examples:
-            parameter_accumulator.append(example.design_point[parameter])
+            parameter_accumulator.append(
+                dict(zip(gus.FREE_PARAMETERS, example.design_point))[parameter]
+            )
         independent_variables.append(parameter_accumulator)
     return np.array(independent_variables)
 

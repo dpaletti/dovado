@@ -5,9 +5,6 @@ import dovado.frame_handling as frame
 # from dovado.point_evaluation import evaluate, setup_evaluation
 from dovado.genetic_algorithm import optimize
 from dovado.src_parsing import (
-    get_parameters,
-    get_parameter_range,
-    get_parameter_on_name,
     is_to_box,
     RTL,
 )
@@ -15,6 +12,7 @@ import dovado.global_user_selections as gus
 import dovado.report_parsing as report
 import dovado.point_evaluation as pe
 import dovado.estimation as es
+import dovado.fitness as fit
 import yaml
 from pathlib import Path
 
@@ -48,6 +46,11 @@ def main():
 
     TO_BOX = is_to_box(Path(TOP_SRC), STOP_STEP)
 
+    gus.set_free_parameters(user_input.ask_parameters(TOP_SRC, TOP_MODULE))
+    gus.set_free_parameters_range(
+        user_input.ask_parameters_range(gus.FREE_PARAMETERS)
+    )
+
     # A local copy of the top module source file is needed
     # in order to update the parameters in place
     if not TO_BOX:
@@ -70,7 +73,7 @@ def main():
             else CONFIG["VERILOG_DIR"] + CONFIG["VERILOG_BOX_FRAME"],
             TOP_SRC,
             TOP_MODULE,
-            get_parameters(Path(TOP_SRC), TOP_MODULE),
+            gus.FREE_PARAMETERS,
             CLOCK_PORT,
             CONFIG["PLACEHOLDER"],
             CONFIG["VHDL_DIR"] + CONFIG["VHDL_BOX"]
@@ -104,6 +107,7 @@ def main():
         SRC_FOLDER,
         TOP_SRC,
         TOP_MODULE,
+        TO_BOX,
         SYNTHESIS_PART,
         SYNTHESIS_DIRECTIVE,
         INCREMENTAL_MODE,
@@ -112,11 +116,6 @@ def main():
         TARGET_CLOCK,
         PLACE_DIRECTIVE,
         ROUTE_DIRECTIVE,
-    )
-    print("\nTOP_SRC: " + str(TOP_SRC) + "\nTOP_MODULE: " + str(TOP_MODULE))
-    gus.set_free_parameters(user_input.ask_parameters(TOP_SRC, TOP_MODULE))
-    gus.set_free_parameters_range(
-        user_input.ask_parameters_range(gus.FREE_PARAMETERS)
     )
     gus.set_metrics(
         user_input.ask_utilization_metrics(
@@ -134,32 +133,14 @@ def main():
         SRC_FOLDER,
         TOP_SRC,
         TARGET_CLOCK,
+        INCREMENTAL_MODE,
     )
     es.generate_dataset(
         CONFIG["INITIAL_SAMPLES"],
         gus.FREE_PARAMETERS_RANGE,
         gus.FREE_PARAMETERS,
     )
+    fit.set_threshold(es.examples)
 
-    result = optimize("00:00:10")
+    result = optimize("04:00:00")
     print("Optimization Result: " + str(result))
-
-    # parameters = get_parameters(
-    #     Path(TOP_SRC), SRC_MODULE if TOP_MODULE == "box" else TOP_MODULE
-    # )
-    # parameters = {parameter: int(parameter.value) for parameter in parameters}
-
-    # setup_evaluation(
-    #     STOP_STEP, TOP_SUFFIX, TOP_MODULE, SRC_FOLDER, TARGET_CLOCK
-    # )
-    # design_value = evaluate(parameters, METRICS)
-
-    # if design_value:
-    #     print("Utilization metrics: " + str(design_value.utilisation))
-    #     print(
-    #         "Max frequency: "
-    #         + str(-design_value.negative_max_frequency)
-    #         + " Mhz"
-    #     )
-    # else:
-    #     print("Failed sourcing tcl script")

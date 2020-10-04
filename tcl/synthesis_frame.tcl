@@ -29,8 +29,11 @@ set src ____
 set xdcFile ____
 ____
 read_all_files $src
-____
+#____
 read_xdc $xdcFile
+
+
+read_vhdl -library bftLib vhdl/box.vhd
 
 # Run synthesis and write checkpoint
 #! read_checkpoint -incremental $outputDir/post_synth.dcp ;# to be turned on for incremental runs (#! is stripped eventually)

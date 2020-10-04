@@ -1,5 +1,4 @@
 import math
-import typing
 import yaml
 from pathlib import Path
 from functools import lru_cache
@@ -8,29 +7,36 @@ import dovado.point_evaluation as pe
 import dovado.estimation as es
 import numpy as np
 from typing import Tuple, List
-import dovado.global_user_selections as gus
 
 CONFIG = yaml.safe_load(Path("config.yaml").open())
+
+threshold: int = 0
 
 
 @lru_cache
 def fitness(design_point: Tuple[int], metric: Tuple[str, str]):
     # design_point is a Tuple because lists are unhashable
     # while caching is allowed only with hashable parameters
+    print(
+        "Nth nearest distance: "
+        + str(_nth_nearest_distance(design_point, es.examples, CONFIG["N"]))
+    )
     if (
         _nth_nearest_distance(design_point, es.examples, CONFIG["N"]) == 0
     ) or (
         _nth_nearest_distance(design_point, es.examples, CONFIG["N"])
-        > CONFIG["THRESHOLD"]
+        > threshold
     ):
+        print("Fitness calling Vivado directly")
         full_design_value = pe.evaluate(design_point)
         design_value = pe.get_metric(full_design_value, metric)
         if (
             _nth_nearest_distance(design_point, es.examples, CONFIG["N"])
-            > CONFIG["THRESHOLD"]
+            > threshold
         ):
             es.add_example(es.Example(design_point, full_design_value,))
     else:
+        print("Fitness estimating")
         design_value = es.estimate(design_point, metric)
     print("design_point: " + str(design_point))
     print("metric: " + str(metric))
@@ -62,6 +68,22 @@ def _nth_nearest_distance(
         distances.append(_distance(design_point, example.design_point))
 
     try:
-        return nlargest(n, distances)[n]
+        return nlargest(n, distances)[n - 1]
     except Exception:
-        return nlargest(n, distances)[-1]
+        return nlargest(n, distances)[-2]
+
+
+def _mean(numbers):
+    return float(sum(numbers)) / max(len(numbers), 1)
+
+
+def set_threshold(examples):
+    global threshold
+    distances = []
+    for example in examples:
+        distances.append(
+            _nth_nearest_distance(example.design_point, examples, CONFIG["N"])
+        )
+    print("Distances for threshold: " + str(distances))
+    threshold = int(round(_mean(distances)))
+    print("Set Threshold: " + str(threshold))
