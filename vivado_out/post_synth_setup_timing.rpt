@@ -1,13 +1,13 @@
-Slack (VIOLATED) :        -9.895ns  (required time - arrival time)
-  Source:                 BOXED/processor/writeback/rd_addr_out_reg[2]/C
+Slack (VIOLATED) :        -5.939ns  (required time - arrival time)
+  Source:                 boxed/op_table_finish_ptr_reg_reg[0]_rep/C
                             (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@0.250ns period=0.500ns})
-  Destination:            BOXED/icache_enabled.icache/cache_hit_reg/D
-                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@0.250ns period=0.500ns})
+  Destination:            boxed/queue_ram_reg_0/ADDRARDADDR[10]
+                            (rising edge-triggered cell RAMB36E1 clocked by clk  {rise@0.000ns fall@0.250ns period=0.500ns})
   Path Group:             clk
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            0.500ns  (clk rise@0.500ns - clk rise@0.000ns)
-  Data Path Delay:        10.252ns  (logic 2.225ns (21.703%)  route 8.027ns (78.297%))
-  Logic Levels:           22  (CARRY4=6 LUT4=2 LUT5=3 LUT6=10 RAMD64E=1)
+  Data Path Delay:        5.780ns  (logic 1.251ns (21.645%)  route 4.529ns (78.355%))
+  Logic Levels:           9  (CARRY4=1 LUT3=1 LUT4=1 LUT5=1 LUT6=4 RAMD64E=1)
   Clock Path Skew:        -0.145ns (DCD - SCD + CPR)
     Destination Clock Delay (DCD):    1.860ns = ( 2.360 - 0.500 ) 
     Source Clock Delay      (SCD):    2.117ns
@@ -26,63 +26,32 @@ Slack (VIOLATED) :        -9.895ns  (required time - arrival time)
                          IBUF (Prop_ibuf_I_O)         0.830     0.830 r  clk_IBUF_inst/O
                          net (fo=1, unplaced)         0.584     1.413    clk_IBUF
                          BUFG (Prop_bufg_I_O)         0.120     1.533 r  clk_IBUF_BUFG_inst/O
-                         net (fo=2919, unplaced)      0.584     2.117    BOXED/processor/writeback/clk
-                         FDRE                                         r  BOXED/processor/writeback/rd_addr_out_reg[2]/C
+                         net (fo=1484, unplaced)      0.584     2.117    boxed/clk
+                         FDRE                                         r  boxed/op_table_finish_ptr_reg_reg[0]_rep/C
   -------------------------------------------------------------------    -------------------
-                         FDRE (Prop_fdre_C_Q)         0.269     2.386 r  BOXED/processor/writeback/rd_addr_out_reg[2]/Q
-                         net (fo=102, unplaced)       0.643     3.029    BOXED/processor/writeback/rd_addr_out_reg[4]_0[2]
-                         LUT5 (Prop_lut5_I0_O)        0.153     3.182 r  BOXED/processor/writeback/dmem_data_out_p[4]_i_6/O
-                         net (fo=2, unplaced)         0.532     3.714    BOXED/processor/writeback/dmem_data_out_p[4]_i_6_n_0
-                         LUT6 (Prop_lut6_I0_O)        0.053     3.767 r  BOXED/processor/writeback/i__carry_i_26/O
-                         net (fo=41, unplaced)        0.417     4.184    BOXED/processor/memory/csr_data_out[29]_i_2
-                         LUT5 (Prop_lut5_I4_O)        0.053     4.237 r  BOXED/processor/memory/i__carry_i_17__0/O
-                         net (fo=10, unplaced)        0.353     4.590    BOXED/processor/execute/csr_data_out_reg[2]
-                         LUT6 (Prop_lut6_I1_O)        0.053     4.643 r  BOXED/processor/execute/i__carry_i_18__0/O
-                         net (fo=19, unplaced)        0.580     5.223    BOXED/processor/execute/alu_instance/rd_data_reg[2]
-                         LUT4 (Prop_lut4_I1_O)        0.053     5.276 r  BOXED/processor/execute/alu_instance/i__carry_i_3/O
-                         net (fo=2, unplaced)         0.374     5.650    BOXED/processor/execute/alu_instance/i__carry_i_3_n_0
-                         CARRY4 (Prop_carry4_DI[1]_CO[3])
-                                                      0.302     5.952 r  BOXED/processor/execute/alu_instance/result0_inferred__3/i__carry/CO[3]
-                         net (fo=1, unplaced)         0.000     5.952    BOXED/processor/execute/alu_instance/result0_inferred__3/i__carry_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.058     6.010 r  BOXED/processor/execute/alu_instance/result0_inferred__3/i__carry__0/CO[3]
-                         net (fo=1, unplaced)         0.000     6.010    BOXED/processor/execute/alu_instance/result0_inferred__3/i__carry__0_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.058     6.068 r  BOXED/processor/execute/alu_instance/result0_inferred__3/i__carry__1/CO[3]
-                         net (fo=1, unplaced)         0.000     6.068    BOXED/processor/execute/alu_instance/result0_inferred__3/i__carry__1_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.058     6.126 r  BOXED/processor/execute/alu_instance/result0_inferred__3/i__carry__2/CO[3]
-                         net (fo=1, unplaced)         0.518     6.644    BOXED/processor/execute/alu_instance/data4
-                         LUT6 (Prop_lut6_I0_O)        0.053     6.697 r  BOXED/processor/execute/alu_instance/dmem_address_p[0]_i_13/O
-                         net (fo=1, unplaced)         0.340     7.037    BOXED/processor/execute/alu_instance/dmem_address_p[0]_i_13_n_0
-                         LUT6 (Prop_lut6_I2_O)        0.053     7.090 r  BOXED/processor/execute/alu_instance/dmem_address_p[0]_i_9/O
-                         net (fo=1, unplaced)         0.340     7.430    BOXED/processor/execute/alu_instance/dmem_address_p[0]_i_9_n_0
-                         LUT6 (Prop_lut6_I2_O)        0.053     7.483 r  BOXED/processor/execute/alu_instance/dmem_address_p[0]_i_4/O
-                         net (fo=2, unplaced)         0.351     7.834    BOXED/processor/execute/alu_instance/dmem_address_p[0]_i_4_n_0
-                         LUT4 (Prop_lut4_I3_O)        0.053     7.887 r  BOXED/processor/execute/alu_instance/mem_op[2]_i_14/O
-                         net (fo=1, unplaced)         0.340     8.227    BOXED/processor/execute/alu_instance/mem_op[2]_i_14_n_0
-                         LUT6 (Prop_lut6_I0_O)        0.053     8.280 f  BOXED/processor/execute/alu_instance/mem_op[2]_i_9/O
-                         net (fo=1, unplaced)         0.340     8.620    BOXED/processor/execute/alu_instance/mem_op[2]_i_9_n_0
-                         LUT6 (Prop_lut6_I4_O)        0.053     8.673 r  BOXED/processor/execute/alu_instance/mem_op[2]_i_4/O
-                         net (fo=149, unplaced)       0.450     9.123    BOXED/processor/execute/alu_instance/mem_op_reg[0]
-                         LUT5 (Prop_lut5_I3_O)        0.053     9.176 r  BOXED/processor/execute/alu_instance/cache_memory_reg_0_i_8/O
-                         net (fo=85, unplaced)        0.760     9.936    BOXED/icache_enabled.icache/tag_memory_reg_192_255_3_5/ADDRC0
+                         FDRE (Prop_fdre_C_Q)         0.269     2.386 r  boxed/op_table_finish_ptr_reg_reg[0]_rep/Q
+                         net (fo=126, unplaced)       0.763     3.149    boxed/op_table_queue_reg_r1_192_255_3_5/ADDRA0
                          RAMD64E (Prop_ramd64e_RADR0_O)
-                                                      0.053     9.989 r  BOXED/icache_enabled.icache/tag_memory_reg_192_255_3_5/RAMC/O
-                         net (fo=1, unplaced)         0.665    10.654    BOXED/icache_enabled.icache/tag_memory_reg_192_255_3_5_n_2
-                         LUT6 (Prop_lut6_I0_O)        0.053    10.707 r  BOXED/icache_enabled.icache/cache_hit_i_46/O
-                         net (fo=1, unplaced)         0.521    11.228    BOXED/icache_enabled.icache/p_1_out[5]
-                         LUT6 (Prop_lut6_I0_O)        0.053    11.281 r  BOXED/icache_enabled.icache/cache_hit_i_17/O
-                         net (fo=1, unplaced)         0.000    11.281    BOXED/icache_enabled.icache/cache_hit_i_17_n_0
-                         CARRY4 (Prop_carry4_S[1]_CO[3])
-                                                      0.324    11.605 r  BOXED/icache_enabled.icache/cache_hit_reg_i_6/CO[3]
-                         net (fo=1, unplaced)         0.000    11.605    BOXED/icache_enabled.icache/cache_hit_reg_i_6_n_0
-                         CARRY4 (Prop_carry4_CI_CO[1])
-                                                      0.108    11.713 r  BOXED/icache_enabled.icache/cache_hit_reg_i_2/CO[1]
-                         net (fo=1, unplaced)         0.503    12.216    BOXED/icache_enabled.icache/to_std_logic
-                         LUT6 (Prop_lut6_I0_O)        0.153    12.369 r  BOXED/icache_enabled.icache/cache_hit_i_1/O
-                         net (fo=1, unplaced)         0.000    12.369    BOXED/icache_enabled.icache/p_3_out
-                         FDRE                                         r  BOXED/icache_enabled.icache/cache_hit_reg/D
+                                                      0.153     3.302 r  boxed/op_table_queue_reg_r1_192_255_3_5/RAMA/O
+                         net (fo=1, unplaced)         0.665     3.967    boxed/op_table_queue_reg_r1_192_255_3_5_n_0
+                         LUT6 (Prop_lut6_I0_O)        0.053     4.020 r  boxed/queue_ram_addr_pipeline_reg[0][3]_i_3/O
+                         net (fo=11, unplaced)        0.567     4.587    boxed/op_req_pipe_next14[3]
+                         LUT6 (Prop_lut6_I1_O)        0.053     4.640 r  boxed/s_axis_enqueue_req_ready_reg_i_160/O
+                         net (fo=1, unplaced)         0.000     4.640    boxed/s_axis_enqueue_req_ready_reg_i_160_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[2])
+                                                      0.351     4.991 f  boxed/s_axis_enqueue_req_ready_reg_reg_i_79/CO[2]
+                         net (fo=1, unplaced)         0.339     5.330    boxed/op_req_pipe_next95_out
+                         LUT4 (Prop_lut4_I2_O)        0.160     5.490 f  boxed/s_axis_enqueue_req_ready_reg_i_33/O
+                         net (fo=1, unplaced)         0.340     5.830    boxed/s_axis_enqueue_req_ready_reg_i_33_n_0
+                         LUT5 (Prop_lut5_I4_O)        0.053     5.883 f  boxed/s_axis_enqueue_req_ready_reg_i_9/O
+                         net (fo=1, unplaced)         0.521     6.404    boxed/s_axis_enqueue_req_ready_reg_i_9_n_0
+                         LUT6 (Prop_lut6_I5_O)        0.053     6.457 r  boxed/s_axis_enqueue_req_ready_reg_i_2/O
+                         net (fo=30, unplaced)        0.410     6.867    boxed/op_req_pipe_next159_out
+                         LUT6 (Prop_lut6_I5_O)        0.053     6.920 r  boxed/queue_ram_addr_pipeline_reg[0][4]_i_2/O
+                         net (fo=1, unplaced)         0.340     7.260    boxed/queue_ram_addr_pipeline_reg[0][4]_i_2_n_0
+                         LUT3 (Prop_lut3_I0_O)        0.053     7.313 r  boxed/queue_ram_addr_pipeline_reg[0][4]_i_1/O
+                         net (fo=3, unplaced)         0.584     7.897    boxed/queue_ram_addr_pipeline_reg[0][4]_i_1_n_0
+                         RAMB36E1                                     r  boxed/queue_ram_reg_0/ADDRARDADDR[10]
   -------------------------------------------------------------------    -------------------
 
                          (clock clk rise edge)        0.500     0.500 r  
@@ -91,16 +60,17 @@ Slack (VIOLATED) :        -9.895ns  (required time - arrival time)
                          IBUF (Prop_ibuf_I_O)         0.754     1.254 r  clk_IBUF_inst/O
                          net (fo=1, unplaced)         0.554     1.808    clk_IBUF
                          BUFG (Prop_bufg_I_O)         0.113     1.921 r  clk_IBUF_BUFG_inst/O
-                         net (fo=2919, unplaced)      0.439     2.360    BOXED/icache_enabled.icache/clk
-                         FDRE                                         r  BOXED/icache_enabled.icache/cache_hit_reg/C
+                         net (fo=1484, unplaced)      0.439     2.360    boxed/clk
+                         RAMB36E1                                     r  boxed/queue_ram_reg_0/CLKARDCLK
                          clock pessimism              0.112     2.472    
                          clock uncertainty           -0.035     2.437    
-                         FDRE (Setup_fdre_C_D)        0.037     2.474    BOXED/icache_enabled.icache/cache_hit_reg
+                         RAMB36E1 (Setup_ramb36e1_CLKARDCLK_ADDRARDADDR[10])
+                                                     -0.479     1.958    boxed/queue_ram_reg_0
   -------------------------------------------------------------------
-                         required time                          2.474    
-                         arrival time                         -12.369    
+                         required time                          1.958    
+                         arrival time                          -7.897    
   -------------------------------------------------------------------
-                         slack                                 -9.895    
+                         slack                                 -5.939    
 
 
 

@@ -25,15 +25,14 @@ set outputDir vivado_out/
 file mkdir $outputDir
 
 # Design Sources and Constraints
-set src examples/potato/src
+set src examples/corundum/fpga/common/rtl
 set xdcFile xdc/constraint.xdc
-read_vhdl -library bftLib vhdl/box.vhd
+read_verilog verilog/box.sv
 read_all_files $src
-#set_property IS_ENABLED 0 [get_files examples/potato/src/pp_potato.vhd]
+## no disabling needed
 read_xdc $xdcFile
 
 
-read_vhdl -library bftLib vhdl/box.vhd
 
 # Run synthesis and write checkpoint
 read_checkpoint -incremental $outputDir/post_synth.dcp ;# to be turned on for incremental runs (is stripped eventually)

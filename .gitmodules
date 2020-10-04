@@ -1,3 +1,9 @@
 [submodule "examples/potato"]
 	path = examples/potato
 	url = https://github.com/skordal/potato
+[submodule "examples/zipcpu"]
+	path = examples/zipcpu
+	url = https://github.com/ZipCPU/zipcpu
+[submodule "examples/corundum"]
+	path = examples/corundum
+	url = https://github.com/corundum/corundum/

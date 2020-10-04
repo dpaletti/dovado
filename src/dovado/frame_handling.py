@@ -30,6 +30,7 @@ def fill_tcl(
     place_directive="",
     route_directive="",
 ):
+    print("TOP LANG: " + str(top_lang))
     SYNTHESIS_REPLACEMENTS = [
         CONFIG["VIVADO_OUTPUT_DIR"],
         src_folder,
@@ -49,6 +50,7 @@ def fill_tcl(
         synthesis_directive,
         "-incremental_synth" if incremental_mode.synthesis else "",
     ]
+    print("SYNTHESIS REPLACEMENTS: " + str(SYNTHESIS_REPLACEMENTS))
 
     IMPLEMENTATION_REPLACEMENTS = (
         []
@@ -89,6 +91,7 @@ def fill_tcl(
         + IMPLEMENTATION_REPLACEMENTS
     )
 
+    print("REPLACEMENTS: " + str(REPLACEMENT))
     frame.fill(
         CONFIG["TCL_DIR"] + CONFIG[stop_step.name + "_FRAME"],
         REPLACEMENT

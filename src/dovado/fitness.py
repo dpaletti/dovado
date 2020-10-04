@@ -35,6 +35,7 @@ def fitness(design_point: Tuple[int], metric: Tuple[str, str]):
             > threshold
         ):
             es.add_example(es.Example(design_point, full_design_value,))
+            set_threshold(es.examples)
     else:
         print("Fitness estimating")
         design_value = es.estimate(design_point, metric)

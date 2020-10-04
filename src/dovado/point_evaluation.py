@@ -1,11 +1,11 @@
 import yaml
+import sys
 from functools import lru_cache
 from pathlib import Path
 from dataclasses import dataclass
 import dovado.vivado_interaction as vivado
 import dovado.report_parsing as report
 import dovado.src_parsing as src
-import numpy as np
 import dovado.global_user_selections as gus
 from dovado.frame_handling import setup_incremental
 from dovado.src_parsing import IsIncremental
@@ -100,8 +100,8 @@ def evaluate(design_point: Tuple[int]) -> DesignValue:
 
     return (
         DesignValue(
-            utilisation={i: np.inf for i in gus.METRICS},
-            negative_max_frequency=np.inf,
+            utilisation={i: sys.maxsize for i in gus.METRICS},
+            negative_max_frequency=sys.maxsize,
         )
         if not success
         else DesignValue(

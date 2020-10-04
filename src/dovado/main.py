@@ -26,7 +26,7 @@ def main():
     SRC_FOLDER = user_input.ask_code_dir()
     TOP_MODULE, TOP_SRC = user_input.ask_top_module(SRC_FOLDER)
     TOP_SUFFIX = Path(SRC_FOLDER + TOP_SRC).suffix
-    if TOP_SUFFIX == ".vhd" or ".vhdl":
+    if TOP_SUFFIX == ".vhd" or TOP_SUFFIX == ".vhdl":
         TOP_LANG = RTL.VHDL
     elif TOP_SUFFIX == ".v":
         TOP_LANG = RTL.VERILOG
@@ -37,7 +37,7 @@ def main():
             "Parsed files must have .v, .vhd, .vhdl or .sv as a suffix not "
             + TOP_SUFFIX
         )
-
+    print("Current Language: " + str(TOP_LANG))
     SYNTHESIS_PART = user_input.ask_part()
 
     # STOP_STEP can take the following values:
@@ -142,5 +142,5 @@ def main():
     )
     fit.set_threshold(es.examples)
 
-    result = optimize("04:00:00")
+    result = optimize("02:00:00")
     print("Optimization Result: " + str(result))
