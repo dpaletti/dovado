@@ -7,6 +7,7 @@ import dovado.vivado_interaction as vivado
 import dovado.report_parsing as report
 import dovado.src_parsing as src
 import dovado.global_user_selections as gus
+import numpy as np
 from dovado.frame_handling import setup_incremental
 from dovado.src_parsing import IsIncremental
 from typing import Tuple, Dict
@@ -100,8 +101,8 @@ def evaluate(design_point: Tuple[int]) -> DesignValue:
 
     return (
         DesignValue(
-            utilisation={i: sys.maxsize for i in gus.METRICS},
-            negative_max_frequency=sys.maxsize,
+            utilisation={i: np.inf for i in gus.METRICS},
+            negative_max_frequency=np.inf,
         )
         if not success
         else DesignValue(

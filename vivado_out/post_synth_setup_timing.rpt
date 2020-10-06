@@ -1,13 +1,13 @@
-Slack (VIOLATED) :        -5.939ns  (required time - arrival time)
-  Source:                 boxed/op_table_finish_ptr_reg_reg[0]_rep/C
+Slack (VIOLATED) :        -5.167ns  (required time - arrival time)
+  Source:                 boxed/op_table_finish_ptr_reg_reg[0]/C
                             (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@0.250ns period=0.500ns})
   Destination:            boxed/queue_ram_reg_0/ADDRARDADDR[10]
                             (rising edge-triggered cell RAMB36E1 clocked by clk  {rise@0.000ns fall@0.250ns period=0.500ns})
   Path Group:             clk
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            0.500ns  (clk rise@0.500ns - clk rise@0.000ns)
-  Data Path Delay:        5.780ns  (logic 1.251ns (21.645%)  route 4.529ns (78.355%))
-  Logic Levels:           9  (CARRY4=1 LUT3=1 LUT4=1 LUT5=1 LUT6=4 RAMD64E=1)
+  Data Path Delay:        5.008ns  (logic 0.740ns (14.778%)  route 4.268ns (85.222%))
+  Logic Levels:           7  (LUT3=1 LUT6=5 RAMD32=1)
   Clock Path Skew:        -0.145ns (DCD - SCD + CPR)
     Destination Clock Delay (DCD):    1.860ns = ( 2.360 - 0.500 ) 
     Source Clock Delay      (SCD):    2.117ns
@@ -26,31 +26,26 @@ Slack (VIOLATED) :        -5.939ns  (required time - arrival time)
                          IBUF (Prop_ibuf_I_O)         0.830     0.830 r  clk_IBUF_inst/O
                          net (fo=1, unplaced)         0.584     1.413    clk_IBUF
                          BUFG (Prop_bufg_I_O)         0.120     1.533 r  clk_IBUF_BUFG_inst/O
-                         net (fo=1484, unplaced)      0.584     2.117    boxed/clk
-                         FDRE                                         r  boxed/op_table_finish_ptr_reg_reg[0]_rep/C
+                         net (fo=714, unplaced)       0.584     2.117    boxed/clk
+                         FDRE                                         r  boxed/op_table_finish_ptr_reg_reg[0]/C
   -------------------------------------------------------------------    -------------------
-                         FDRE (Prop_fdre_C_Q)         0.269     2.386 r  boxed/op_table_finish_ptr_reg_reg[0]_rep/Q
-                         net (fo=126, unplaced)       0.763     3.149    boxed/op_table_queue_reg_r1_192_255_3_5/ADDRA0
-                         RAMD64E (Prop_ramd64e_RADR0_O)
-                                                      0.153     3.302 r  boxed/op_table_queue_reg_r1_192_255_3_5/RAMA/O
-                         net (fo=1, unplaced)         0.665     3.967    boxed/op_table_queue_reg_r1_192_255_3_5_n_0
-                         LUT6 (Prop_lut6_I0_O)        0.053     4.020 r  boxed/queue_ram_addr_pipeline_reg[0][3]_i_3/O
-                         net (fo=11, unplaced)        0.567     4.587    boxed/op_req_pipe_next14[3]
-                         LUT6 (Prop_lut6_I1_O)        0.053     4.640 r  boxed/s_axis_enqueue_req_ready_reg_i_160/O
-                         net (fo=1, unplaced)         0.000     4.640    boxed/s_axis_enqueue_req_ready_reg_i_160_n_0
-                         CARRY4 (Prop_carry4_S[1]_CO[2])
-                                                      0.351     4.991 f  boxed/s_axis_enqueue_req_ready_reg_reg_i_79/CO[2]
-                         net (fo=1, unplaced)         0.339     5.330    boxed/op_req_pipe_next95_out
-                         LUT4 (Prop_lut4_I2_O)        0.160     5.490 f  boxed/s_axis_enqueue_req_ready_reg_i_33/O
-                         net (fo=1, unplaced)         0.340     5.830    boxed/s_axis_enqueue_req_ready_reg_i_33_n_0
-                         LUT5 (Prop_lut5_I4_O)        0.053     5.883 f  boxed/s_axis_enqueue_req_ready_reg_i_9/O
-                         net (fo=1, unplaced)         0.521     6.404    boxed/s_axis_enqueue_req_ready_reg_i_9_n_0
-                         LUT6 (Prop_lut6_I5_O)        0.053     6.457 r  boxed/s_axis_enqueue_req_ready_reg_i_2/O
-                         net (fo=30, unplaced)        0.410     6.867    boxed/op_req_pipe_next159_out
-                         LUT6 (Prop_lut6_I5_O)        0.053     6.920 r  boxed/queue_ram_addr_pipeline_reg[0][4]_i_2/O
-                         net (fo=1, unplaced)         0.340     7.260    boxed/queue_ram_addr_pipeline_reg[0][4]_i_2_n_0
-                         LUT3 (Prop_lut3_I0_O)        0.053     7.313 r  boxed/queue_ram_addr_pipeline_reg[0][4]_i_1/O
-                         net (fo=3, unplaced)         0.584     7.897    boxed/queue_ram_addr_pipeline_reg[0][4]_i_1_n_0
+                         FDRE (Prop_fdre_C_Q)         0.269     2.386 r  boxed/op_table_finish_ptr_reg_reg[0]/Q
+                         net (fo=49, unplaced)        0.740     3.126    boxed/op_table_queue_reg_r1_0_31_0_4/ADDRA0
+                         RAMD32 (Prop_ramd32_RADR0_O)
+                                                      0.153     3.279 r  boxed/op_table_queue_reg_r1_0_31_0_4/RAMA_D1/O
+                         net (fo=6, unplaced)         0.696     3.975    boxed/op_req_pipe_next9[1]
+                         LUT6 (Prop_lut6_I1_O)        0.053     4.028 r  boxed/s_axis_enqueue_req_ready_reg_i_44/O
+                         net (fo=1, unplaced)         0.310     4.338    boxed/s_axis_enqueue_req_ready_reg_i_44_n_0
+                         LUT6 (Prop_lut6_I2_O)        0.053     4.391 f  boxed/s_axis_enqueue_req_ready_reg_i_26/O
+                         net (fo=1, unplaced)         0.664     5.055    boxed/s_axis_enqueue_req_ready_reg_i_26_n_0
+                         LUT6 (Prop_lut6_I0_O)        0.053     5.108 f  boxed/s_axis_enqueue_req_ready_reg_i_11/O
+                         net (fo=1, unplaced)         0.521     5.629    boxed/s_axis_enqueue_req_ready_reg_i_11_n_0
+                         LUT6 (Prop_lut6_I0_O)        0.053     5.682 f  boxed/s_axis_enqueue_req_ready_reg_i_3/O
+                         net (fo=35, unplaced)        0.413     6.095    boxed/s_axis_enqueue_req_ready_reg_i_3_n_0
+                         LUT3 (Prop_lut3_I1_O)        0.053     6.148 r  boxed/queue_ram_addr_pipeline_reg[0][4]_i_6/O
+                         net (fo=1, unplaced)         0.340     6.488    boxed/queue_ram_addr_pipeline_reg[0][4]_i_6_n_0
+                         LUT6 (Prop_lut6_I5_O)        0.053     6.541 r  boxed/queue_ram_addr_pipeline_reg[0][4]_i_1/O
+                         net (fo=3, unplaced)         0.584     7.125    boxed/queue_ram_addr_pipeline_reg[0][4]_i_1_n_0
                          RAMB36E1                                     r  boxed/queue_ram_reg_0/ADDRARDADDR[10]
   -------------------------------------------------------------------    -------------------
 
@@ -60,7 +55,7 @@ Slack (VIOLATED) :        -5.939ns  (required time - arrival time)
                          IBUF (Prop_ibuf_I_O)         0.754     1.254 r  clk_IBUF_inst/O
                          net (fo=1, unplaced)         0.554     1.808    clk_IBUF
                          BUFG (Prop_bufg_I_O)         0.113     1.921 r  clk_IBUF_BUFG_inst/O
-                         net (fo=1484, unplaced)      0.439     2.360    boxed/clk
+                         net (fo=714, unplaced)       0.439     2.360    boxed/clk
                          RAMB36E1                                     r  boxed/queue_ram_reg_0/CLKARDCLK
                          clock pessimism              0.112     2.472    
                          clock uncertainty           -0.035     2.437    
@@ -68,9 +63,9 @@ Slack (VIOLATED) :        -5.939ns  (required time - arrival time)
                                                      -0.479     1.958    boxed/queue_ram_reg_0
   -------------------------------------------------------------------
                          required time                          1.958    
-                         arrival time                          -7.897    
+                         arrival time                          -7.125    
   -------------------------------------------------------------------
-                         slack                                 -5.939    
+                         slack                                 -5.167    
 
 
 

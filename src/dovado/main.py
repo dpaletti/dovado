@@ -142,5 +142,5 @@ def main():
     )
     fit.set_threshold(es.examples)
 
-    result = optimize("02:00:00")
+    result = optimize("00:20:00")
     print("Optimization Result: " + str(result))

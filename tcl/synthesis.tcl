@@ -1,4 +1,4 @@
-# All lines starting with may be eventually stripped on user preference
+# All lines starting with #! may be eventually stripped on user preference
 
 proc read_all_files { dir } {
     set contents [glob -directory $dir *]
@@ -35,7 +35,7 @@ read_xdc $xdcFile
 
 
 # Run synthesis and write checkpoint
-read_checkpoint -incremental $outputDir/post_synth.dcp ;# to be turned on for incremental runs (is stripped eventually)
+#! read_checkpoint -incremental $outputDir/post_synth.dcp ;# to be turned on for incremental runs (#! is stripped eventually)
 synth_design -top box  -part xc7k70tfbv676-1 -directive default
 write_checkpoint -incremental_synth -force $outputDir/post_synth.dcp ;# either -incremental_synth or nothing
 

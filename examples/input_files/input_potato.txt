@@ -1,0 +1,12 @@
+examples/potato/src
+pp_potato
+xc7k70tfbv676-1
+synthesis
+ICACHE_LINE_SIZE, ICACHE_NUM_LINES
+4 64
+128 512
+clk
+
+
+2000
+1, 4, 8
