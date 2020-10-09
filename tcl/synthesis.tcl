@@ -25,11 +25,11 @@ set outputDir vivado_out/
 file mkdir $outputDir
 
 # Design Sources and Constraints
-set src examples/corundum/fpga/common/rtl
+set src examples/potato/src
 set xdcFile xdc/constraint.xdc
-read_verilog verilog/box.sv
+read_vhdl -library bftLib vhdl/box.vhd
 read_all_files $src
-## no disabling needed
+#set_property IS_ENABLED 0 [get_files examples/potato/src/pp_potato.vhd]
 read_xdc $xdcFile
 
 

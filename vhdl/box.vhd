@@ -13,8 +13,8 @@ attribute DONT_TOUCH : string;
 attribute DONT_TOUCH of BOXED : label is "TRUE";
 BEGIN
     BOXED: entity work.pp_potato GENERIC MAP(
-        ICACHE_LINE_SIZE => 18,
-        ICACHE_NUM_LINES => 163
+        ICACHE_LINE_SIZE => 20,
+        ICACHE_NUM_LINES => 401
     ) PORT MAP(
         clk => clk,
         reset => '1',
