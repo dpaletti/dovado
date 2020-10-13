@@ -432,3 +432,37 @@ def ask_utilization_metrics(util_indices):
                 "Invalid input, please enter"
                 + " a comma separated list of integer numbers"
             )
+
+
+def ask_is_point_evaluation():
+    default = "p"
+    while True:
+        user_input = input(
+            "Would you like to run single point evaluation "
+            + "or design space evaluation?\n"
+            + "Please input 'p' for point evaluation "
+            + "or 'd' for design space evaluation "
+            "[default = " + default + "]"
+        )
+        user_input = user_input.strip()
+        if not (user_input == "p" or user_input == "d"):
+            print(
+                user_input
+                + " is an in invalid input, please input either 'p' or 'd'"
+            )
+            continue
+        return True if user_input == "p" else False
+
+
+def ask_parameters_value(param_list):
+    parameter_value_accumulator = []
+    i = 0
+    while i < len(param_list):
+        user_input = input("Enter value for parameter " + param_list[i] + ":")
+        try:
+            parameter_value_accumulator.append(int(user_input))
+            i = i + 1
+        except Exception:
+            print("Please input an integer value")
+            continue
+    return parameter_value_accumulator

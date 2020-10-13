@@ -12,20 +12,25 @@ CONFIG = yaml.safe_load(Path("config.yaml").open())
 
 threshold: int = 0
 
+estimate_working = True
+
 
 @lru_cache
 def fitness(design_point: Tuple[int], metric: Tuple[str, str]):
     # design_point is a Tuple because lists are unhashable
     # while caching is allowed only with hashable parameters
+    global estimate_working
     print(
         "Nth nearest distance: "
         + str(_nth_nearest_distance(design_point, es.examples, CONFIG["N"]))
     )
     if (
-        _nth_nearest_distance(design_point, es.examples, CONFIG["N"]) == 0
-    ) or (
-        _nth_nearest_distance(design_point, es.examples, CONFIG["N"])
-        > threshold
+        (_nth_nearest_distance(design_point, es.examples, CONFIG["N"]) == 0)
+        or (
+            _nth_nearest_distance(design_point, es.examples, CONFIG["N"])
+            > threshold
+        )
+        or (not estimate_working)
     ):
         print("Fitness calling Vivado directly")
         full_design_value = pe.evaluate(design_point)
@@ -33,12 +38,29 @@ def fitness(design_point: Tuple[int], metric: Tuple[str, str]):
         if (
             _nth_nearest_distance(design_point, es.examples, CONFIG["N"])
             > threshold
-        ):
-            es.add_example(es.Example(design_point, full_design_value,))
+        ) and estimate_working:
+
+            if any(
+                np.isinf(v) for v in full_design_value.utilisation.values()
+            ) or np.isinf(full_design_value.negative_max_frequency):
+                es.add_example(
+                    es.Example(design_point, full_design_value, True)
+                )
+            else:
+                es.add_example(
+                    es.Example(design_point, full_design_value, False)
+                )
             set_threshold(es.examples)
     else:
         print("Fitness estimating")
         design_value = es.estimate(design_point, metric)
+        print("Estimated Value: " + design_value)
+        if not design_value:
+            print("Disabling estimator")
+            estimate_working = False
+            full_design_value = pe.evaluate(design_point)
+            design_value = pe.get_metric(full_design_value, metric)
+
     print("design_point: " + str(design_point))
     print("metric: " + str(metric))
     print("Design Value: " + str(design_value))

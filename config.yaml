@@ -71,7 +71,10 @@ IMPLEMENTATION_TIMING: "post_impl_setup_timing.rpt"
 INTEGER_HIGH: 2147483647
 
 # Initial sample size for the estimator
-INITIAL_SAMPLES: 30
+INITIAL_SAMPLES: 100
 
 # N-parameter to choose which example to calculate the distance from
 N: 3
+
+# Run time set as a constraint for the genetic algorithm, format "hh:mm:ss"
+GENETIC_RUN_TIME: "08:00:00"

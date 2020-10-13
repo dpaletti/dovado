@@ -2,9 +2,9 @@ module box (
     input wire clk
 );
     (* dont_touch  = "true" *) cpl_queue_manager #(
-        .OP_TABLE_SIZE(44),
-        .QUEUE_INDEX_WIDTH(6),
-        .PIPELINE(2)
+        .OP_TABLE_SIZE(6),
+        .QUEUE_INDEX_WIDTH(5),
+        .PIPELINE(10)
     ) boxed (
         .clk(clk),
         .rst(1),

@@ -47,9 +47,6 @@ def main():
     TO_BOX = is_to_box(Path(TOP_SRC), STOP_STEP)
 
     gus.set_free_parameters(user_input.ask_parameters(TOP_SRC, TOP_MODULE))
-    gus.set_free_parameters_range(
-        user_input.ask_parameters_range(gus.FREE_PARAMETERS)
-    )
 
     # A local copy of the top module source file is needed
     # in order to update the parameters in place
@@ -135,12 +132,23 @@ def main():
         TARGET_CLOCK,
         INCREMENTAL_MODE,
     )
-    es.generate_dataset(
-        CONFIG["INITIAL_SAMPLES"],
-        gus.FREE_PARAMETERS_RANGE,
-        gus.FREE_PARAMETERS,
-    )
-    fit.set_threshold(es.examples)
+    if user_input.ask_is_point_evaluation():
+        print(
+            pe.evaluate(
+                tuple(user_input.ask_parameters_value(gus.FREE_PARAMETERS))
+            )
+        )
 
-    result = optimize("00:20:00")
-    print("Optimization Result: " + str(result))
+    else:
+        gus.set_free_parameters_range(
+            user_input.ask_parameters_range(gus.FREE_PARAMETERS)
+        )
+        es.generate_dataset(
+            CONFIG["INITIAL_SAMPLES"],
+            gus.FREE_PARAMETERS_RANGE,
+            gus.FREE_PARAMETERS,
+        )
+        fit.set_threshold(es.examples)
+
+        result = optimize(CONFIG["GENETIC_RUN_TIME"])
+        print("Optimization Result: " + str(result))
