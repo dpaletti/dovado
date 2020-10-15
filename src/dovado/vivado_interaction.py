@@ -32,6 +32,8 @@ def execute_command(command):
     if t_vivado_init is not None:
         print("Waiting for Vivado to start ...")
         t_vivado_init.join()
+        vivado.sendline("set_param tcl.collectionResultDisplayLimit Inf")
+        vivado.expect("Vivado%", timeout=None)
         t_vivado_init = None
 
     vivado.sendline(command)
@@ -45,14 +47,20 @@ def source(tcl_script):
 
 
 def get_parts():
-    parts = re.sub("get_parts\r\n", "", execute_command("get_parts")).split(
-        " "
-    )[1:-1]
-    family = re.sub(
-        "[get_parts]\r\n",
-        "",
-        execute_command("get_property FAMILY [get_parts]"),
-    ).split(" ")[3:-1]
+    parts = [
+        x.strip()
+        for x in re.sub(
+            "get_parts\r\n", "", execute_command("get_parts")
+        ).split(" ")[1:]
+    ]
+    family = [
+        x.strip()
+        for x in re.sub(
+            "[get_parts]\r\n",
+            "",
+            execute_command("get_property FAMILY [get_parts]"),
+        ).split(" ")[3:]
+    ]
     family[0] = family[0][len("[get_parts]\r\n") :]
     return dict(zip(parts, family))
 

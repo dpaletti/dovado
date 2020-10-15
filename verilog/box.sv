@@ -1,31 +1,31 @@
 module box (
     input wire clk
 );
-    (* dont_touch  = "true" *) cpl_queue_manager #(
-        .OP_TABLE_SIZE(44),
-        .QUEUE_INDEX_WIDTH(6),
-        .PIPELINE(2)
+    (* dont_touch  = "true" *) krnl_vadd_rtl #(
+        .C_S_AXI_CONTROL_DATA_WIDTH(invalid_parameter)
     ) boxed (
-        .clk(clk),
-        .rst(1),
-        .s_axis_enqueue_req_queue(1),
-        .s_axis_enqueue_req_tag(1),
-        .s_axis_enqueue_req_valid(1),
-        .m_axis_enqueue_resp_ready(1),
-        .s_axis_enqueue_commit_op_tag(1),
-        .s_axis_enqueue_commit_valid(1),
-        .s_axil_awaddr(1),
-        .s_axil_awprot(1),
-        .s_axil_awvalid(1),
-        .s_axil_wdata(1),
-        .s_axil_wstrb(1),
-        .s_axil_wvalid(1),
-        .s_axil_bready(1),
-        .s_axil_araddr(1),
-        .s_axil_arprot(1),
-        .s_axil_arvalid(1),
-        .s_axil_rready(1),
-        .enable(1)
+        .ap_clk(clk),
+        .ap_rst_n(1),
+        .m_axi_gmem_AWREADY(1),
+        .m_axi_gmem_WREADY(1),
+        .m_axi_gmem_ARREADY(1),
+        .m_axi_gmem_RVALID(1),
+        .m_axi_gmem_RDATA(1),
+        .m_axi_gmem_RLAST(1),
+        .m_axi_gmem_RID(1),
+        .m_axi_gmem_RRESP(1),
+        .m_axi_gmem_BVALID(1),
+        .m_axi_gmem_BRESP(1),
+        .m_axi_gmem_BID(1),
+        .s_axi_control_AWVALID(1),
+        .s_axi_control_AWADDR(1),
+        .s_axi_control_WVALID(1),
+        .s_axi_control_WDATA(1),
+        .s_axi_control_WSTRB(1),
+        .s_axi_control_ARVALID(1),
+        .s_axi_control_ARADDR(1),
+        .s_axi_control_RREADY(1),
+        .s_axi_control_BREADY(1)
     );
 
 endmodule

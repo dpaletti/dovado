@@ -114,14 +114,7 @@ def main():
         PLACE_DIRECTIVE,
         ROUTE_DIRECTIVE,
     )
-    gus.set_metrics(
-        user_input.ask_utilization_metrics(
-            report.get_available_indices(
-                CONFIG["VIVADO_OUTPUT_DIR"]
-                + CONFIG[STOP_STEP.name + "_UTILISATION"]
-            )
-        )
-    )
+
     pe.setup_evaluation(
         STOP_STEP,
         TOP_LANG,
@@ -131,6 +124,16 @@ def main():
         TOP_SRC,
         TARGET_CLOCK,
         INCREMENTAL_MODE,
+    )
+    gus.set_metrics([])
+    pe.evaluate(tuple(["invalid_parameter"] * len(gus.FREE_PARAMETERS)))
+    gus.set_metrics(
+        user_input.ask_utilization_metrics(
+            report.get_available_indices(
+                CONFIG["VIVADO_OUTPUT_DIR"]
+                + CONFIG[STOP_STEP.name + "_UTILISATION"]
+            )
+        )
     )
     if user_input.ask_is_point_evaluation():
         print(

@@ -7,3 +7,6 @@
 [submodule "examples/corundum"]
 	path = examples/corundum
 	url = https://github.com/corundum/corundum/
+[submodule "examples/Vitis_Accel_Examples"]
+	path = examples/Vitis_Accel_Examples
+	url = https://github.com/Xilinx/Vitis_Accel_Examples.git
