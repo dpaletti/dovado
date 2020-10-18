@@ -33,7 +33,6 @@ read_xdc $xdcFile
 # Read box file
 ____
 
-read_vhdl -library bftLib vhdl/box.vhd
 
 # Run synthesis and write checkpoint
 #! read_checkpoint -incremental $outputDir/post_synth.dcp ;# to be turned on for incremental runs (#! is stripped eventually)

@@ -1,6 +1,6 @@
 ./examples/Vitis_Accel_Examples/rtl_kernels/rtl_vadd/src/hdl/
 krnl_vadd_rtl
-xcvu35p-fsvh2104-1-e
+xczu7ev-ffvc1156-2-e
 implementation
 C_S_AXI_CONTROL_DATA_WIDTH
 ap_clk
@@ -10,3 +10,6 @@ no
 
 
 2000
+p
+32
+1, 19, 20

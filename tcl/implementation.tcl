@@ -1,4 +1,4 @@
-# All lines starting with #! may be eventually stripped on user preference
+# All lines starting with may be eventually stripped on user preference
 
 proc read_all_files { dir } {
     set contents [glob -directory $dir *]
@@ -33,16 +33,15 @@ read_xdc $xdcFile
 # Read box file
 read_verilog verilog/box.sv
 
-read_vhdl -library bftLib vhdl/box.vhd
 
 # Run synthesis and write checkpoint
-#! read_checkpoint -incremental $outputDir/post_synth.dcp ;# to be turned on for incremental runs (#! is stripped eventually)
-synth_design -top box  -part xcvu35p-fsvh2104-1-e -directive default
+read_checkpoint -incremental $outputDir/post_synth.dcp ;# to be turned on for incremental runs (is stripped eventually)
+synth_design -top box  -part xczu7ev-ffvc1156-2-e -directive default
 write_checkpoint  -force $outputDir/post_synth.dcp ;# either -incremental_synth or nothing
 
 # Run implementation
 opt_design
-#! read_checkpoint -incremental  $outputDir/post_place.dcp ;#here goes directive
+read_checkpoint -incremental  $outputDir/post_place.dcp ;#here goes directive
 place_design -directive Default ;#here goes directive
 
 # Optimizations in case of timing violations
@@ -53,7 +52,7 @@ phys_opt_design
 
 write_checkpoint -force $outputDir/post_place.dcp
 
-#! read_checkpoint -incremental  $outputDir/post_route.dcp ;#here goes directive
+read_checkpoint -incremental  $outputDir/post_route.dcp ;#here goes directive
 route_design -directive Default ;#here goes directive
 write_checkpoint -force $outputDir/post_route.dcp
 

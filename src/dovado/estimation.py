@@ -12,7 +12,7 @@ import numpy as np
 class Example:
     design_point: List[int]
     design_value: DesignValue
-    is_infinite: bool
+    is_infinite: bool = False
 
 
 examples: List[Example] = []
@@ -149,5 +149,6 @@ def estimate(design_point: List[float], metric: Tuple[str, str]):
             examples_updated = False
             estimate, _ = estimator.fit(np.array(design_point))
             return estimate[0]
-        except Exception:
+        except Exception as e:
+            print("Estimation algorithm failed due to: " + str(e))
             return None

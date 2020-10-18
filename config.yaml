@@ -71,7 +71,7 @@ IMPLEMENTATION_TIMING: "post_impl_setup_timing.rpt"
 INTEGER_HIGH: 2147483647
 
 # Initial sample size for the estimator
-INITIAL_SAMPLES: 100
+INITIAL_SAMPLES: 4
 
 # N-parameter to choose which example to calculate the distance from
 N: 3

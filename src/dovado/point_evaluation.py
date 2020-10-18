@@ -1,5 +1,4 @@
 import yaml
-import sys
 from functools import lru_cache
 from pathlib import Path
 from dataclasses import dataclass
@@ -7,6 +6,7 @@ import dovado.vivado_interaction as vivado
 import dovado.report_parsing as report
 import dovado.src_parsing as src
 import dovado.global_user_selections as gus
+import dovado.user_input as user_input
 import numpy as np
 from dovado.frame_handling import setup_incremental
 from dovado.src_parsing import IsIncremental
@@ -98,6 +98,15 @@ def evaluate(design_point: Tuple[int]) -> DesignValue:
     if is_first_evaluation:
         is_first_evaluation = False
         setup_incremental(evaluation_setup.is_incremental)
+    if not gus.METRICS:
+        gus.set_metrics(
+            user_input.ask_utilization_metrics(
+                report.get_available_indices(
+                    CONFIG["VIVADO_OUTPUT_DIR"]
+                    + CONFIG[evaluation_setup.stop_step.name + "_UTILISATION"]
+                )
+            )
+        )
 
     return (
         DesignValue(

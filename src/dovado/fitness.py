@@ -54,7 +54,6 @@ def fitness(design_point: Tuple[int], metric: Tuple[str, str]):
     else:
         print("Fitness estimating")
         design_value = es.estimate(design_point, metric)
-        print("Estimated Value: " + design_value)
         if not design_value:
             print("Disabling estimator")
             estimate_working = False

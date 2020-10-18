@@ -2,7 +2,7 @@ module box (
     input wire clk
 );
     (* dont_touch  = "true" *) krnl_vadd_rtl #(
-        .C_S_AXI_CONTROL_DATA_WIDTH(invalid_parameter)
+        .C_S_AXI_CONTROL_DATA_WIDTH(32)
     ) boxed (
         .ap_clk(clk),
         .ap_rst_n(1),

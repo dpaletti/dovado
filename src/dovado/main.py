@@ -1,6 +1,7 @@
 import dovado.user_input as user_input
 import dovado.vivado_interaction as vivado
 import dovado.frame_handling as frame
+import dovado.src_parsing as parsing
 
 # from dovado.point_evaluation import evaluate, setup_evaluation
 from dovado.genetic_algorithm import optimize
@@ -124,16 +125,6 @@ def main():
         TOP_SRC,
         TARGET_CLOCK,
         INCREMENTAL_MODE,
-    )
-    gus.set_metrics([])
-    pe.evaluate(tuple(["invalid_parameter"] * len(gus.FREE_PARAMETERS)))
-    gus.set_metrics(
-        user_input.ask_utilization_metrics(
-            report.get_available_indices(
-                CONFIG["VIVADO_OUTPUT_DIR"]
-                + CONFIG[STOP_STEP.name + "_UTILISATION"]
-            )
-        )
     )
     if user_input.ask_is_point_evaluation():
         print(

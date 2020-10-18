@@ -32,8 +32,6 @@ read_all_files $src
 #set_property IS_ENABLED 0 [get_files examples/potato/src/pp_potato.vhd]
 read_xdc $xdcFile
 
-
-
 # Run synthesis and write checkpoint
 read_checkpoint -incremental $outputDir/post_synth.dcp ;# to be turned on for incremental runs (is stripped eventually)
 synth_design -top box  -part xc7k70tfbv676-1 -directive default

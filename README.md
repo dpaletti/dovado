@@ -9,8 +9,7 @@ A CLI tool for RTL Design Space Exploration on top of Vivado.
 
 # State of the Project
 
-**In active development**   
-Given an input RTL file after-synthesis utilization and timing are extracted.
+Complete prototype.
 
 
 # How to inspect the project
@@ -38,7 +37,7 @@ If this does not work add the poetry installation directory to the PATH ([instru
 
 Clone this repository to your local machine:
 
-    git clone https://github.com/DPaletti/dovado.git
+    git clone  --recurse-submodules -j8 https://github.com/DPaletti/dovado.git
 
 Now position at the project root (from now on all commands assume you are at project root):
 
@@ -50,7 +49,7 @@ Install all the required dependences:
 
 Run an example:
 
-    poetry run dovado < examples/fifo_memory/input
+    poetry run dovado < examples/input_files/input_rtl_vadd.txt
 
 Doing so all the program prompts are automatically answered with each line in input (one line = one answer), open it to see the answers.
 After all the vivado output you should see examples&rsquo; WNS (worst negative slack) and LUT (lookup table) percentage utilization
@@ -63,7 +62,7 @@ In order to run tests:
     poetry run pytest
 
 All tests will be ran and their respective outcome shown.   
-Tests are managed through pytest which is used as a testing library and as a test runner. Hypothesis is a library used for property based testing. Functions which call Vivado are mocked through monkeypatch (from pytest).   
+Tests are managed through pytest which is used as a testing library and as a test runner. Functions which call Vivado are mocked through monkeypatch (from pytest).   
 
 A recap of test coverage can be read by:
 
@@ -72,3 +71,6 @@ A recap of test coverage can be read by:
 
 if you do not have firefox installed any other browser will do.   
 
+
+# Report
+A full report of the activity conducted in developing Dovado and studying the RTL design space exploration problem can be read ([here](./dovado.pdf)).
