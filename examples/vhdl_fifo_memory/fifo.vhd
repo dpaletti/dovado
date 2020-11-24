@@ -1,5 +1,3 @@
-
-
 Library IEEE;
 USE IEEE.Std_logic_1164.all;
 -- FPGA projects using VHDL/ VHDL
@@ -18,7 +16,7 @@ entity fifo_mem is
       rd: in std_logic;
       data_in: in std_logic_vector(7 downto 0)
    );
-end fifo_mem;
+end entity fifo_mem;
 architecture Behavioral of fifo_mem is
 component write_pointer
    port(

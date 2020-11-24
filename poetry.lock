@@ -184,6 +184,14 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "hdlparse"
+version = "1.0.4"
+description = "HDL parser"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "hypothesis"
 version = "5.23.11"
 description = "A library for property-based testing"
@@ -609,7 +617,7 @@ testing = ["pytest (>=3.5,<3.7.3 || >3.7.3)", "pytest-checkdocs (>=1.2.3)", "pyt
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6"
-content-hash = "de18d91333ec88c597978011ea9d5f3060a03c0e088d8513f0acbe2d0a132092"
+content-hash = "2b0359ab9d7a0b6fb49f89f4ca8f40dafc4752aca19c5e8c155969d0a042a3ba"
 
 [metadata.files]
 appdirs = [
@@ -742,6 +750,9 @@ hdlconvertor = [
 ]
 hdlconvertorast = [
     {file = "hdlConvertorAst-0.2.tar.gz", hash = "sha256:c5532e59f160da995c1602476dfd09228cefa43e098d7cd3382f8c6ad70515f8"},
+]
+hdlparse = [
+    {file = "hdlparse-1.0.4.tar.gz", hash = "sha256:fb6230ed1e7a04a8f82f8d3fb59791d0751ae35e5b8e58dbbf2cbcf100d0d0f2"},
 ]
 hypothesis = [
     {file = "hypothesis-5.23.11-py3-none-any.whl", hash = "sha256:c0ed9cbbba273fb4ff4148ff539b73b52d5b6422b1bb86a7901f8cbb43f49db3"},
