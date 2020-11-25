@@ -1,82 +1,75 @@
 from statsmodels.nonparametric.kernel_regression import KernelReg
-from typing import Dict, Tuple, List
-from dovado_rtl.point_evaluation import evaluate, DesignValue, get_metric
+from typing import Tuple, List
 from random import randint, shuffle
-from dataclasses import dataclass
-import dovado_rtl.global_user_selections as gus
 import numpy as np
+from dovado_rtl.point_evaluation import DesignPointEvaluator, DesignValue
 
 
-@dataclass
 class Example:
-    design_point: List[int]
-    design_value: DesignValue
+    def __init__(self, design_point: List[int], design_value: DesignValue):
+        self.design_point: List[int] = design_point
+        self.design_value: DesignValue = design_value
 
 
-examples: List[Example] = []
-examples_updated = True
+class Estimator:
+    def __init__(
+        self,
+        design_point_evaluator: DesignPointEvaluator,
+        free_parameters_range,  # OrderedDict[str, Tuple[int, int]],
+        dataset_size: int,
+    ):
+        self.__examples: List[Example] = []
+        self.__examples_updated: bool = True
+        self.__estimator = None
+        self.__design_point_evaluator: DesignPointEvaluator = design_point_evaluator
+        self.__dataset_size: int = dataset_size
+        self.__generate_dataset(free_parameters_range,)
 
-
-def add_example(example: Example):
-    global examples
-    global examples_updated
-    examples.append(example)
-    shuffle(examples)
-    examples_updated = True
-    print("EXAMPLES: " + str(examples))
-
-
-def generate_dataset(
-    size: int,
-    parameters_range: Dict[str, Tuple[int, int]],
-    free_parameters: List[str],
-):
-    for i in range(0, size):
-        design_point = []
-        for k in free_parameters:
-            design_point.append(
-                randint(parameters_range[k][0], parameters_range[k][1])
+    def estimate(self, design_point: List[float], metric: Tuple[str, str]):
+        if self.__examples_updated:
+            independent_variables = self.__get_independent_variables()
+            self.__estimator = KernelReg(
+                self.__get_dependent_variable(metric),
+                independent_variables,
+                "c" * len(independent_variables),
             )
-        design_value = evaluate(tuple(design_point))
-        add_example(Example(design_point, design_value))
+            self.__examples_updated = False
+        estimate, _ = self.__estimator.fit(np.array(design_point))
+        return estimate[0]
 
+    def add_example(self, example: Example):
+        self.__examples.append(example)
+        shuffle(self.__examples)
+        self.__examples_updated = True
+        print("EXAMPLES: " + str(self.__examples))
 
-def get_dependent_variable(
-    examples: List[Example], metric: Tuple[str, str]
-) -> np.ndarray:
-    dependent_variable = []
-    for example in examples:
-        dependent_variable.append(get_metric(example.design_value, metric))
-    return np.array(dependent_variable)
+    def __generate_dataset(
+        self, parameters_range  # : OrderedDict[str, Tuple[int, int]],
+    ) -> None:
+        for i in range(0, self.__dataset_size):
+            design_point = []
+            for k in parameters_range.keys():
+                design_point.append(
+                    randint(parameters_range[k][0], parameters_range[k][1])
+                )
+            design_value = self.__design_point_evaluator.evaluate(
+                tuple(design_point)
+            )
+            self.add_example(Example(design_point, design_value))
 
+    def __get_dependent_variable(self, metric: Tuple[str, str]) -> np.ndarray:
+        dependent_variable = []
+        for example in self.__examples:
+            dependent_variable.append(
+                DesignPointEvaluator.get_metric(example.design_value, metric)
+            )
+        return np.array(dependent_variable)
 
-def get_independent_variables(
-    examples: List[Example], free_parameters: List[str]
-) -> np.ndarray:
-    independent_variables = []
-    for parameter in free_parameters:
-        parameter_accumulator = []
-        for example in examples:
-            parameter_accumulator.append(example.design_point[parameter])
-        independent_variables.append(parameter_accumulator)
-    return np.array(independent_variables)
+    def __get_independent_variables(self) -> np.ndarray:
+        independent_variables = []
+        for example in self.__examples:
+            independent_variables.append(example.design_point)
+        return np.array(independent_variables)
 
-
-estimator = None
-
-
-def estimate(design_point: List[float], metric: Tuple[str, str]):
-    global estimator
-    global examples_updated
-    if examples_updated:
-        independent_variables = get_independent_variables(
-            examples, gus.FREE_PARAMETERS
-        )
-        estimator = KernelReg(
-            get_dependent_variable(examples, metric),
-            independent_variables,
-            "c" * len(independent_variables),
-        )
-        examples_updated = False
-    estimate, _ = estimator.fit(np.array(design_point))
-    return estimate[0]
+    def get_examples(self):
+        return self.__examples

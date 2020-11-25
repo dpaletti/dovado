@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "DoVado"
-version = "0.1.0"
+name = "dovado-rtl"
+version = "0.2.10"
 description = "CLI tool for RTL Design Space Exploration on top of Vivado"
 authors = ["Daniele Paletti"]
 license = "MIT"
@@ -16,12 +16,10 @@ BeautifulSoup4 = "^4.9.1"
 lxml = "^4.5.2"
 pyyaml = "^5.3.1"
 pexpect = "^4.8.0"
-hdlconvertor = "^1.6"
-hdlConvertorAst = "^0.2"
 statsmodels = "^0.12.0"
 pymoo = "^0.4.2"
 numpy = "^1.19.2"
-hdlparse = "^1.0.4"
+antlr4-python3-runtime = "^4.9"
 
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"
@@ -33,7 +31,7 @@ cairocffi = "^1.1.0"
 PyGObject = "^3.38.0"
 
 [tool.poetry.scripts]
-dovado = "dovado.main:main"
+dovado = "dovado_rtl.main:main"
 
 [tool.black]
 line-length = 79

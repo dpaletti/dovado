@@ -64,7 +64,7 @@ def test_fitness():
                 test.fitness(tuple(example3.design_point.values()), "metric_1")
                 == -123
             )
-            assert example3 in es.examples
+            assert example3 in es.__examples
         with patch("dovado.estimation.estimate", return_value=-120):
 
             assert test.fitness(tuple([0, 3, 44]), "metric_1") == -120
@@ -72,4 +72,4 @@ def test_fitness():
 
 def test__distance():
     with pytest.raises(ValueError):
-        test._distance([1, 2, 3], [1, 2])
+        test.__distance([1, 2, 3], [1, 2])

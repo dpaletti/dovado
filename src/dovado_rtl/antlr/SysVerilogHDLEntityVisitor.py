@@ -16,6 +16,7 @@ from dovado_rtl.antlr.generated.SysVerilogHDL.SysVerilogHDLParser import (
 class SysVerilogHDLEntityVisitor(SysVerilogHDLVisitor):
     def __init__(self):
         self.entities: List[Entity] = []
+        self.top_level = None
 
     def visitSource_text(
         self, ctx: SysVerilogHDLParser.Source_textContext

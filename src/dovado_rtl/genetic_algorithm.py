@@ -1,3 +1,4 @@
+from typing import List, Tuple
 from pymoo.model.problem import Problem
 from pymoo.algorithms.nsga2 import NSGA2
 from pymoo.factory import (
@@ -8,25 +9,33 @@ from pymoo.factory import (
 )
 from pymoo.optimize import minimize
 
+
 import numpy as np
-import dovado_rtl.global_user_selections as gus
-from dovado_rtl.fitness import fitness
+from dovado_rtl.fitness import FitnessEvaluator
 import pickle
 
 
 class MyProblem(Problem):
-    def __init__(self):
+    def __init__(
+        self,
+        fitness_evaluator: FitnessEvaluator,
+        free_parameters_range,  # : OrderedDict[str, Tuple[int, int]],
+        metrics: List[Tuple[str, str]],
+    ):
+        self.evaluator: FitnessEvaluator = fitness_evaluator
+        self.metrics: List[Tuple[str, str]] = metrics
+        metrics.append(("Frequency", "max_frequency"))
         super().__init__(
-            n_var=len(gus.FREE_PARAMETERS_RANGE),
-            n_obj=len(gus.METRICS),
+            n_var=len(free_parameters_range.keys()),
+            n_obj=len(free_parameters_range.keys()),
             n_constr=0,
             xl=[
-                gus.FREE_PARAMETERS_RANGE[parameter][0]
-                for parameter in gus.FREE_PARAMETERS
+                free_parameters_range[parameter][0]
+                for parameter in free_parameters_range.keys()
             ],
             xu=[
-                gus.FREE_PARAMETERS_RANGE[parameter][1]
-                for parameter in gus.FREE_PARAMETERS
+                free_parameters_range[parameter][1]
+                for parameter in free_parameters_range.keys()
             ],
             type_var=np.int,
             elementwise_evaluation=True,
@@ -35,18 +44,23 @@ class MyProblem(Problem):
     def _evaluate(self, x, out, *args, **kwargs):
         out["F"] = np.column_stack(
             [
-                fitness(tuple(x), metric)
-                for metric in (gus.METRICS + ["max_frequency"])
+                self.evaluator.fitness(tuple(x), metric)
+                for metric in self.metrics
             ]
         )
 
 
-def optimize(execution_time: str) -> np.ndarray:
-    problem = MyProblem()
+def optimize(
+    evaluator: FitnessEvaluator,
+    free_parameters_range,  # : OrderedDict[str, Tuple[int, int]],
+    metrics,
+    execution_time: str,
+) -> np.ndarray:
+    problem = MyProblem(evaluator, free_parameters_range, metrics)
 
     algorithm = NSGA2(
-        pop_size=10 * len(gus.FREE_PARAMETERS),
-        n_offsprings=10 * len(gus.FREE_PARAMETERS),
+        pop_size=10 * len(free_parameters_range.keys()),
+        n_offsprings=10 * len(free_parameters_range.keys()),
         sampling=get_sampling("int_random"),
         crossover=get_crossover("int_sbx", prob=0.9, eta=15),
         mutation=get_mutation("int_pm", eta=20),

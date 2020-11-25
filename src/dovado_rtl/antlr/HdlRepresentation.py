@@ -5,36 +5,36 @@ class Port:
     def __init__(
         self, name: str, direction: Optional[str], port_type: Optional[str]
     ):
-        self._name = name
-        self._direction = direction
-        self._type = port_type
+        self.__name: str = name
+        self.__direction: str = direction
+        self.__type: str = port_type
 
-    def get_name(self):
-        return self._name
+    def get_name(self) -> str:
+        return self.__name
 
-    def get_direction(self):
-        return self._direction
+    def get_direction(self) -> str:
+        return self.__direction
 
-    def get_type(self):
-        return self._type
+    def get_type(self) -> str:
+        return self.__type
 
-    def set_direction(self, direction: str):
-        self._direction = direction
+    def set_direction(self, direction: str) -> None:
+        self.__direction = direction
 
-    def set_type(self, s_type: str):
-        self._type = s_type
+    def set_type(self, s_type: str) -> None:
+        self.__type = s_type
 
     def __repr__(self):
         return (
             "Port: {"
             + "name: '"
-            + str(self._name)
+            + str(self.__name)
             + "', "
             + "type: '"
-            + str(self._type)
+            + str(self.__type)
             + "', "
             + "direction: '"
-            + str(self._direction)
+            + str(self.__direction)
             + "'}"
         )
 
@@ -47,23 +47,30 @@ class Port:
 
 class Parameter:
     def __init__(self, name: str, generic_type: Optional[str]):
-        self._name = name
-        self._type = generic_type
+        self.__name: str = name
+        self.__type: str = generic_type
+        self.__value: Optional[int] = None
 
-    def get_name(self):
-        return self._name
+    def get_name(self) -> str:
+        return self.__name
 
-    def get_type(self):
-        return self._type
+    def get_type(self) -> str:
+        return self.__type
+
+    def get_value(self) -> int:
+        return self.__value
+
+    def set_value(self, value) -> None:
+        self.__value = value
 
     def __repr__(self):
         return (
             "Parameter: {"
             + "name: '"
-            + str(self._name)
+            + str(self.__name)
             + "', "
             + "type: '"
-            + str(self._type)
+            + str(self.__type)
             + "'}"
         )
 
@@ -76,14 +83,13 @@ class Parameter:
 
 class Entity:
     def __init__(self, name: str):
-        self._name: str = name
-        self._ports: List[Port] = []
-        self._parameters: List[Parameter] = []
-        self._port_updates = []
+        self.__name: str = name
+        self.__ports: List[Port] = []
+        self.__parameters: List[Parameter] = []
 
-    def add_port(self, port_to_add: Port):
+    def add_port(self, port_to_add: Port) -> None:
         # verilog parser may traverse ports more than once
-        for p in self._ports:
+        for p in self.__ports:
             if p.get_name() == port_to_add.get_name():
                 if not p.get_direction() and port_to_add.get_direction():
                     p.set_direction(port_to_add.get_direction())
@@ -104,34 +110,34 @@ class Entity:
                         + port_to_add.get_type()
                     )
                 return
-        self._ports.append(port_to_add)
+        self.__ports.append(port_to_add)
 
-    def get_ports(self):
-        return self._ports
+    def get_ports(self) -> List[Port]:
+        return self.__ports
 
-    def add_parameter(self, parameter: Parameter):
-        self._parameters.append(parameter)
+    def add_parameter(self, parameter: Parameter) -> None:
+        self.__parameters.append(parameter)
 
-    def get_parameters(self):
-        return self._parameters
+    def get_parameters(self) -> List[Parameter]:
+        return self.__parameters
 
     def get_name(self):
-        return self._name
+        return self.__name
 
 
 class TopLevel:
     def __init__(self, libraries, used):
-        self._libraries: List[str] = libraries
-        self._used: List[str] = used
+        self.__libraries: List[str] = libraries
+        self.__use_clauses: List[str] = used
 
     def add_library(self, library):
-        self._libraries.append(library)
+        self.__libraries.append(library)
 
     def add_used(self, used):
-        self._libraries.append(used)
+        self.__libraries.append(used)
 
     def get_libraries(self):
-        return self._libraries
+        return self.__libraries
 
-    def get_used(self):
-        return self._used
+    def get_use_clauses(self):
+        return self.__use_clauses

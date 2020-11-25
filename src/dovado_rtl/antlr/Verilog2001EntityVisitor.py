@@ -15,6 +15,7 @@ from typing import List, Optional
 class Verilog2001EntityVisitor(Verilog2001Visitor):
     def __init__(self):
         self.entities: List[Entity] = []
+        self.top_level = None
 
     def visitSource_text(
         self, ctx: Verilog2001Parser.Source_textContext

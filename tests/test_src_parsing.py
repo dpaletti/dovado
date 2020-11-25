@@ -18,13 +18,13 @@ def test_parse():
 
 
 def test_get_modules():
-    assert test.get_modules(
+    assert test.get_entities(
         Path("./examples/vhdl_ripple_borrow_subtractor/rbs.vhd")
     ) == ["rbs"]
-    assert test.get_modules(
+    assert test.get_entities(
         Path("./examples/verilog_unsigned_adder/unsigned_adder.sv")
     ) == ["krnl_vadd_rtl_adder"]
-    assert test.get_modules(
+    assert test.get_entities(
         Path("./examples/verilog_unsigned_adder/unsigned_adder.sv")
     ) == ["krnl_vadd_rtl_adder"]
 
