@@ -12,25 +12,25 @@
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="Slice LUTs*" halign="1" type="string"/>
-        <tablecell class="" contents="2424" halign="4" type="string"/>
+        <tablecell class="" contents="533" halign="4" type="string"/>
         <tablecell class="" contents="41000" halign="4" type="string"/>
-        <tablecell class="" contents="5.91" halign="4" type="string"/>
+        <tablecell class="" contents="1.30" halign="4" type="string"/>
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="  LUT as Logic" halign="1" type="string"/>
-        <tablecell class="" contents="2320" halign="4" type="string"/>
+        <tablecell class="" contents="493" halign="4" type="string"/>
         <tablecell class="" contents="41000" halign="4" type="string"/>
-        <tablecell class="" contents="5.66" halign="4" type="string"/>
+        <tablecell class="" contents="1.20" halign="4" type="string"/>
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="  LUT as Memory" halign="1" type="string"/>
-        <tablecell class="" contents="104" halign="4" type="string"/>
+        <tablecell class="" contents="40" halign="4" type="string"/>
         <tablecell class="" contents="13400" halign="4" type="string"/>
-        <tablecell class="" contents="0.78" halign="4" type="string"/>
+        <tablecell class="" contents="0.30" halign="4" type="string"/>
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="    LUT as Distributed RAM" halign="1" type="string"/>
-        <tablecell class="" contents="104" halign="4" type="string"/>
+        <tablecell class="" contents="40" halign="4" type="string"/>
         <tablecell class="" contents="" halign="0" type="string"/>
         <tablecell class="" contents="" halign="0" type="string"/>
       </tablerow>
@@ -42,15 +42,15 @@
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="Slice Registers" halign="1" type="string"/>
-        <tablecell class="" contents="1686" halign="4" type="string"/>
+        <tablecell class="" contents="385" halign="4" type="string"/>
         <tablecell class="" contents="82000" halign="4" type="string"/>
-        <tablecell class="" contents="2.06" halign="4" type="string"/>
+        <tablecell class="" contents="0.47" halign="4" type="string"/>
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="  Register as Flip Flop" halign="1" type="string"/>
-        <tablecell class="" contents="1686" halign="4" type="string"/>
+        <tablecell class="" contents="385" halign="4" type="string"/>
         <tablecell class="" contents="82000" halign="4" type="string"/>
-        <tablecell class="" contents="2.06" halign="4" type="string"/>
+        <tablecell class="" contents="0.47" halign="4" type="string"/>
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="  Register as Latch" halign="1" type="string"/>
@@ -60,15 +60,15 @@
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="F7 Muxes" halign="1" type="string"/>
-        <tablecell class="" contents="16" halign="4" type="string"/>
+        <tablecell class="" contents="2" halign="4" type="string"/>
         <tablecell class="" contents="20500" halign="4" type="string"/>
-        <tablecell class="" contents="0.08" halign="4" type="string"/>
+        <tablecell class="" contents="&lt;0.01" halign="4" type="string"/>
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="F8 Muxes" halign="1" type="string"/>
-        <tablecell class="" contents="8" halign="4" type="string"/>
+        <tablecell class="" contents="0" halign="4" type="string"/>
         <tablecell class="" contents="10250" halign="4" type="string"/>
-        <tablecell class="" contents="0.08" halign="4" type="string"/>
+        <tablecell class="" contents="0.00" halign="4" type="string"/>
       </tablerow>
     </table>
     <section class="" title="Summary of Registers by Type">
@@ -128,13 +128,13 @@
           <tablecell class="" contents="Reset" halign="4" type="string"/>
         </tablerow>
         <tablerow class="" suppressoutput="0" wordwrap="0">
-          <tablecell class="" contents="29" halign="1" type="string"/>
+          <tablecell class="" contents="0" halign="1" type="string"/>
           <tablecell class="" contents="Yes" halign="4" type="string"/>
           <tablecell class="" contents="Set" halign="4" type="string"/>
           <tablecell class="" contents="-" halign="4" type="string"/>
         </tablerow>
         <tablerow class="" suppressoutput="0" wordwrap="0">
-          <tablecell class="" contents="1657" halign="1" type="string"/>
+          <tablecell class="" contents="385" halign="1" type="string"/>
           <tablecell class="" contents="Yes" halign="4" type="string"/>
           <tablecell class="" contents="Reset" halign="4" type="string"/>
           <tablecell class="" contents="-" halign="4" type="string"/>
@@ -325,9 +325,9 @@
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="BUFGCTRL" halign="1" type="string"/>
-        <tablecell class="" contents="2" halign="4" type="string"/>
+        <tablecell class="" contents="1" halign="4" type="string"/>
         <tablecell class="" contents="32" halign="4" type="string"/>
-        <tablecell class="" contents="6.25" halign="4" type="string"/>
+        <tablecell class="" contents="3.13" halign="4" type="string"/>
       </tablerow>
       <tablerow class="" suppressoutput="0" wordwrap="0">
         <tablecell class="" contents="BUFIO" halign="1" type="string"/>

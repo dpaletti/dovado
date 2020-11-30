@@ -153,10 +153,14 @@ class Verilog2001EntityVisitor(Verilog2001Visitor):
         self, ctx: Verilog2001Parser.Local_parameter_declarationContext
     ):
         if ctx.range_():
-            for p in ctx.list_of_param_assignments():
+            for p in self.visitList_of_param_assignments(
+                ctx.list_of_param_assignments()
+            ):
                 self.entities[-1].add_parameter(Parameter(p, None))
         else:
-            for p in ctx.list_of_param_assignments():
+            for p in self.visitList_of_param_assignments(
+                ctx.list_of_param_assignments()
+            ):
                 self.entities[-1].add_parameter(
                     Parameter(p, ctx.getText().split()[1])
                 )
@@ -319,7 +323,7 @@ class Verilog2001EntityVisitor(Verilog2001Visitor):
         self, ctx: Verilog2001Parser.Module_parameter_port_listContext
     ) -> None:
         for p in ctx.parameter_declaration_():
-            self.visitParameter_declaration(p)
+            self.visitParameter_declaration_(p)
 
     def visitParameter_declaration(
         self, ctx: Verilog2001Parser.Parameter_declarationContext

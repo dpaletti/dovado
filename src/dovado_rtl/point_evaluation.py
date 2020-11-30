@@ -27,7 +27,7 @@ class DesignValue:
             "Utilisation: "
             + str(self.utilisation)
             + "\nMax frequency: "
-            + str(self.negative_max_frequency)
+            + str(-self.negative_max_frequency)
         )
 
 
