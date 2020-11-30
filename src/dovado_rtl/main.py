@@ -1,15 +1,13 @@
-from typing import List, Optional, Tuple
-import numpy as np
 import dovado_rtl.user_input as user_input
 import dovado_rtl.report_parsing as report_utilities
 from dovado_rtl.config import Configuration
 import dovado_rtl.vivado_interaction as vivado
-from dovado_rtl.frame_handling import (
+from dovado_rtl.concrete_frame_handling import (
     TclFrameHandler,
     HdlBoxFrameHandler,
     XdcFrameHandler,
 )
-from dovado_rtl.utility_classes import StopStep, IsIncremental, RTL
+from dovado_rtl.utility_classes import RTL
 from dovado_rtl.src_parsing import SourceFile
 from dovado_rtl.point_evaluation import DesignPointEvaluator
 from dovado_rtl.estimation import Estimator
@@ -19,28 +17,21 @@ from dovado_rtl.genetic_algorithm import optimize
 
 def main():
     vivado.start()
-    config: Configuration = Configuration()
+    config = Configuration()
 
-    src_folder: str = user_input.ask_code_dir()
-    top_module: str
-    top_src: str
+    src_folder = user_input.ask_code_dir()
     top_module, top_src = user_input.ask_top_module(src_folder, config)
-    parsed_source: SourceFile = SourceFile(src_folder + top_src)
-    synthesis_part: str = user_input.ask_part()
+    parsed_source = SourceFile(top_src, top_module)
+    synthesis_part = user_input.ask_part()
 
-    stop_step: StopStep = user_input.ask_stop_step()
+    stop_step = user_input.ask_stop_step()
 
-    free_parameters: List[str] = user_input.ask_parameters(parsed_source)
+    free_parameters = user_input.ask_parameters(parsed_source)
 
-    clock_port: str = user_input.ask_identifiers(parsed_source)
+    clock_port = user_input.ask_identifiers(parsed_source)
 
-    incremental_mode: IsIncremental = user_input.ask_incremental_mode(
-        stop_step
-    )
+    incremental_mode = user_input.ask_incremental_mode(stop_step)
 
-    synthesis_directive: str
-    place_directive: Optional[str]
-    route_directive: Optional[str]
     (
         synthesis_directive,
         place_directive,
@@ -48,50 +39,53 @@ def main():
     ) = user_input.ask_directives(stop_step, incremental_mode)
 
     # Clock given in Mhz
-    target_clock: float = user_input.ask_clock()
+    target_clock = user_input.ask_clock()
 
     XdcFrameHandler(
-        config.get_config("PLACEHOLDER"),
-        config.get_config("XDC_DIR") + config.get_config("CONSTRAINT_FRAME"),
+        str(config.get_config("PLACEHOLDER")),
+        str(config.get_config("XDC_DIR"))
+        + str(config.get_config("CONSTRAINT_FRAME")),
         1000 / target_clock,
-        config.get_config("XDC_DIR") + config.get_config("CONSTRAINT"),
-    ).fill_xdc()
+        str(config.get_config("XDC_DIR"))
+        + str(config.get_config("CONSTRAINT")),
+    ).fill()
 
     tcl_handler = TclFrameHandler(
         config,
         parsed_source,
-        True,
         synthesis_part,
         synthesis_directive,
         incremental_mode,
         stop_step,
         place_directive,
         route_directive,
-    ).fill_tcl()
+    )
+    tcl_handler.fill()
 
-    box_handler: HdlBoxFrameHandler = HdlBoxFrameHandler(
-        config.get_config("PLACEHOLDER"),
-        config.get_config("VHDL_DIR") + config.get_config("VHDL_BOX_FRAME")
+    box_handler = HdlBoxFrameHandler(
+        str(config.get_config("PLACEHOLDER")),
+        str(config.get_config("VHDL_DIR"))
+        + str(config.get_config("VHDL_BOX_FRAME"))
         if parsed_source.get_hdl() is RTL.VHDL
-        else config.get_config("VERILOG_DIR")
-        + config.get_config("VERILOG_BOX_FRAME"),
-        top_module,
+        else str(config.get_config("VERILOG_DIR"))
+        + str(config.get_config("VERILOG_BOX_FRAME")),
+        top_module.get_name(),
         parsed_source.get_ports(),
-        parsed_source.get_port(clock_port),
-        config.get_config("VHDL_DIR") + config.get_config("VHDL_BOX")
+        parsed_source.get_port(clock_port.get_name()),
+        str(config.get_config("VHDL_DIR")) + str(config.get_config("VHDL_BOX"))
         if parsed_source.get_hdl() is RTL.VHDL
-        else config.get_config("VERILOG_DIR")
-        + config.get_config("VERILOG_BOX"),
+        else str(config.get_config("VERILOG_DIR"))
+        + str(config.get_config("VERILOG_BOX")),
         parsed_source.get_hdl(),
         parsed_source.get_top_level()
         if parsed_source.get_hdl() is RTL.VHDL
         else None,
     )
 
-    metrics: List[Tuple[str, str]] = user_input.ask_utilization_metrics(
+    metrics = user_input.ask_utilization_metrics(
         report_utilities.get_available_indices(
-            config.get_config("VIVADO_OUTPUT_DIR")
-            + config.get_config(stop_step.name + "_UTILISATION")
+            str(config.get_config("VIVADO_OUTPUT_DIR"))
+            + str(config.get_config(stop_step.name + "_UTILISATION"))
         )
     )
 
@@ -100,13 +94,13 @@ def main():
         parsed_source,
         box_handler,
         tcl_handler,
-        True,
         target_clock,
-        user_input.ask_incremental_mode(stop_step),
+        incremental_mode,
         stop_step,
-        free_parameters,
+        [p.get_name() for p in free_parameters],
         metrics,
     )
+
     if user_input.ask_is_point_evaluation():
         print(
             "Point Evaluation result\n"
@@ -118,26 +112,22 @@ def main():
         )
         return
 
-    # OrderedDict from typing is available only from python 3.7 (we support python 3.6)
-    # OrderedDict[str, Tuple[int, int]]
     free_parameters_range = user_input.ask_parameters_range(
         free_parameters, config
     )
 
-    estimator: Estimator = Estimator(
+    estimator = Estimator(
         point_evaluator,
         free_parameters_range,
-        config.get_config("INITIAL_SAMPLES"),
+        int(config.get_config("INITIAL_SAMPLES")),
     )
-    fitness_evaluator: FitnessEvaluator = FitnessEvaluator(
-        estimator, point_evaluator, config
-    )
+    fitness_evaluator = FitnessEvaluator(estimator, point_evaluator, config)
 
-    result: np.ndarray = optimize(
+    result = optimize(
         fitness_evaluator,
         free_parameters_range,
         metrics,
-        config.get_config("GENETIC_RUN_TIME"),
+        str(config.get_config("GENETIC_RUN_TIME")),
     )
     print("Optimization Result: " + str(result))
 

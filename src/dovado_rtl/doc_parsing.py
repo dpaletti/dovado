@@ -1,9 +1,9 @@
-#!/usr/bin/env python3
 import re
+from typing import List
 import dovado_rtl.vivado_interaction as vivado
 
 
-def get_directives_paragraph(command):
+def get_directives_paragraph(command: str) -> str:
 
     if command not in {"synthesis", "place", "route", "read checkpoint"}:
         raise ValueError(
@@ -17,6 +17,12 @@ def get_directives_paragraph(command):
         help = vivado.get_help("route_design").strip()
     elif command == "read checkpoint":
         help = vivado.get_help("read_checkpoint").strip()
+    else:
+        raise Exception(
+            "Unrecognized command in get_directives_paragraph: "
+            + command
+            + " available are: synthesis, place, route, read_checkpoint"
+        )
     help = re.split("(\r\n?|\n)+", help)
     directive_index = help.index(
         [
@@ -40,7 +46,7 @@ def get_directives_paragraph(command):
     ).strip()
 
 
-def get_directives(directives_paragraph):
+def get_directives(directives_paragraph: str) -> List[str]:
     return [
         re.sub(r"\*|-| ", "", item)
         for sublist in [
@@ -50,7 +56,3 @@ def get_directives(directives_paragraph):
         ]
         for item in sublist
     ]
-
-
-def get_note(par):
-    return par[re.search("[ \t]*Note:[ \t]*", par).start() :]

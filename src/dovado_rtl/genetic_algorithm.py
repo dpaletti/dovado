@@ -1,4 +1,5 @@
 from typing import List, Tuple
+from collections import OrderedDict
 from pymoo.model.problem import Problem
 from pymoo.algorithms.nsga2 import NSGA2
 from pymoo.factory import (
@@ -19,7 +20,7 @@ class MyProblem(Problem):
     def __init__(
         self,
         fitness_evaluator: FitnessEvaluator,
-        free_parameters_range,  # : OrderedDict[str, Tuple[int, int]],
+        free_parameters_range: "OrderedDict[str, Tuple[int, int]]",
         metrics: List[Tuple[str, str]],
     ):
         self.evaluator: FitnessEvaluator = fitness_evaluator
@@ -41,7 +42,7 @@ class MyProblem(Problem):
             elementwise_evaluation=True,
         )
 
-    def _evaluate(self, x, out, *args, **kwargs):
+    def _evaluate(self, x: List[int], out, *args, **kwargs):
         out["F"] = np.column_stack(
             [
                 self.evaluator.fitness(tuple(x), metric)
@@ -52,10 +53,10 @@ class MyProblem(Problem):
 
 def optimize(
     evaluator: FitnessEvaluator,
-    free_parameters_range,  # : OrderedDict[str, Tuple[int, int]],
-    metrics,
+    free_parameters_range: "OrderedDict[str, Tuple[int, int]]",
+    metrics: List[Tuple[str, str]],
     execution_time: str,
-) -> np.ndarray:
+) -> List[float]:
     problem = MyProblem(evaluator, free_parameters_range, metrics)
 
     algorithm = NSGA2(
@@ -80,4 +81,4 @@ def optimize(
         pickle.dump([res, algorithm], f)
     # with open('objs.pkl', 'rb') as f:
     #     obj0, obj1, obj2 = pickle.load(f)
-    return res.F[-1]
+    return res.F[-1].to_list()

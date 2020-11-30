@@ -33,7 +33,7 @@ class FitnessEvaluator:
                 self.__nth_nearest_distance(
                     list(design_point),
                     self.estimator.get_examples(),
-                    self.config.get_config("N"),
+                    int(self.config.get_config("N")),
                 )
             )
         )
@@ -42,7 +42,7 @@ class FitnessEvaluator:
                 self.__nth_nearest_distance(
                     list(design_point),
                     self.estimator.get_examples(),
-                    self.config.get_config("N"),
+                    int(self.config.get_config("N")),
                 )
                 == 0
             )
@@ -50,7 +50,7 @@ class FitnessEvaluator:
                 self.__nth_nearest_distance(
                     list(design_point),
                     self.estimator.get_examples(),
-                    self.config.get_config("N"),
+                    int(self.config.get_config("N")),
                 )
                 > self.threshold
             )
@@ -63,7 +63,7 @@ class FitnessEvaluator:
                 self.__nth_nearest_distance(
                     list(design_point),
                     self.estimator.get_examples(),
-                    self.config.get_config("N"),
+                    int(self.config.get_config("N")),
                 )
                 > self.threshold
             ) and self.estimate_working:
@@ -72,9 +72,7 @@ class FitnessEvaluator:
                     np.isinf(v) for v in full_design_value.utilisation.values()
                 ) or np.isinf(full_design_value.negative_max_frequency):
                     self.estimator.add_example(
-                        self.estimator.add_example(
-                            Example(list(design_point), full_design_value)
-                        )
+                        Example(list(design_point), full_design_value)
                     )
                 else:
                     self.estimator.add_example(
@@ -133,15 +131,17 @@ class FitnessEvaluator:
             return largest_list[-2]
 
     @staticmethod
-    def __mean(numbers):
+    def __mean(numbers: List[float]) -> float:
         return float(sum(numbers)) / max(len(numbers), 1)
 
-    def __set_threshold(self, examples):
+    def __set_threshold(self, examples: List[Example]) -> None:
         distances = []
         for example in examples:
             distances.append(
                 self.__nth_nearest_distance(
-                    example.design_point, examples, self.config.get_config("N")
+                    example.design_point,
+                    examples,
+                    int(self.config.get_config("N")),
                 )
             )
         print("Distances for threshold: " + str(distances))

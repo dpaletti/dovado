@@ -1,9 +1,13 @@
 from functools import lru_cache
 from typing import Tuple, Dict, List
+
 import dovado_rtl.vivado_interaction as vivado
 import dovado_rtl.report_parsing as report
 import numpy as np
-from dovado_rtl.frame_handling import HdlBoxFrameHandler, TclFrameHandler
+from dovado_rtl.concrete_frame_handling import (
+    HdlBoxFrameHandler,
+    TclFrameHandler,
+)
 from dovado_rtl.src_parsing import SourceFile
 from dovado_rtl.config import Configuration
 from dovado_rtl.utility_classes import IsIncremental, StopStep
@@ -18,6 +22,14 @@ class DesignValue:
         self.utilisation: Dict[Tuple[str, str], float] = utilisation
         self.negative_max_frequency: float = negative_max_frequency
 
+    def __repr__(self) -> str:
+        return (
+            "Utilisation: "
+            + str(self.utilisation)
+            + "\nMax frequency: "
+            + str(self.negative_max_frequency)
+        )
+
 
 class DesignPointEvaluator:
     def __init__(
@@ -26,7 +38,6 @@ class DesignPointEvaluator:
         parsed_source: SourceFile,
         hdl_handler: HdlBoxFrameHandler,
         tcl_handler: TclFrameHandler,
-        to_box: bool,
         target_clock: float,
         is_incremental: IsIncremental,
         stop_step: StopStep,
@@ -36,7 +47,6 @@ class DesignPointEvaluator:
         self.hdl_handler: HdlBoxFrameHandler = hdl_handler
         self.stop_step: StopStep = stop_step
         self.parsed_file = parsed_source
-        self.is_boxed: bool = to_box
         self.target_clock: float = target_clock
         self.is_incremental: IsIncremental = is_incremental
         self.is_first_evaluation: bool = True
@@ -47,29 +57,13 @@ class DesignPointEvaluator:
 
     @lru_cache()
     def evaluate(self, design_point: Tuple[int]) -> DesignValue:
-        if not self.is_boxed:
-            self.parsed_file.write_parameter_values(
-                self.hdl_handler,
-                dict(zip(self.free_parameters, design_point)),
-            )
-        else:
-            # TODO revise or delete unboxed evaluation
-            # for parameter, value in zip(gus.FREE_PARAMETERS, design_point):
-            #     src.map_parameter(
-            #         Path(get_config("VHDL_DIR") + get_config("VHDL_BOX"))
-            #         if evaluation_setup.top_lang is src.RTL.VHDL
-            #         else Path(
-            #             get_config("VERILOG_DIR") + get_config("VERILOG_BOX")
-            #         ),
-            #         "box",
-            #         parameter,
-            #         value,
-            #     )
-            raise Exception("Unboxed evaluation not implemented")
+        self.parsed_file.write_parameter_values(
+            self.hdl_handler, dict(zip(self.free_parameters, design_point)),
+        )
 
         vivado_out, success = vivado.source(
-            self.config.get_config("TCL_DIR")
-            + self.config.get_config(self.stop_step.name)
+            str(self.config.get_config("TCL_DIR"))
+            + str(self.config.get_config(self.stop_step.name))
         )
 
         print(vivado_out)
@@ -79,16 +73,18 @@ class DesignPointEvaluator:
 
         return (
             DesignValue(
-                utilisation={i: np.inf for i in self.metrics},
-                negative_max_frequency=np.inf,
+                utilisation={i: float(np.inf) for i in self.metrics},
+                negative_max_frequency=float(np.inf),
             )
             if not success
             else DesignValue(
                 utilisation={
                     i: report.get_utilisation(
-                        self.config.get_config("VIVADO_OUTPUT_DIR")
-                        + self.config.get_config(
-                            self.stop_step.name + "_UTILISATION"
+                        str(self.config.get_config("VIVADO_OUTPUT_DIR"))
+                        + str(
+                            self.config.get_config(
+                                self.stop_step.name + "_UTILISATION"
+                            )
                         ),
                         i[0],
                         i[1],
@@ -98,9 +94,11 @@ class DesignPointEvaluator:
                 negative_max_frequency=-float(
                     self.get_max_frequency(
                         report.get_wns(
-                            self.config.get_config("VIVADO_OUTPUT_DIR")
-                            + self.config.get_config(
-                                self.stop_step.name + "_TIMING"
+                            str(self.config.get_config("VIVADO_OUTPUT_DIR"))
+                            + str(
+                                self.config.get_config(
+                                    self.stop_step.name + "_TIMING"
+                                )
                             )
                         )
                     )
@@ -108,12 +106,14 @@ class DesignPointEvaluator:
             )
         )
 
-    def get_max_frequency(self, wns):
+    def get_max_frequency(self, wns: float) -> float:
 
         return 1000 / ((1 / 1000 * self.target_clock) - wns)
 
     @staticmethod
-    def get_metric(design_value, metric):
+    def get_metric(
+        design_value: DesignValue, metric: Tuple[str, str]
+    ) -> float:
         if metric == "max_frequency":
             return design_value.negative_max_frequency
         else:

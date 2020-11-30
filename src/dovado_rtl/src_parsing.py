@@ -27,10 +27,11 @@ from dovado_rtl.antlr.HdlRepresentation import (
     Port,
 )
 from dovado_rtl.utility_classes import RTL
+from dovado_rtl.frame_handler import FrameHandler
 
 
 class SourceFile:
-    def __init__(self, src_path: str, entity: Optional[str] = None):
+    def __init__(self, src_path: str, entity: Optional[Entity] = None):
         self.posix_path = Path(src_path)
         supported_extensions = [".vhd", ".vhdl", ".v", ".sv"]
         if self.posix_path.suffix not in supported_extensions:
@@ -41,7 +42,8 @@ class SourceFile:
                 + self.posix_path.suffix
                 + " not supported"
             )
-        self.__input_stream = FileStream(self.posix_path.read_text())
+
+        self.__input_stream = FileStream(str(self.posix_path))
         self.__RTL = (
             RTL.VHDL
             if (
@@ -61,18 +63,20 @@ class SourceFile:
             token_stream = CommonTokenStream(lexer)
             parser = vhdlParser(token_stream)
             visitor = VhdlEntityVisitor()
+            tree = parser.design_file()
         elif self.__RTL is RTL.VERILOG:
             lexer = Verilog2001Lexer(self.__input_stream)
             token_stream = CommonTokenStream(lexer)
             parser = Verilog2001Parser(token_stream)
             visitor = Verilog2001EntityVisitor()
+            tree = parser.source_text()
         else:
             lexer = SysVerilogHDLLexer(self.__input_stream)
             token_stream = CommonTokenStream(lexer)
             parser = SysVerilogHDLParser(token_stream)
             visitor = SysVerilogHDLEntityVisitor()
+            tree = parser.source_text()
 
-        tree = parser.design_file()
         visitor.visit(tree)
         return visitor.entities, visitor.top_level
 
@@ -91,7 +95,11 @@ class SourceFile:
         self.__selected_entity = self.get_entity(entity)
 
     def get_top_entity(self) -> Entity:
-        return self.__selected_entity
+        if self.__selected_entity:
+            return self.__selected_entity
+        raise ValueError(
+            "Trying to access selected entity when it is not yet set"
+        )
 
     def get_path(self) -> str:
         return str(self.posix_path)
@@ -106,71 +114,75 @@ class SourceFile:
         return self.__entities
 
     def get_parameters(self) -> List[Parameter]:
-        return self.__selected_entity.get_parameters()
+        return self.get_top_entity().get_parameters()
 
-    def __get_parameter(self, parameter: str) -> Parameter:
-        for p in self.__selected_entity.get_parameters():
+    def get_parameter(self, parameter: str) -> Parameter:
+        for p in self.get_top_entity().get_parameters():
             if p.get_name() == parameter:
                 return p
         raise Exception(
             "Parameter "
             + parameter
             + "has not been found among parsed parameters"
-            + str(self.__selected_entity.get_parameters())
+            + str(self.get_top_entity().get_parameters())
             + " in entity "
-            + self.__selected_entity.get_name()
+            + self.get_top_entity().get_name()
         )
 
     def get_top_level(self):
         return self.__top_level
 
     def get_parameter_value(self, parameter: str) -> Optional[int]:
-        return self.__get_parameter(parameter).get_value()
+        return self.get_parameter(parameter).get_value()
 
     def __set_parameter_value(self, parameter: str, value: int) -> None:
-        self.__get_parameter(parameter).set_value(value)
+        self.get_parameter(parameter).set_value(value)
 
     def write_parameter_values(
-        self, handler, values: Dict[str, int],
+        self, hdl_handler: FrameHandler, values: Dict[str, int],
     ):
-        # here the handler is a HdlBoxHandler, cannot import the name
-        # due to circular import
-        for p, v in values:
+        # FrameHandler is too broad, should use HdlBoxHandler but in python 3.6 is not
+        # possible to solve the circular dependency
+
+        for p, v in values.items():
             self.__set_parameter_value(p, v)
-        handler.fill_box(
-            [
-                p
-                for p in self.__selected_entity.get_parameters()
-                if p in values.keys()
-            ]
+
+        hdl_handler.replacements = [
+            p.get_name()
+            for p in self.get_top_entity().get_parameters()
+            if p in values.keys()
+        ]
+        hdl_handler.set_parameters(
+            [self.get_parameter(p) for p in values.keys()]
         )
+        hdl_handler.fill()
 
     def get_ports(self) -> List[Port]:
-        return self.__selected_entity.get_ports()
+        return self.get_top_entity().get_ports()
 
     def get_port(self, port: str) -> Port:
-        for p in self.__selected_entity.get_ports():
+        for p in self.get_top_entity().get_ports():
             if p.get_name() == port:
                 return p
         raise Exception(
             "Port "
             + port
             + "has not been found among parsed ports"
-            + str(self.__selected_entity.get_ports())
+            + str(self.get_top_entity().get_ports())
             + " in entity "
-            + self.__selected_entity.get_name()
+            + self.get_top_entity().get_name()
         )
 
     def check_port(self, port: str) -> Optional[Port]:
-        for p in self.__selected_entity.get_ports():
+        for p in self.get_top_entity().get_ports():
             if p.get_name() == port:
                 return p
         return None
 
-    def get_port_direction(self, port: str) -> str:
+    def get_port_direction(self, port: str) -> Optional[str]:
         return self.get_port(port).get_direction()
 
-    def get_port_type(self, port: str) -> str:
+    def get_port_type(self, port: str) -> Optional[str]:
         return self.get_port(port).get_type()
 
     def get_imports(self) -> Tuple[List[str], List[str]]:
@@ -178,3 +190,4 @@ class SourceFile:
             self.__top_level.get_libraries(),
             self.__top_level.get_use_clauses(),
         )
+

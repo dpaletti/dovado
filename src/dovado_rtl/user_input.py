@@ -3,6 +3,7 @@ from pathvalidate import is_valid_filepath
 from os import path
 from pathlib import Path
 from collections import OrderedDict
+from typing import Tuple, Optional, Set, List, Dict
 import dovado_rtl.vivado_interaction as vivado
 import dovado_rtl.doc_parsing as doc
 from dovado_rtl.config import Configuration
@@ -13,10 +14,10 @@ from dovado_rtl.utility_classes import (
     RTL,
 )
 from dovado_rtl.src_parsing import SourceFile
-from dovado_rtl.antlr.HdlRepresentation import Port
+from dovado_rtl.antlr.HdlRepresentation import Entity, Parameter, Port
 
 
-def list_rtl_files(src_path):
+def list_rtl_files(src_path: Path) -> Set[str]:
     rtl_extensions = ["vhd", "vhdl", "v", "sv"]
     files = []
     for extension in rtl_extensions:
@@ -26,7 +27,7 @@ def list_rtl_files(src_path):
     return set(files)
 
 
-def ask_code_dir():
+def ask_code_dir() -> str:
     while True:
         default = "./"
         user_input = input(
@@ -43,21 +44,24 @@ def ask_code_dir():
         print("Invalid path, ensure there are no typos\n")
 
 
-def top_module_exists(src_folder: str, module: str, config: Configuration):
+def get_top_module(
+    src_folder: str, module: str, config: Configuration
+) -> Tuple[Entity, str]:
+    # TODO optimize this search
 
     for src in list_rtl_files(Path(src_folder)):
-        if module in SourceFile(
-            src
-        ).get_entities() and src != src_folder + config.get_config(
-            "VHDL_LOCAL_SRC"
-        ):
-            return src
-    return None
+        entities: List[Entity] = SourceFile(src).get_entities()
+        for e in entities:
+            if e.get_name() == module and src != src_folder + str(
+                config.get_config("VHDL_LOCAL_SRC")
+            ):
+                return e, src
+    raise ValueError("Could not find module")
 
 
-def default_top_module(src_folder: str):
+def default_top_module(src_folder: str) -> Tuple[Entity, str]:
     for src in list_rtl_files(Path(src_folder)):
-        modules = SourceFile(src).get_entities()
+        modules: List[Entity] = SourceFile(src).get_entities()
         if modules:
             return modules[0], src
     print("No module found in the given source files")
@@ -68,7 +72,9 @@ def default_top_module(src_folder: str):
     )
 
 
-def ask_top_module(src_folder: str, config: Configuration):
+def ask_top_module(
+    src_folder: str, config: Configuration
+) -> Tuple[Entity, str]:
     default, def_src = default_top_module(src_folder)
     while True:
         user_input = input(
@@ -76,17 +82,18 @@ def ask_top_module(src_folder: str, config: Configuration):
             + default.get_name()
             + "]: "
         )
-        mod_src = top_module_exists(src_folder, user_input, config)
-        if mod_src or user_input == "":
-            return (
-                (default, def_src)
-                if user_input == ""
-                else (user_input, mod_src)
+        try:
+            print("Looking for top_module among source files")
+            mod: Tuple[Entity, str] = get_top_module(
+                src_folder, user_input, config
             )
-        print("Module does not exist among the files in the code folder\n")
+            return (default, def_src) if user_input == "" else (mod[0], mod[1])
+        except ValueError:
+            print("Module does not exist among the files in the code folder\n")
+            continue
 
 
-def ask_part():
+def ask_part() -> str:
     parts = vivado.get_parts()
     default = list(parts.keys())[0]
     while True:
@@ -128,7 +135,7 @@ def ask_stop_step() -> StopStep:
             )
 
 
-def ask_incremental_mode(stop_step) -> IsIncremental:
+def ask_incremental_mode(stop_step: StopStep) -> IsIncremental:
     default = "yes"
     default_second = "yes"
     while True:
@@ -164,12 +171,7 @@ def ask_incremental_mode(stop_step) -> IsIncremental:
 
 def _ask_implementation_directives(
     to_request: ImplementationStep, incremental_mode: IsIncremental,
-):
-    if not isinstance(to_request, ImplementationStep):
-        raise ValueError(
-            "_request_incremental_directives called with " + str(to_request)
-        )
-
+) -> str:
     default = "Default"
     directives_paragraph = doc.get_directives_paragraph(
         to_request.name.lower()
@@ -210,7 +212,9 @@ def _ask_implementation_directives(
             return default if user_input == "" else user_input
 
 
-def ask_directives(stop_step, incremental_mode: IsIncremental):
+def ask_directives(
+    stop_step: StopStep, incremental_mode: IsIncremental
+) -> Tuple[str, Optional[str], Optional[str]]:
     synth_directives_paragraph = doc.get_directives_paragraph("synthesis")
     synth_directives = doc.get_directives(synth_directives_paragraph)
     or_directives = ""
@@ -249,7 +253,7 @@ def ask_directives(stop_step, incremental_mode: IsIncremental):
         )
 
 
-def ask_clock():
+def ask_clock() -> int:
     default = "250"
     while True:
         user_input = input(
@@ -266,7 +270,7 @@ def ask_clock():
             continue
 
 
-def get_default_clock_identifier(parsed_src: SourceFile):
+def get_default_clock_identifier(parsed_src: SourceFile) -> List[str]:
     return [
         i
         for i in [j.get_name() for j in parsed_src.get_ports()]
@@ -274,7 +278,9 @@ def get_default_clock_identifier(parsed_src: SourceFile):
     ]
 
 
-def is_valid_clock(parsed_src: SourceFile, port: Port):
+def is_valid_clock(
+    parsed_src: SourceFile, port: Optional[Port]
+) -> Tuple[Optional[Port], Optional[str], Optional[str]]:
     if not port:
         return None, None, None
     port_direction = port.get_direction()
@@ -292,7 +298,7 @@ def is_valid_clock(parsed_src: SourceFile, port: Port):
     return None, port_direction, port_type
 
 
-def ask_identifiers(parsed_src: SourceFile):
+def ask_identifiers(parsed_src: SourceFile) -> Port:
     while True:
         user_input = input("Enter clock identifier: ")
         clock, clock_direction, clock_port_type = is_valid_clock(
@@ -310,8 +316,8 @@ def ask_identifiers(parsed_src: SourceFile):
 
 
 def ask_parameters_range(
-    param_list, config: Configuration
-):  # -> OrderedDict[str, Tuple[int, int]]
+    param_list: List[Parameter], config: Configuration
+) -> "OrderedDict[str, Tuple[int, int]]":
     shortcut = "_"
     print(
         "For each parameter specify a range e.g.'0 100' ,\n"
@@ -326,16 +332,18 @@ def ask_parameters_range(
     param_range_accumulator = []
     i = 0
     while i < len(param_list):
-        user_input = input("Enter range for " + param_list[i] + ": ")
+        user_input = input(
+            "Enter range for " + str([p.get_name for p in param_list]) + ": "
+        )
         if user_input == shortcut:
             return OrderedDict(
                 zip(
-                    param_list,
+                    [p.get_name() for p in param_list],
                     param_range_accumulator
                     + (
                         [
                             (
-                                -config.get_config("INTEGER_HIGH"),
+                                -int(config.get_config("INTEGER_HIGH")),
                                 config.get_config("INTEGER_HIGH"),
                             )
                         ]
@@ -355,22 +363,27 @@ def ask_parameters_range(
         except Exception:
             print("Could not parse input as a pair of integers ")
 
-    return OrderedDict(zip(param_list, param_range_accumulator))
+    return OrderedDict(
+        zip([p.get_name() for p in param_list], param_range_accumulator)
+    )
 
 
-def ask_parameters(parsed_src: SourceFile):
+def ask_parameters(parsed_src: SourceFile) -> List[Parameter]:
     while True:
         user_input = input(
             "Enter a comma separated list "
             + "of parameters to optimize [example: firstParam, N, width]: "
         )
         param_list = parse_comma_separated_list(r"\w+", user_input)
-        available_param_list = [
-            i.get_name() for i in parsed_src.get_parameters()
-        ]
-        if param_list and all(i in available_param_list for i in param_list):
+        available_param_list = [i for i in parsed_src.get_parameters()]
+        if param_list and all(
+            i in [p.get_name() for p in available_param_list]
+            for i in param_list
+        ):
             return [
-                i for i in available_param_list if i in param_list
+                parsed_src.get_parameter(i)
+                for i in [p.get_name() for p in available_param_list]
+                if i in param_list
             ]  # return ordered list
         if not param_list:
             print("Malformed list: " + user_input + "\ntry again\n")
@@ -389,7 +402,9 @@ def ask_parameters(parsed_src: SourceFile):
             )
 
 
-def parse_comma_separated_list(regexp_element, to_parse):
+def parse_comma_separated_list(
+    regexp_element: str, to_parse: str
+) -> Optional[List[str]]:
     return (
         None
         if not re.fullmatch(
@@ -405,7 +420,9 @@ def parse_comma_separated_list(regexp_element, to_parse):
     )
 
 
-def ask_utilization_metrics(util_indices):
+def ask_utilization_metrics(
+    util_indices: Dict[str, List[str]]
+) -> List[Tuple[str, str]]:
 
     info_prompt = "Percentage Utilisation indices available:\n"
     i = 0
@@ -441,7 +458,7 @@ def ask_utilization_metrics(util_indices):
             )
 
 
-def ask_is_point_evaluation():
+def ask_is_point_evaluation() -> bool:
     default = "p"
     while True:
         user_input = input(
@@ -461,11 +478,17 @@ def ask_is_point_evaluation():
         return True if user_input == "p" else False
 
 
-def ask_parameters_value(param_list):
+def ask_parameters_value(param_list: List[Parameter]) -> List[int]:
+    if len(param_list) == 0:
+        raise Exception(
+            "No params passed to ask_parameters_value, at least one must be selected"
+        )
     parameter_value_accumulator = []
     i = 0
     while i < len(param_list):
-        user_input = input("Enter value for parameter " + param_list[i] + ":")
+        user_input = input(
+            "Enter value for parameter " + param_list[i].get_name() + ":"
+        )
         try:
             parameter_value_accumulator.append(int(user_input))
             i = i + 1

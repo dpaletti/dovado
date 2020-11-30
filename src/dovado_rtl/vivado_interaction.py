@@ -1,6 +1,7 @@
 import pexpect
 import threading
 import re
+from typing import Tuple, Dict
 
 vivado = None
 t_vivado_init = None
@@ -20,7 +21,7 @@ def start():
     return vivado
 
 
-def execute_command(command):
+def execute_command(command: str) -> str:
     if not vivado.isalive():
         raise Exception(
             "Could not start Vivado, is it installed?"
@@ -38,15 +39,15 @@ def execute_command(command):
 
     vivado.sendline(command)
     vivado.expect("Vivado%", timeout=None)
-    return vivado.before
+    return str(vivado.before)
 
 
-def source(tcl_script):
+def source(tcl_script: str) -> Tuple[str, bool]:
     vivado_out = execute_command("source " + tcl_script)
     return vivado_out, not re.findall("ERROR:", vivado_out)
 
 
-def get_parts():
+def get_parts() -> Dict[str, str]:
     parts = [
         x.strip()
         for x in re.sub(
@@ -65,5 +66,5 @@ def get_parts():
     return dict(zip(parts, family))
 
 
-def get_help(command):
+def get_help(command: str) -> str:
     return execute_command("help " + command)
