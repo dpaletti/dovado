@@ -85,7 +85,9 @@ def ask_top_module(
         try:
             print("Looking for top_module among source files")
             mod: Tuple[Entity, str] = get_top_module(
-                src_folder, user_input, config
+                src_folder,
+                user_input if user_input != "" else default.get_name(),
+                config,
             )
             return (default, def_src) if user_input == "" else (mod[0], mod[1])
         except ValueError:
