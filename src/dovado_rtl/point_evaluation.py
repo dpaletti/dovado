@@ -57,6 +57,7 @@ class DesignPointEvaluator:
 
     @lru_cache()
     def evaluate(self, design_point: Tuple[int]) -> DesignValue:
+
         self.parsed_file.write_parameter_values(
             self.hdl_handler, dict(zip(self.free_parameters, design_point)),
         )
@@ -70,7 +71,6 @@ class DesignPointEvaluator:
         if self.is_first_evaluation:
             self.is_first_evaluation = False
             self.tcl_handler.setup_incremental(self.is_incremental)
-
         return (
             DesignValue(
                 utilisation={i: float(np.inf) for i in self.metrics},

@@ -25,7 +25,7 @@ set outputDir vivado_out/
 file mkdir $outputDir
 
 # Design Sources and Constraints
-set src examples/verilog_unsigned_adder
+set src examples/corundum/fpga/common/rtl
 set xdcFile xdc/constraint.xdc
 read_verilog verilog/box.sv
 read_all_files $src
