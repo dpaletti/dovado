@@ -70,15 +70,3 @@
 1.3,0.3195639067022403,Slice Logic-Slice LUTs*
 0.47,0.09059915432526476,Slice Logic-Slice Registers
 1.48,0.3013664108446628,Memory-Block RAM Tile
-Frequency
-100.0,0.47128369326937625,Slice Logic-Slice LUTs*
-100.0,0.471283696836288,Slice Logic-Slice Registers
-100.0,0.4712836894632585,Memory-Block RAM Tile
-Frequency
-3.01,0.11775973546832669,Slice Logic-Slice LUTs*
-1.02,-0.0037654725224100785,Slice Logic-Slice Registers
-171.85,11.533452613334912,Memory-Block RAM Tile
-Frequency
-100.0,10.404282403886572,Slice Logic-Slice LUTs*
-100.0,10.369233338578772,Slice Logic-Slice Registers
-100.0,14.848772541855356,Memory-Block RAM Tile

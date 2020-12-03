@@ -4,10 +4,10 @@ from typing import Tuple, List, Optional
 from pathlib import Path
 from random import randint, shuffle
 import numpy as np
-import scipy.stats as sp
 from sklearn.kernel_ridge import KernelRidge
+from scipy import stats
 from dovado_rtl.enums import RegressionModel
-from sklearn.model_selection import LeaveOneOut, GridSearchCV
+from sklearn.model_selection import LeaveOneOut, RandomizedSearchCV
 from dovado_rtl.config import Configuration
 from dovado_rtl.abstract_classes import (
     AbstractEstimator,
@@ -77,20 +77,13 @@ class Estimator(AbstractEstimator):
         y = self.__get_dependent_variables(metric)
         y = y.astype("float64").reshape(-1, 1)
         reg = KernelRidge()
-        lambda_0 = 1 / self.__signaltonoise(X)
         parameters = {
-            "alpha": [
-                1 / (8 * lambda_0),
-                1 / (4 * lambda_0),
-                1 / (2 * lambda_0),
-                lambda_0,
-                2 * lambda_0,
-            ],
-            "gamma": [1 / (4 * pi), 1 / (2 * pi), 1 / pi, 2 / pi, 4 / pi],
+            "alpha": stats.reciprocal(a=1e-7, b=1e2, size=10),
+            "gamma": stats.expon(scale=0.1),
             "kernel": ["rbf"],
         }
         cv = LeaveOneOut()
-        cv_reg = GridSearchCV(
+        cv_reg = RandomizedSearchCV(
             reg,
             parameters,
             cv=cv,
@@ -100,14 +93,6 @@ class Estimator(AbstractEstimator):
         cv_reg.fit(X, y)
         design_point = np.reshape(design_point, (1, -1))
         return cv_reg.predict(design_point)[0][0]
-
-    def __signaltonoise(
-        self, a: "np.ndarray", axis: int = 0, ddof: int = 0
-    ) -> "np.ndarray((1), dtype=float)":
-        a = np.asanyarray(a)
-        m = a.mean(axis)
-        sd = a.std(axis=axis, ddof=ddof)
-        return np.where(sd == 0, 0, m / sd)
 
     def add_example(self, example: Example) -> None:
         if not self.__metrics:
