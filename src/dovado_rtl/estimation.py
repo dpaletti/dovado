@@ -1,46 +1,117 @@
-from statsmodels.nonparametric.kernel_regression import KernelReg
+from cmath import pi
 from collections import OrderedDict
-from typing import Tuple, List
+from typing import Tuple, List, Optional
+from pathlib import Path
 from random import randint, shuffle
 import numpy as np
-from dovado_rtl.point_evaluation import DesignPointEvaluator, DesignValue
+import scipy.stats as sp
+from sklearn.kernel_ridge import KernelRidge
+from dovado_rtl.enums import RegressionModel
+from sklearn.model_selection import LeaveOneOut, GridSearchCV
+from dovado_rtl.config import Configuration
+from dovado_rtl.abstract_classes import (
+    AbstractEstimator,
+    AbstractDesignPointEvaluator,
+)
+from dovado_rtl.simple_types import Example, Metric
 
 
-class Example:
-    def __init__(self, design_point: List[int], design_value: DesignValue):
-        self.design_point: List[int] = design_point
-        self.design_value: DesignValue = design_value
-
-
-class Estimator:
+class Estimator(AbstractEstimator):
     def __init__(
         self,
-        design_point_evaluator: DesignPointEvaluator,
+        regression_model: RegressionModel,
+        design_point_evaluator: AbstractDesignPointEvaluator,
         free_parameters_range: "OrderedDict[str, Tuple[int, int]]",
         dataset_size: int,
+        config: Configuration,
     ):
+        self.__regression_model = regression_model
         self.__examples: List[Example] = []
         self.__examples_updated: bool = True
         self.__estimator = None
-        self.__design_point_evaluator: DesignPointEvaluator = design_point_evaluator
+        self.__design_point_evaluator: AbstractDesignPointEvaluator = design_point_evaluator
         self.__dataset_size: int = dataset_size
+        self.__config: Configuration = config
+        self.__design_point_evaluator.set_estimator(self)
+        self.__metrics: Optional[List[Metric]] = None
+        if self.__config.get_config("ESTIMATION_TESTING"):
+            self.__fname = str(self.__config.get_config("WORK_DIR")) + str(
+                self.__config.get_config("EST_TEST_CSV")
+            )
+            Path(self.__fname).open("w").close()
         self.__generate_dataset(free_parameters_range,)
 
-    def estimate(
-        self, design_point: List[float], metric: Tuple[str, str]
-    ) -> float:
-        if self.__examples_updated:
-            independent_variables = self.__get_independent_variables()
-            self.__estimator = KernelReg(
-                self.__get_dependent_variable(metric),
-                independent_variables,
-                "c" * len(independent_variables),
+    def estimate(self, design_point: List[int], metric: Metric) -> float:
+        if self.__regression_model is RegressionModel.KERNEL_RIDGE:
+            estimate = self.__kernel_ridge(design_point, metric)
+        else:
+            raise Exception("Other models still need to be implemented")
+
+        if self.__config.get_config("ESTIMATION_TESTING") and len(
+            self.__examples
+        ) > max(len(list(design_point)), 5):
+            evaluated = self.__design_point_evaluator.evaluate(
+                tuple(design_point)
             )
-            self.__examples_updated = False
-        estimate, _ = self.__estimator.fit(np.array(design_point))
-        return estimate[0]
+            line = (
+                str(evaluated.value[metric])
+                + ","
+                + str(estimate)
+                + ","
+                + (
+                    str(metric.utilisation[0])
+                    + "-"
+                    + str(metric.utilisation[1])
+                    if not metric.is_frequency
+                    else "Frequency"
+                )
+            )
+
+            Path(self.__fname).open("a").writelines([line + "\n"])
+
+        return estimate
+
+    def __kernel_ridge(self, design_point: List[int], metric: Metric) -> float:
+        X = self.__get_independent_variables()
+        X = X.astype("int64").reshape(-1, len(design_point))
+        y = self.__get_dependent_variables(metric)
+        y = y.astype("float64").reshape(-1, 1)
+        reg = KernelRidge()
+        lambda_0 = 1 / self.__signaltonoise(X)
+        parameters = {
+            "alpha": [
+                1 / (8 * lambda_0),
+                1 / (4 * lambda_0),
+                1 / (2 * lambda_0),
+                lambda_0,
+                2 * lambda_0,
+            ],
+            "gamma": [1 / (4 * pi), 1 / (2 * pi), 1 / pi, 2 / pi, 4 / pi],
+            "kernel": ["rbf"],
+        }
+        cv = LeaveOneOut()
+        cv_reg = GridSearchCV(
+            reg,
+            parameters,
+            cv=cv,
+            scoring="neg_root_mean_squared_error",
+            n_jobs=-1,
+        )
+        cv_reg.fit(X, y)
+        design_point = np.reshape(design_point, (1, -1))
+        return cv_reg.predict(design_point)[0][0]
+
+    def __signaltonoise(
+        self, a: "np.ndarray", axis: int = 0, ddof: int = 0
+    ) -> "np.ndarray((1), dtype=float)":
+        a = np.asanyarray(a)
+        m = a.mean(axis)
+        sd = a.std(axis=axis, ddof=ddof)
+        return np.where(sd == 0, 0, m / sd)
 
     def add_example(self, example: Example) -> None:
+        if not self.__metrics:
+            self.__metrics = self.__design_point_evaluator.get_metrics()
         self.__examples.append(example)
         shuffle(self.__examples)
         self.__examples_updated = True
@@ -57,16 +128,14 @@ class Estimator:
             design_value = self.__design_point_evaluator.evaluate(
                 tuple(design_point)
             )
-            self.add_example(Example(design_point, design_value))
+            self.add_example(
+                Example(design_point=design_point, design_value=design_value)
+            )
 
-    def __get_dependent_variable(
-        self, metric: Tuple[str, str]
-    ) -> "np.ndarray":
+    def __get_dependent_variables(self, metric: Metric) -> "np.ndarray":
         dependent_variable = []
         for example in self.__examples:
-            dependent_variable.append(
-                DesignPointEvaluator.get_metric(example.design_value, metric)
-            )
+            dependent_variable.append(example.design_value.value[metric])
         return np.array(dependent_variable)
 
     def __get_independent_variables(self) -> "np.ndarray":

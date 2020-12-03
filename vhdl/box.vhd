@@ -16,7 +16,7 @@ architecture box_arch of box is
 begin
   BOXED:  entity Work.pp_potato
     generic map(
-ICACHE_LINE_SIZE => 4)
+ICACHE_LINE_SIZE => 2)
     port map(
     clk => clk,
     -- remaining input ports are attached to internal clocks

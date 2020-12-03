@@ -1,6 +1,7 @@
 import re
 from pathlib import Path
-from typing import Dict, Any, List
+from importlib_resources import files
+from typing import Dict, Any, List, Optional
 from bs4 import BeautifulSoup
 from bs4.element import PageElement, ResultSet
 import numpy as np
@@ -29,7 +30,9 @@ def _get_percentage_util(columns: ResultSet, row: PageElement) -> str:
 
 
 def get_available_indices(report_path: str) -> Dict[str, List[str]]:
-    report: BeautifulSoup = BeautifulSoup(Path(report_path).open(), "lxml-xml")
+    report: BeautifulSoup = BeautifulSoup(
+        Path(report_path).open(), "lxml-xml",
+    )
     indices = {}
     sections_partial: ResultSet = report.find_all("section")
     sections = []
@@ -60,7 +63,9 @@ def get_available_indices(report_path: str) -> Dict[str, List[str]]:
 
 
 def get_utilisation(report_path: str, section_name: str, row_name: str):
-    report: BeautifulSoup = BeautifulSoup(Path(report_path).open(), "lxml-xml")
+    report: BeautifulSoup = BeautifulSoup(
+        Path(report_path).open(), "lxml-xml",
+    )
     section: PageElement = report.find("section", {"title": section_name})
     columns: ResultSet = section.find_all("tableheader")
     row: PageElement = section.find(

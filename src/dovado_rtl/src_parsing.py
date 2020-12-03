@@ -3,34 +3,37 @@ from typing import List, Tuple, Any, Union, Optional, Dict
 from antlr4 import CommonTokenStream, FileStream
 from dovado_rtl.antlr.generated.vhdl.vhdlLexer import vhdlLexer
 from dovado_rtl.antlr.generated.vhdl.vhdlParser import vhdlParser
-from dovado_rtl.antlr.VhdlEntityVisitor import VhdlEntityVisitor
+from dovado_rtl.antlr.vhdl_entity_visitor import VhdlEntityVisitor
 from dovado_rtl.antlr.generated.Verilog2001.Verilog2001Parser import (
     Verilog2001Parser,
 )
 from dovado_rtl.antlr.generated.Verilog2001.Verilog2001Lexer import (
     Verilog2001Lexer,
 )
-from dovado_rtl.antlr.Verilog2001EntityVisitor import Verilog2001EntityVisitor
+from dovado_rtl.antlr.verilog2001_entity_visitor import (
+    Verilog2001EntityVisitor,
+)
 from dovado_rtl.antlr.generated.SysVerilogHDL.SysVerilogHDLParser import (
     SysVerilogHDLParser,
 )
 from dovado_rtl.antlr.generated.SysVerilogHDL.SysVerilogHDLLexer import (
     SysVerilogHDLLexer,
 )
-from dovado_rtl.antlr.SysVerilogHDLEntityVisitor import (
+from dovado_rtl.antlr.sysverilog_entity_visitor import (
     SysVerilogHDLEntityVisitor,
 )
-from dovado_rtl.antlr.HdlRepresentation import (
-    Entity,
+from dovado_rtl.antlr.hdl_representation import (
+    Entity, PortDirection, PortType,
     TopLevel,
     Parameter,
     Port,
 )
-from dovado_rtl.utility_classes import RTL
-from dovado_rtl.frame_handler import FrameHandler
+from dovado_rtl.abstract_classes import AbstractSourceParser
+from dovado_rtl.enums import RTL
+from dovado_rtl.fill_handler import FillHandler
 
 
-class SourceFile:
+class SourceParser(AbstractSourceParser):
     def __init__(self, src_path: str, entity: Optional[Entity] = None):
         self.posix_path = Path(src_path)
         supported_extensions = [".vhd", ".vhdl", ".v", ".sv"]
@@ -57,7 +60,7 @@ class SourceFile:
         self.__entities, self.__top_level = self.parse()
         self.__selected_entity: Optional[Entity] = entity
 
-    def parse(self) -> Tuple[List[Entity], Union[TopLevel, Any]]:
+    def parse(self) -> Tuple[List[Entity], Optional[TopLevel]]:
         if self.__RTL is RTL.VHDL:
             lexer = vhdlLexer(self.__input_stream)
             token_stream = CommonTokenStream(lexer)
@@ -139,7 +142,7 @@ class SourceFile:
         self.get_parameter(parameter).set_value(value)
 
     def write_parameter_values(
-        self, hdl_handler: FrameHandler, values: Dict[str, int],
+        self, hdl_handler: FillHandler, values: Dict[str, int],
     ):
         # FrameHandler is too broad, should use HdlBoxHandler but in python 3.6 is not
         # possible to solve the circular dependency
@@ -179,10 +182,10 @@ class SourceFile:
                 return p
         return None
 
-    def get_port_direction(self, port: str) -> Optional[str]:
+    def get_port_direction(self, port: str) -> Optional[PortDirection]:
         return self.get_port(port).get_direction()
 
-    def get_port_type(self, port: str) -> Optional[str]:
+    def get_port_type(self, port: str) -> Optional[PortType]:
         return self.get_port(port).get_type()
 
     def get_imports(self) -> Tuple[List[str], List[str]]:

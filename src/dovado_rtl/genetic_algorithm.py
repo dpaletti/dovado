@@ -12,6 +12,7 @@ from pymoo.optimize import minimize
 
 
 import numpy as np
+from dovado_rtl.simple_types import Metric
 from dovado_rtl.fitness import FitnessEvaluator
 import pickle
 
@@ -21,11 +22,10 @@ class MyProblem(Problem):
         self,
         fitness_evaluator: FitnessEvaluator,
         free_parameters_range: "OrderedDict[str, Tuple[int, int]]",
-        metrics: List[Tuple[str, str]],
+        metrics: List[Metric],
     ):
         self.evaluator: FitnessEvaluator = fitness_evaluator
-        self.metrics: List[Tuple[str, str]] = metrics
-        metrics.append(("Frequency", "max_frequency"))
+        self.metrics: List[Metric] = metrics
         super().__init__(
             n_var=len(free_parameters_range.keys()),
             n_obj=len(free_parameters_range.keys()),
@@ -54,7 +54,7 @@ class MyProblem(Problem):
 def optimize(
     evaluator: FitnessEvaluator,
     free_parameters_range: "OrderedDict[str, Tuple[int, int]]",
-    metrics: List[Tuple[str, str]],
+    metrics: List[Metric],
     execution_time: str,
 ) -> List[float]:
     problem = MyProblem(evaluator, free_parameters_range, metrics)
@@ -81,4 +81,4 @@ def optimize(
         pickle.dump([res, algorithm], f)
     # with open('objs.pkl', 'rb') as f:
     #     obj0, obj1, obj2 = pickle.load(f)
-    return res.F[-1].to_list()
+    return res.F[-1].tolist()

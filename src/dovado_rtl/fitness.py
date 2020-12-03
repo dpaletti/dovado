@@ -1,14 +1,17 @@
 import math
 from functools import lru_cache
 from heapq import nlargest
-from dovado_rtl.estimation import Estimator, Example
+from dovado_rtl.simple_types import Metric, Example
+from dovado_rtl.estimation import Estimator
 from dovado_rtl.point_evaluation import DesignPointEvaluator
 from dovado_rtl.config import Configuration
 import numpy as np
 from typing import Tuple, List
 
+from dovado_rtl.abstract_classes import AbstractFitnessEvaluator
 
-class FitnessEvaluator:
+
+class FitnessEvaluator(AbstractFitnessEvaluator):
     def __init__(
         self,
         estimator: Estimator,
@@ -23,61 +26,28 @@ class FitnessEvaluator:
         self.__set_threshold(self.estimator.get_examples())
 
     @lru_cache()
-    def fitness(self, design_point: Tuple[int], metric: Tuple[str, str]):
+    def fitness(self, design_point: Tuple[int, ...], metric: Metric):
         # design_point is a Tuple because lists are unhashable
         # and caching is allowed only with hashable parameters
 
-        print(
-            "Nth nearest distance: "
-            + str(
-                self.__nth_nearest_distance(
-                    list(design_point),
-                    self.estimator.get_examples(),
-                    int(self.config.get_config("N")),
-                )
-            )
+        sample_distance = self.__nth_nearest_distance(
+            list(design_point),
+            self.estimator.get_examples(),
+            int(self.config.get_config("N")),
         )
+        print("Nth nearest distance: " + str(sample_distance))
         if (
-            (
-                self.__nth_nearest_distance(
-                    list(design_point),
-                    self.estimator.get_examples(),
-                    int(self.config.get_config("N")),
-                )
-                == 0
-            )
-            or (
-                self.__nth_nearest_distance(
-                    list(design_point),
-                    self.estimator.get_examples(),
-                    int(self.config.get_config("N")),
-                )
-                > self.threshold
-            )
+            (sample_distance == 0)
+            or (sample_distance > self.threshold)
             or (not self.estimate_working)
         ):
             print("Fitness calling Vivado directly")
             full_design_value = self.evaluator.evaluate(design_point)
-            design_value = self.evaluator.get_metric(full_design_value, metric)
-            if (
-                self.__nth_nearest_distance(
-                    list(design_point),
-                    self.estimator.get_examples(),
-                    int(self.config.get_config("N")),
+            design_value = full_design_value.value[metric]
+            if self.estimate_working:
+                self.estimator.add_example(
+                    Example(list(design_point), full_design_value)
                 )
-                > self.threshold
-            ) and self.estimate_working:
-
-                if any(
-                    np.isinf(v) for v in full_design_value.utilisation.values()
-                ) or np.isinf(full_design_value.negative_max_frequency):
-                    self.estimator.add_example(
-                        Example(list(design_point), full_design_value)
-                    )
-                else:
-                    self.estimator.add_example(
-                        Example(list(design_point), full_design_value)
-                    )
                 self.__set_threshold(self.estimator.get_examples())
         else:
             print("Fitness estimating")
@@ -86,10 +56,7 @@ class FitnessEvaluator:
                 print("Disabling estimator")
                 self.estimate_working = False
                 full_design_value = self.evaluator.evaluate(design_point)
-                design_value = self.evaluator.get_metric(
-                    full_design_value, metric
-                )
-
+                design_value = full_design_value.value[metric]
         print("design_point: " + str(design_point))
         print("metric: " + str(metric))
         print("Design Value: " + str(design_value))

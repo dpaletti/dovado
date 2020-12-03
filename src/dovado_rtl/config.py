@@ -5,6 +5,15 @@ import yaml
 
 class Configuration:
     __config_dict = {
+        # This switch controls if at each estimate call
+        # also vivado is called in order to record approximation accuracy
+        # against the real value
+        "ESTIMATION_TESTING": True,
+        "EST_TEST_CSV": "estimation_accuracy.csv",
+        # Dovado Working Dir
+        # This directory will be created in the same directory
+        # in which the "dovado" command is executed
+        "WORK_DIR": "dovado_work/",
         # Directory holding tcl scripts
         "TCL_DIR": "tcl/",
         # Directory holding xdc files
@@ -28,18 +37,10 @@ class Configuration:
         "IMPLEMENTATION_FRAME": "implementation_frame.tcl",
         # TCL script with all fields filled with user input
         "IMPLEMENTATION": "implementation.tcl",
-        # Local copy of VHDL top module source where parameters are changed in place.
-        # This is used if stop step is synthesis
-        # Reverse parsing does not work for (System)Verilog so no such file
-        # exists for the (System)Verilog case which is instead always boxed
-        # TODO remove VHDL_LOCAL_SRC and VERILOG_LOCAL_SRC if boxing removed
-        "VHDL_LOCAL_SRC": "dovado_work_file.vhd",
         # Vhdl file with fields to be filled for boxing
         "VHDL_BOX_FRAME": "box_frame.vhd",
         # Vhdl file with all fields filled
         "VHDL_BOX": "box.vhd",
-        # Verilog local source
-        "VERILOG_LOCAL_SRC": "dovado_work_file.sv",
         # Verilog file with fields to be filled for boxing
         "VERILOG_BOX_FRAME": "box_frame.sv",
         # Verilog file with all fields filled
@@ -64,7 +65,7 @@ class Configuration:
         # N-parameter to choose which example to calculate the distance from
         "N": 3,
         # Run time set as a constraint for the genetic algorithm, format "hh:mm:ss"
-        "GENETIC_RUN_TIME": "00:30:00",
+        "GENETIC_RUN_TIME": "04:00:00",
     }
 
     def __init__(self):

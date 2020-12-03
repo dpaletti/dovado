@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "dovado-rtl"
-version = "0.2.10"
+version = "0.2.11"
 description = "CLI tool for RTL Design Space Exploration on top of Vivado"
-authors = ["Daniele Paletti"]
+authors = ["Daniele Paletti <danielepaletti98@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/DPaletti/dovado"
@@ -19,7 +19,14 @@ keywords = [
     "Kernel Regression",
     "Nadaraya-Watson Model",
 ]
-
+packages = [
+    { include = "dovado_rtl", from = "src" },
+    { include = "vivado_out" },
+    { include = "vhdl" },
+    { include = "verilog" },
+    { include = "xdc" },
+    { include = "tcl" },
+]
 [tool.poetry.dependencies]
 python = "^3.6"
 pathvalidate = "^2.3.0"
@@ -27,10 +34,13 @@ BeautifulSoup4 = "^4.9.1"
 lxml = "^4.5.2"
 pyyaml = "^5.3.1"
 pexpect = "^4.8.0"
-statsmodels = "^0.12.0"
 pymoo = "^0.4.2"
 numpy = "^1.19.2"
-antlr4-python3-runtime = "^4.8"
+antlr4-python3-runtime = "~4.8.0"
+importlib-resources = "^3.3.0"
+dataclasses = "^0.8"
+sklearn = "^0.0"
+scipy = "^1.5.4"
 
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"

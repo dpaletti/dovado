@@ -1,14 +1,14 @@
+from pathlib import Path
 import dovado_rtl.user_input as user_input
-import dovado_rtl.report_parsing as report_utilities
 from dovado_rtl.config import Configuration
 import dovado_rtl.vivado_interaction as vivado
-from dovado_rtl.concrete_frame_handling import (
+from dovado_rtl.frame_handling import (
     TclFrameHandler,
     HdlBoxFrameHandler,
     XdcFrameHandler,
 )
-from dovado_rtl.utility_classes import RTL
-from dovado_rtl.src_parsing import SourceFile
+from dovado_rtl.enums import RTL, RegressionModel
+from dovado_rtl.src_parsing import SourceParser
 from dovado_rtl.point_evaluation import DesignPointEvaluator
 from dovado_rtl.estimation import Estimator
 from dovado_rtl.fitness import FitnessEvaluator
@@ -16,12 +16,14 @@ from dovado_rtl.genetic_algorithm import optimize
 
 
 def main():
+
     vivado.start()
     config = Configuration()
+    Path(str(config.get_config("WORK_DIR"))).mkdir(parents=True, exist_ok=True)
 
     src_folder = user_input.ask_code_dir()
     top_module, top_src = user_input.ask_top_module(src_folder, config)
-    parsed_source = SourceFile(top_src, top_module)
+    parsed_source = SourceParser(top_src, top_module)
     synthesis_part = user_input.ask_part()
 
     stop_step = user_input.ask_stop_step()
@@ -46,7 +48,7 @@ def main():
         str(config.get_config("XDC_DIR"))
         + str(config.get_config("CONSTRAINT_FRAME")),
         1000 / target_clock,
-        str(config.get_config("XDC_DIR"))
+        str(config.get_config("WORK_DIR"))
         + str(config.get_config("CONSTRAINT")),
     ).fill()
 
@@ -72,21 +74,14 @@ def main():
         top_module.get_name(),
         parsed_source.get_ports(),
         parsed_source.get_port(clock_port.get_name()),
-        str(config.get_config("VHDL_DIR")) + str(config.get_config("VHDL_BOX"))
+        str(config.get_config("WORK_DIR")) + str(config.get_config("VHDL_BOX"))
         if parsed_source.get_hdl() is RTL.VHDL
-        else str(config.get_config("VERILOG_DIR"))
+        else str(config.get_config("WORK_DIR"))
         + str(config.get_config("VERILOG_BOX")),
         parsed_source.get_hdl(),
         parsed_source.get_top_level()
         if parsed_source.get_hdl() is RTL.VHDL
         else None,
-    )
-
-    metrics = user_input.ask_utilization_metrics(
-        report_utilities.get_available_indices(
-            str(config.get_config("VIVADO_OUTPUT_DIR"))
-            + str(config.get_config(stop_step.name + "_UTILISATION"))
-        )
     )
 
     point_evaluator = DesignPointEvaluator(
@@ -98,7 +93,6 @@ def main():
         incremental_mode,
         stop_step,
         [p.get_name() for p in free_parameters],
-        metrics,
     )
 
     if user_input.ask_is_point_evaluation():
@@ -117,11 +111,22 @@ def main():
     )
 
     estimator = Estimator(
+        RegressionModel.KERNEL_RIDGE,
         point_evaluator,
         free_parameters_range,
         int(config.get_config("INITIAL_SAMPLES")),
+        config,
     )
+
     fitness_evaluator = FitnessEvaluator(estimator, point_evaluator, config)
+
+    metrics = point_evaluator.get_metrics()
+
+    if not metrics:
+        raise Exception(
+            "INITIAL_SAMPLES must be at least one in order to analyze "
+            + "which utilization metrics are available for the given board"
+        )
 
     result = optimize(
         fitness_evaluator,

@@ -7,14 +7,18 @@ from typing import Tuple, Optional, Set, List, Dict
 import dovado_rtl.vivado_interaction as vivado
 import dovado_rtl.doc_parsing as doc
 from dovado_rtl.config import Configuration
-from dovado_rtl.utility_classes import (
-    StopStep,
-    IsIncremental,
-    ImplementationStep,
-    RTL,
+from dovado_rtl.simple_types import IsIncremental, Metric
+from dovado_rtl.enums import RTL, StopStep, ImplementationStep
+from dovado_rtl.src_parsing import SourceParser
+from dovado_rtl.antlr.hdl_representation import (
+    Entity,
+    Parameter,
+    Port,
+    PortDirection,
+    PortDirectionEnum,
+    PortType,
+    PortTypeEnum,
 )
-from dovado_rtl.src_parsing import SourceFile
-from dovado_rtl.antlr.HdlRepresentation import Entity, Parameter, Port
 
 
 def list_rtl_files(src_path: Path) -> Set[str]:
@@ -50,18 +54,16 @@ def get_top_module(
     # TODO optimize this search
 
     for src in list_rtl_files(Path(src_folder)):
-        entities: List[Entity] = SourceFile(src).get_entities()
+        entities: List[Entity] = SourceParser(src).get_entities()
         for e in entities:
-            if e.get_name() == module and src != src_folder + str(
-                config.get_config("VHDL_LOCAL_SRC")
-            ):
+            if e.get_name() == module:
                 return e, src
     raise ValueError("Could not find module")
 
 
 def default_top_module(src_folder: str) -> Tuple[Entity, str]:
     for src in list_rtl_files(Path(src_folder)):
-        modules: List[Entity] = SourceFile(src).get_entities()
+        modules: List[Entity] = SourceParser(src).get_entities()
         if modules:
             return modules[0], src
     print("No module found in the given source files")
@@ -149,7 +151,10 @@ def ask_incremental_mode(stop_step: StopStep) -> IsIncremental:
             user_input = default if user_input == "" else user_input
             break
     if stop_step is StopStep.SYNTHESIS:
-        return IsIncremental(synthesis=True if user_input == "yes" else False)
+        return IsIncremental(
+            synthesis=True if user_input == "yes" else False,
+            implementation=True,
+        )
     while True:
         user_second_input = input(
             "Do you want to run implementation in incremental mode?"
@@ -272,7 +277,7 @@ def ask_clock() -> int:
             continue
 
 
-def get_default_clock_identifier(parsed_src: SourceFile) -> List[str]:
+def get_default_clock_identifier(parsed_src: SourceParser) -> List[str]:
     return [
         i
         for i in [j.get_name() for j in parsed_src.get_ports()]
@@ -281,16 +286,17 @@ def get_default_clock_identifier(parsed_src: SourceFile) -> List[str]:
 
 
 def is_valid_clock(
-    parsed_src: SourceFile, port: Optional[Port]
-) -> Tuple[Optional[Port], Optional[str], Optional[str]]:
+    parsed_src: SourceParser, port: Optional[Port]
+) -> Tuple[Optional[Port], Optional[PortDirection], Optional[PortType]]:
     if not port:
         return None, None, None
     port_direction = port.get_direction()
     port_type = port.get_type()
     if (
-        port_direction == "input" and port_type == "std_logic"
+        port_direction.direction is PortDirectionEnum.INPUT
+        and port_type.type is PortTypeEnum.SCALAR
         if parsed_src.get_hdl() is RTL.VHDL
-        else port_type == "wire"
+        else port_type.type is PortTypeEnum.VECTOR
     ):
         return (
             port,
@@ -300,7 +306,7 @@ def is_valid_clock(
     return None, port_direction, port_type
 
 
-def ask_identifiers(parsed_src: SourceFile) -> Port:
+def ask_identifiers(parsed_src: SourceParser) -> Port:
     while True:
         user_input = input("Enter clock identifier: ")
         clock, clock_direction, clock_port_type = is_valid_clock(
@@ -335,7 +341,7 @@ def ask_parameters_range(
     i = 0
     while i < len(param_list):
         user_input = input(
-            "Enter range for " + str([p.get_name for p in param_list]) + ": "
+            "Enter range for " + str(param_list[i].get_name()) + ": "
         )
         if user_input == shortcut:
             return OrderedDict(
@@ -370,7 +376,7 @@ def ask_parameters_range(
     )
 
 
-def ask_parameters(parsed_src: SourceFile) -> List[Parameter]:
+def ask_parameters(parsed_src: SourceParser) -> List[Parameter]:
     while True:
         user_input = input(
             "Enter a comma separated list "
@@ -424,36 +430,50 @@ def parse_comma_separated_list(
 
 def ask_utilization_metrics(
     util_indices: Dict[str, List[str]]
-) -> List[Tuple[str, str]]:
+) -> List[Metric]:
 
     info_prompt = "Percentage Utilisation indices available:\n"
     i = 0
     counter_dict = {}
     for section in util_indices.keys():
         info_prompt += section + "\n"
-        for metric in util_indices[section]:
+        for util_metric in util_indices[section]:
             i = i + 1
-            counter_dict[i] = (section, metric)
-            info_prompt += "\t(" + str(i) + ") " + metric + "\n"
+            counter_dict[i] = Metric(
+                utilisation=(section, util_metric), is_frequency=False
+            )
+            info_prompt += "\t(" + str(i) + ") " + util_metric + "\n"
 
     print(info_prompt)
-    default = "1, 4, 9"
+    default = "-1, 1, 4, 9"
     while True:
         user_input = input(
             "Enter a comma-separated list of percentage "
-            + "utilisation indices [default = "
+            + "indices to optimize, input -1 to select frequency [default = "
             + default
             + "]: "
         )
         if user_input == "":
             user_input = default
-        parsed_list = parse_comma_separated_list(r"\d+", user_input)
         try:
-            if parsed_list and max([int(i) for i in parsed_list]) < len(
+            parsed_list = [
+                int(i)
+                for i in parse_comma_separated_list(r"[-+]?\d+", user_input)
+            ]
+            if parsed_list and max([i for i in parsed_list if i > 0]) < len(
                 counter_dict
             ):
-                return [counter_dict[int(i)] for i in set(parsed_list)]
-        except Exception:
+                out: List[Metric] = [
+                    counter_dict[i]
+                    for i in set([i for i in parsed_list if i >= 0])
+                ]
+                return (
+                    (out + [Metric(None, True)])
+                    if (-1 in parsed_list)
+                    else out
+                )
+        except Exception as e:
+            print(e)
             print(
                 "Invalid input, please enter"
                 + " a comma separated list of integer numbers"
