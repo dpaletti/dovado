@@ -1,3 +1,4 @@
+import argparse as ap
 from pathlib import Path
 import dovado_rtl.user_input as user_input
 from dovado_rtl.config import Configuration
@@ -8,7 +9,6 @@ from dovado_rtl.frame_handling import (
     XdcFrameHandler,
 )
 from dovado_rtl.enums import RTL, RegressionModel
-from dovado_rtl.src_parsing import SourceParser
 from dovado_rtl.point_evaluation import DesignPointEvaluator
 from dovado_rtl.estimation import Estimator
 from dovado_rtl.fitness import FitnessEvaluator
@@ -18,11 +18,12 @@ from dovado_rtl.genetic_algorithm import optimize
 def main():
 
     vivado.start()
+    parser = ap.ArgumentParser()
     config = Configuration()
     Path(str(config.get_config("WORK_DIR"))).mkdir(parents=True, exist_ok=True)
 
     src_folder = user_input.ask_code_dir()
-    top_module, top_src, parsed_source = user_input.ask_top_module(
+    top_module, _, parsed_source = user_input.ask_top_module(
         src_folder, config
     )
     parsed_source.set_entity(top_module.get_name())

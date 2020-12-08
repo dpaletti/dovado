@@ -1,4 +1,4 @@
-from importlib_resources import files
+import argparse
 from pathlib import Path
 from typing import List, Optional
 from dovado_rtl.src_parsing import SourceParser
@@ -8,7 +8,6 @@ from dovado_rtl.antlr.hdl_representation import (
     Port,
     PortDirectionEnum,
     PortTypeEnum,
-    TopLevel,
 )
 from dovado_rtl.enums import RTL, StopStep
 from dovado_rtl.simple_types import IsIncremental
@@ -71,8 +70,8 @@ class TclFrameHandler(FillHandler):
         user_libs = "{"
         folder = ""
         if is_library:
-            for l in self.parsed_source.get_user_defined_libs():
-                user_libs += " " + l
+            for lib in self.parsed_source.get_user_defined_libs():
+                user_libs += " " + lib
         else:
             folder = self.parsed_source.get_folder()
             user_libs += " " + folder
@@ -192,10 +191,9 @@ class HdlBoxFrameHandler(FillHandler):
     def get_parameters(self) -> List[Parameter]:
         if self.__parameters:
             return self.__parameters
-        else:
-            raise Exception(
-                "Trying to access parameters in HdlBoxFrameHandler before setting them"
-            )
+        raise Exception(
+            "Trying to access parameters in HdlBoxFrameHandler before setting them"
+        )
 
     def set_parameters(self, parameters: List[Parameter]) -> None:
         self.__parameters = parameters

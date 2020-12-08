@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Tuple, Any, Union, Optional, Dict, Iterator
+from typing import List, Tuple, Optional, Dict, Iterator
 from antlr4 import CommonTokenStream, FileStream
 from dovado_rtl.antlr.generated.vhdl.vhdlLexer import vhdlLexer
 from dovado_rtl.antlr.generated.vhdl.vhdlParser import vhdlParser
