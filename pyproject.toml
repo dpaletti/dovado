@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dovado-rtl"
-version = "0.2.11"
+version = "0.2.12"
 description = "CLI tool for RTL Design Space Exploration on top of Vivado"
 authors = ["Daniele Paletti <danielepaletti98@gmail.com>"]
 license = "MIT"
@@ -38,7 +38,7 @@ pymoo = "^0.4.2"
 numpy = "^1.19.2"
 antlr4-python3-runtime = "~4.8.0"
 importlib-resources = "^3.3.0"
-dataclasses = "^0.8"
+dataclasses = { version = "^0.8", python = "~3.6" }
 sklearn = "^0.0"
 scipy = "^1.5.4"
 

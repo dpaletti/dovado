@@ -1,15 +1,19 @@
-# All lines starting with #! may be eventually stripped on user preference
+# All lines starting with #! may be eventually uncommented on user preference
+package require Tcl 8.0
+package require struct::set
 
-proc read_all_files { dir } {
-    set contents [glob -directory $dir *]
+proc read_all_files { dir libs} {
+    set contents [glob -nocomplain -directory $dir *]
 
     foreach item $contents {
         # recurse - go into the sub directory
         if { [file isdirectory $item] } {
-            read_all_files $item
+            read_all_files $item $libs
             }
         if { [file extension $item] == ".vhd" } {
-            read_vhdl -library bftLib $item
+            set path [file split  [file normalize $item]]
+            set lib [::struct::set intersect $libs $path]
+            read_vhdl -library $lib $item
         }
         if { [file extension $item] == ".v" } {
             read_verilog $item
@@ -25,11 +29,11 @@ set outputDir dovado_work/
 file mkdir $outputDir
 
 # Design Sources and Constraints
-set src examples/corundum/fpga/common/rtl
+set src ../neorv32/rtl/neorv32
 set xdcFile dovado_work/constraint.xdc
-read_verilog dovado_work/box.sv
-read_all_files $src
-## no disabling needed
+set libs_list { neorv32 }
+read_all_files $src $libs_list
+read_vhdl -library neorv32 dovado_work/box.vhd
 read_xdc $xdcFile
 
 # Run synthesis and write checkpoint

@@ -256,6 +256,10 @@ class VhdlEntityVisitor(vhdlParserVisitor):
         type = self.visitType_mark(ctx.type_mark())
         if type == "std_logic":
             return PortType(PortTypeEnum.SCALAR, "std_logic")
+        if type == "std_ulogic":
+            return PortType(PortTypeEnum.SCALAR, "std_ulogic")
+        if type == "std_ulogic_vector":
+            return PortType(PortTypeEnum.VECTOR, "std_ulogic_vector")
         elif type == "std_logic_vector":
             return PortType(PortTypeEnum.VECTOR, "std_logic_vector")
         elif type == "integer":

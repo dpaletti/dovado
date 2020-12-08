@@ -1,5 +1,7 @@
--- libraries read from the module to be boxed
+library ieee;
+-- library containing entity to be boxed
 ____
+use ieee.std_logic_1164.all;
 entity box is
   port (
     clk: in std_logic

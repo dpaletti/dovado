@@ -22,8 +22,10 @@ def main():
     Path(str(config.get_config("WORK_DIR"))).mkdir(parents=True, exist_ok=True)
 
     src_folder = user_input.ask_code_dir()
-    top_module, top_src = user_input.ask_top_module(src_folder, config)
-    parsed_source = SourceParser(top_src, top_module)
+    top_module, top_src, parsed_source = user_input.ask_top_module(
+        src_folder, config
+    )
+    parsed_source.set_entity(top_module.get_name())
     synthesis_part = user_input.ask_part()
 
     stop_step = user_input.ask_stop_step()
@@ -55,6 +57,7 @@ def main():
     tcl_handler = TclFrameHandler(
         config,
         parsed_source,
+        src_folder,
         synthesis_part,
         synthesis_directive,
         incremental_mode,
@@ -79,7 +82,7 @@ def main():
         else str(config.get_config("WORK_DIR"))
         + str(config.get_config("VERILOG_BOX")),
         parsed_source.get_hdl(),
-        parsed_source.get_top_level()
+        parsed_source.get_folder()
         if parsed_source.get_hdl() is RTL.VHDL
         else None,
     )

@@ -38,6 +38,7 @@ class TclFrameHandler(FillHandler):
         self,
         config: Configuration,
         parsed_source: SourceParser,
+        base_folder: str,
         synthesis_part: str,
         synthesis_directive: str,
         incremental_mode: IsIncremental,
@@ -46,6 +47,7 @@ class TclFrameHandler(FillHandler):
         route_directive: Optional[str] = None,
     ):
         self.parsed_source: SourceParser = parsed_source
+        self.base_folder: str = base_folder
         self.synthesis_part: str = synthesis_part
         self.synthesis_directive: str = synthesis_directive
         self.incremental_mode: IsIncremental = incremental_mode
@@ -65,14 +67,26 @@ class TclFrameHandler(FillHandler):
 
     def fill(self) -> bool:
         top_lang: RTL = self.parsed_source.get_hdl()
-        print("TOP LANG: " + str(top_lang))
+        is_library = self.parsed_source.is_library_project()
+        user_libs = "{"
+        folder = ""
+        if is_library:
+            for l in self.parsed_source.get_user_defined_libs():
+                user_libs += " " + l
+        else:
+            folder = self.parsed_source.get_folder()
+            user_libs += " " + folder
+        user_libs += " }"
+
         synthesis_replacements: List[str] = [
             str(self.config.get_config("WORK_DIR")),
-            self.parsed_source.get_folder(),
+            self.base_folder,
             str(self.config.get_config("WORK_DIR"))
             + str(self.config.get_config("CONSTRAINT")),
+            user_libs,
             (
-                "read_vhdl -library bftLib "
+                "read_vhdl -library "
+                + ("dovado " if is_library else (folder + " "))
                 + str(self.config.get_config("WORK_DIR"))
                 + str(self.config.get_config("VHDL_BOX"))
             )
@@ -82,13 +96,13 @@ class TclFrameHandler(FillHandler):
                 + str(self.config.get_config("WORK_DIR"))
                 + str(self.config.get_config("VERILOG_BOX"))
             ),
-            (
-                "set_property IS_ENABLED 0 [get_files "
-                + self.parsed_source.get_path()
-                + "]"
-            )
-            if top_lang is RTL.VHDL
-            else "# no disabling needed",
+            # (
+            # "set_property IS_ENABLED 0 [get_files "
+            # + self.parsed_source.get_path()
+            # + "]"
+            # )
+            # if top_lang is RTL.VHDL
+            # else "# no disabling needed",
             "box",
             self.synthesis_part,
             self.synthesis_directive,
@@ -164,40 +178,41 @@ class HdlBoxFrameHandler(FillHandler):
         clock_port: Port,
         out_path: str,
         hdl: RTL,
-        top_level: Optional[TopLevel] = None,
+        lib: Optional[str],
     ):
-        self.frame_path: str = frame_path
-        self.top_module: str = top_module
-        self.ports: List[Port] = ports
-        self.clock_port: Port = clock_port
-        self.out_path: str = out_path
-        self.top_level: Optional[TopLevel] = top_level
-        self.parameters: Optional[List[Parameter]] = None
-        self.hdl: RTL = hdl
+        self.__top_module: str = top_module
+        self.__ports: List[Port] = ports
+        self.__clock_port: Port = clock_port
+        self.__parameters: Optional[List[Parameter]] = None
+        self.__hdl: RTL = hdl
+        self.__lib: Optional[str] = lib
 
         FillHandler.__init__(self, placeholder, frame_path, out_path)
 
     def get_parameters(self) -> List[Parameter]:
-        if self.parameters:
-            return self.parameters
+        if self.__parameters:
+            return self.__parameters
         else:
             raise Exception(
                 "Trying to access parameters in HdlBoxFrameHandler before setting them"
             )
 
     def set_parameters(self, parameters: List[Parameter]) -> None:
-        self.parameters = parameters
+        self.__parameters = parameters
 
     def fill(self) -> bool:
-        if not self.parameters:
+        if not self.__parameters:
             raise Exception(
                 "Cannot fill box without setting parameters beforehand"
             )
 
-        if self.hdl is RTL.VHDL and self.top_level:
-            libraries = self.top_level.get_libraries()
-            imports = self.top_level.get_use_clauses()
-            return self.__vhdl_fill_box(libraries, imports)
+        if self.__hdl is RTL.VHDL:
+            if self.__lib:
+                return self.__vhdl_fill_box(self.__lib)
+            else:
+                raise ValueError(
+                    "Cannot retrieve lib in which the top level resides"
+                )
         else:
             return self.__verilog_fill_box()
 
@@ -224,33 +239,30 @@ class HdlBoxFrameHandler(FillHandler):
         )
         return parameter_section
 
-    def __vhdl_fill_box(
-        self, libraries: List[str], imports: List[str],
-    ) -> bool:
+    def __vhdl_fill_box(self, lib: str) -> bool:
         input_mapping = [
             port.get_name()
             + (
-                " => '1',\n"
+                " => " + port.get_type().descriptor + "'('1'),\n"
                 if port.get_type().type is PortTypeEnum.SCALAR
-                else " => std_logic_vector'((others => '1')),\n"
+                else " => "
+                + port.get_type().descriptor
+                + "'((others => std_logic'('1'))),\n"
             )
-            for port in self.ports
+            for port in self.__ports
             if (
                 port.get_direction().direction is PortDirectionEnum.INPUT
-                and port.get_name() != self.clock_port.get_name()
+                and port.get_name() != self.__clock_port.get_name()
             )
         ]
         input_mapping[len(input_mapping) - 1] = input_mapping[
             len(input_mapping) - 1
         ].replace(",", "")
         self.replacements = [
-            "".join(
-                ["library " + lib + ";\n" for lib in libraries]
-                + ["use " + imp + ";\n" for imp in imports]
-            ),
-            "Work." + self.top_module,
+            "library " + lib + ";",
+            lib + "." + self.__top_module,
             self.__vhdl_parameter_map(),
-            self.clock_port.get_name(),
+            self.__clock_port.get_name(),
             "".join(input_mapping),
         ]
         return super().fill()
@@ -277,10 +289,10 @@ class HdlBoxFrameHandler(FillHandler):
     def __verilog_fill_box(self,) -> bool:
         input_mapping = [
             "." + port.get_name() + " ('1),\n"
-            for port in self.ports
+            for port in self.__ports
             if (
                 port.get_direction().direction is PortDirectionEnum.INPUT
-                and port.get_name() != self.clock_port.get_name()
+                and port.get_name() != self.__clock_port.get_name()
             )
         ]
 
@@ -289,9 +301,9 @@ class HdlBoxFrameHandler(FillHandler):
         ].replace(",", "")
 
         self.replacements = [
-            self.top_module,
+            self.__top_module,
             self.__verilog_parameter_map(),
-            self.clock_port.get_name(),
+            self.__clock_port.get_name(),
             "".join(input_mapping),
         ]
         return super().fill()

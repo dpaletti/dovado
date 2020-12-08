@@ -1,15 +1,15 @@
-Slack (VIOLATED) :        -5.631ns  (required time - arrival time)
-  Source:                 boxed/op_table_finish_ptr_reg_reg[0]/C
-                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@0.250ns period=0.500ns})
-  Destination:            boxed/queue_ram_reg_0_0_0/ADDRBWRADDR[0]
-                            (rising edge-triggered cell RAMB36E1 clocked by clk  {rise@0.000ns fall@0.250ns period=0.500ns})
+Slack (VIOLATED) :        -1.436ns  (required time - arrival time)
+  Source:                 BOXED/neorv32_cpu_inst/neorv32_cpu_control_inst/ipb_reg[r_pnt][0]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            BOXED/neorv32_wdt_inst_true.neorv32_wdt_inst/cnt_reg[0]/R
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@2.000ns period=4.000ns})
   Path Group:             clk
   Path Type:              Setup (Max at Slow Process Corner)
-  Requirement:            0.500ns  (clk rise@0.500ns - clk rise@0.000ns)
-  Data Path Delay:        5.472ns  (logic 1.276ns (23.321%)  route 4.196ns (76.679%))
-  Logic Levels:           9  (CARRY4=2 LUT4=2 LUT5=1 LUT6=3 RAMD32=1)
+  Requirement:            4.000ns  (clk rise@4.000ns - clk rise@0.000ns)
+  Data Path Delay:        4.886ns  (logic 0.740ns (15.145%)  route 4.146ns (84.855%))
+  Logic Levels:           7  (LUT2=1 LUT6=6)
   Clock Path Skew:        -0.145ns (DCD - SCD + CPR)
-    Destination Clock Delay (DCD):    1.860ns = ( 2.360 - 0.500 ) 
+    Destination Clock Delay (DCD):    1.860ns = ( 5.860 - 4.000 ) 
     Source Clock Delay      (SCD):    2.117ns
     Clock Pessimism Removal (CPR):    0.112ns
   Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
@@ -26,52 +26,44 @@ Slack (VIOLATED) :        -5.631ns  (required time - arrival time)
                          IBUF (Prop_ibuf_I_O)         0.830     0.830 r  clk_IBUF_inst/O
                          net (fo=1, unplaced)         0.584     1.413    clk_IBUF
                          BUFG (Prop_bufg_I_O)         0.120     1.533 r  clk_IBUF_BUFG_inst/O
-                         net (fo=1559, unplaced)      0.584     2.117    boxed/clk
-                         FDRE                                         r  boxed/op_table_finish_ptr_reg_reg[0]/C
+                         net (fo=1793, unplaced)      0.584     2.117    BOXED/neorv32_cpu_inst/neorv32_cpu_control_inst/clk_i
+                         FDRE                                         r  BOXED/neorv32_cpu_inst/neorv32_cpu_control_inst/ipb_reg[r_pnt][0]/C
   -------------------------------------------------------------------    -------------------
-                         FDRE (Prop_fdre_C_Q)         0.269     2.386 r  boxed/op_table_finish_ptr_reg_reg[0]/Q
-                         net (fo=59, unplaced)        0.744     3.130    boxed/op_table_queue_reg_r1_0_31_0_5/ADDRB0
-                         RAMD32 (Prop_ramd32_RADR0_O)
-                                                      0.168     3.298 r  boxed/op_table_queue_reg_r1_0_31_0_5/RAMB/O
-                         net (fo=13, unplaced)        0.715     4.013    boxed/op_req_pipe_next16[2]
-                         LUT6 (Prop_lut6_I0_O)        0.053     4.066 r  boxed/s_axis_dequeue_req_ready_reg_i_285/O
-                         net (fo=1, unplaced)         0.000     4.066    boxed/s_axis_dequeue_req_ready_reg_i_285_n_0
-                         CARRY4 (Prop_carry4_S[0]_CO[3])
-                                                      0.313     4.379 r  boxed/s_axis_dequeue_req_ready_reg_reg_i_180/CO[3]
-                         net (fo=1, unplaced)         0.000     4.379    boxed/s_axis_dequeue_req_ready_reg_reg_i_180_n_0
-                         CARRY4 (Prop_carry4_CI_CO[1])
-                                                      0.108     4.487 f  boxed/s_axis_dequeue_req_ready_reg_reg_i_93/CO[1]
-                         net (fo=1, unplaced)         0.452     4.939    boxed/op_req_pipe_next62_out
-                         LUT4 (Prop_lut4_I1_O)        0.153     5.092 f  boxed/s_axis_dequeue_req_ready_reg_i_32/O
-                         net (fo=1, unplaced)         0.340     5.432    boxed/s_axis_dequeue_req_ready_reg_i_32_n_0
-                         LUT5 (Prop_lut5_I4_O)        0.053     5.485 f  boxed/s_axis_dequeue_req_ready_reg_i_9/O
-                         net (fo=1, unplaced)         0.340     5.825    boxed/s_axis_dequeue_req_ready_reg_i_9_n_0
-                         LUT6 (Prop_lut6_I4_O)        0.053     5.878 f  boxed/s_axis_dequeue_req_ready_reg_i_2/O
-                         net (fo=39, unplaced)        0.597     6.475    boxed/s_axis_dequeue_req_ready_reg_i_2_n_0
-                         LUT4 (Prop_lut4_I1_O)        0.053     6.528 f  boxed/queue_ram_addr_pipeline_reg[0][15]_i_2/O
-                         net (fo=176, unplaced)       0.424     6.952    boxed/queue_ram_addr_pipeline_reg[0][15]_i_2_n_0
-                         LUT6 (Prop_lut6_I2_O)        0.053     7.005 r  boxed/queue_ram_addr_pipeline_reg[0][0]_i_1/O
-                         net (fo=23, unplaced)        0.584     7.589    boxed/queue_ram_addr_pipeline_reg[0][0]_i_1_n_0
-                         RAMB36E1                                     r  boxed/queue_ram_reg_0_0_0/ADDRBWRADDR[0]
+                         FDRE (Prop_fdre_C_Q)         0.269     2.386 r  BOXED/neorv32_cpu_inst/neorv32_cpu_control_inst/ipb_reg[r_pnt][0]/Q
+                         net (fo=41, unplaced)        0.735     3.121    BOXED/neorv32_cpu_inst/neorv32_cpu_control_inst/ipb_reg[r_pnt_n_0_][0]
+                         LUT6 (Prop_lut6_I0_O)        0.153     3.274 r  BOXED/neorv32_cpu_inst/neorv32_cpu_control_inst/i_arbiter[rd_req]_i_2/O
+                         net (fo=6, unplaced)         0.372     3.646    BOXED/neorv32_cpu_inst/neorv32_cpu_control_inst/ipb_reg[r_pnt][0]_0
+                         LUT2 (Prop_lut2_I1_O)        0.053     3.699 f  BOXED/neorv32_cpu_inst/neorv32_cpu_control_inst/FSM_sequential_arbiter[state][1]_i_3/O
+                         net (fo=6, unplaced)         0.342     4.041    BOXED/neorv32_busswitch_inst/cpu_i[re]
+                         LUT6 (Prop_lut6_I3_O)        0.053     4.094 r  BOXED/neorv32_busswitch_inst/imem_file_ram_ll_reg_i_25/O
+                         net (fo=71, unplaced)        0.612     4.706    BOXED/neorv32_cpu_inst/neorv32_cpu_control_inst/rdata_reg
+                         LUT6 (Prop_lut6_I2_O)        0.053     4.759 r  BOXED/neorv32_cpu_inst/neorv32_cpu_control_inst/dout[31]_i_5/O
+                         net (fo=1, unplaced)         0.664     5.423    BOXED/neorv32_cpu_inst/neorv32_cpu_control_inst/dout[31]_i_5_n_0
+                         LUT6 (Prop_lut6_I1_O)        0.053     5.476 r  BOXED/neorv32_cpu_inst/neorv32_cpu_control_inst/dout[31]_i_3/O
+                         net (fo=20, unplaced)        0.400     5.876    BOXED/neorv32_cpu_inst/neorv32_cpu_bus_inst/wren_i16_out
+                         LUT6 (Prop_lut6_I0_O)        0.053     5.929 r  BOXED/neorv32_cpu_inst/neorv32_cpu_bus_inst/clk_sel[2]_i_3/O
+                         net (fo=3, unplaced)         0.358     6.287    BOXED/neorv32_cpu_inst/neorv32_cpu_control_inst/clk_sel_reg[2]
+                         LUT6 (Prop_lut6_I5_O)        0.053     6.340 r  BOXED/neorv32_cpu_inst/neorv32_cpu_control_inst/clk_sel[2]_i_1/O
+                         net (fo=26, unplaced)        0.663     7.003    BOXED/neorv32_wdt_inst_true.neorv32_wdt_inst/SR[0]
+                         FDRE                                         r  BOXED/neorv32_wdt_inst_true.neorv32_wdt_inst/cnt_reg[0]/R
   -------------------------------------------------------------------    -------------------
 
-                         (clock clk rise edge)        0.500     0.500 r  
-                                                      0.000     0.500 r  clk (IN)
-                         net (fo=0)                   0.000     0.500    clk
-                         IBUF (Prop_ibuf_I_O)         0.754     1.254 r  clk_IBUF_inst/O
-                         net (fo=1, unplaced)         0.554     1.808    clk_IBUF
-                         BUFG (Prop_bufg_I_O)         0.113     1.921 r  clk_IBUF_BUFG_inst/O
-                         net (fo=1559, unplaced)      0.439     2.360    boxed/clk
-                         RAMB36E1                                     r  boxed/queue_ram_reg_0_0_0/CLKBWRCLK
-                         clock pessimism              0.112     2.472    
-                         clock uncertainty           -0.035     2.437    
-                         RAMB36E1 (Setup_ramb36e1_CLKBWRCLK_ADDRBWRADDR[0])
-                                                     -0.479     1.958    boxed/queue_ram_reg_0_0_0
+                         (clock clk rise edge)        4.000     4.000 r  
+                                                      0.000     4.000 r  clk (IN)
+                         net (fo=0)                   0.000     4.000    clk
+                         IBUF (Prop_ibuf_I_O)         0.754     4.754 r  clk_IBUF_inst/O
+                         net (fo=1, unplaced)         0.554     5.308    clk_IBUF
+                         BUFG (Prop_bufg_I_O)         0.113     5.421 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1793, unplaced)      0.439     5.860    BOXED/neorv32_wdt_inst_true.neorv32_wdt_inst/clk_i
+                         FDRE                                         r  BOXED/neorv32_wdt_inst_true.neorv32_wdt_inst/cnt_reg[0]/C
+                         clock pessimism              0.112     5.972    
+                         clock uncertainty           -0.035     5.937    
+                         FDRE (Setup_fdre_C_R)       -0.370     5.567    BOXED/neorv32_wdt_inst_true.neorv32_wdt_inst/cnt_reg[0]
   -------------------------------------------------------------------
-                         required time                          1.958    
-                         arrival time                          -7.589    
+                         required time                          5.567    
+                         arrival time                          -7.003    
   -------------------------------------------------------------------
-                         slack                                 -5.631    
+                         slack                                 -1.436    
 
 
 

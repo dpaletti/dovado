@@ -1,14 +1,29 @@
 .DS_Store
 .idea
+.envrc
+.env
+.projectile
 *.log
 *.jou
 tmp/
+poetry.lock
+README.rst
 
 *.egg
 *.org
+*.out
+*.pkl
 
 .hypothesis/
 poetry.lock
 htmlcov/
 .Xil/
 .pytest_cache/
+vivado_out/
+dovado_work/
+typings/
+run_results/
+dist/
+.Xil/
+.vscode/
+.ipynb_checkpoints/

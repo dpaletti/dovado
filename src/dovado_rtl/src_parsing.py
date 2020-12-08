@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Tuple, Any, Union, Optional, Dict
+from typing import List, Tuple, Any, Union, Optional, Dict, Iterator
 from antlr4 import CommonTokenStream, FileStream
 from dovado_rtl.antlr.generated.vhdl.vhdlLexer import vhdlLexer
 from dovado_rtl.antlr.generated.vhdl.vhdlParser import vhdlParser
@@ -23,7 +23,9 @@ from dovado_rtl.antlr.sysverilog_entity_visitor import (
     SysVerilogHDLEntityVisitor,
 )
 from dovado_rtl.antlr.hdl_representation import (
-    Entity, PortDirection, PortType,
+    Entity,
+    PortDirection,
+    PortType,
     TopLevel,
     Parameter,
     Port,
@@ -34,27 +36,30 @@ from dovado_rtl.fill_handler import FillHandler
 
 
 class SourceParser(AbstractSourceParser):
-    def __init__(self, src_path: str, entity: Optional[Entity] = None):
-        self.posix_path = Path(src_path)
+    def __init__(
+        self, root_folder: str, src_path: str, entity: Optional[Entity] = None
+    ):
+        self.__root_folder: Path = Path(root_folder)
+        self.__posix_path: Path = Path(src_path)
         supported_extensions = [".vhd", ".vhdl", ".v", ".sv"]
-        if self.posix_path.suffix not in supported_extensions:
+        if self.__posix_path.suffix not in supported_extensions:
             raise Exception(
                 "Supported extensions are: "
                 + str(supported_extensions)
                 + ", input extension "
-                + self.posix_path.suffix
+                + self.__posix_path.suffix
                 + " not supported"
             )
 
-        self.__input_stream = FileStream(str(self.posix_path))
+        self.__input_stream = FileStream(str(self.__posix_path))
         self.__RTL = (
             RTL.VHDL
             if (
-                self.posix_path.suffix == ".vhd"
-                or self.posix_path.suffix == ".vhdl"
+                self.__posix_path.suffix == ".vhd"
+                or self.__posix_path.suffix == ".vhdl"
             )
             else RTL.VERILOG
-            if self.posix_path.suffix == ".v"
+            if self.__posix_path.suffix == ".v"
             else RTL.SYSTEM_VERILOG
         )
         self.__entities, self.__top_level = self.parse()
@@ -105,10 +110,10 @@ class SourceParser(AbstractSourceParser):
         )
 
     def get_path(self) -> str:
-        return str(self.posix_path)
+        return str(self.__posix_path)
 
     def get_folder(self) -> str:
-        return str(self.posix_path.parents[0])
+        return str(self.__posix_path.parents[0].name)
 
     def get_hdl(self) -> RTL:
         return self.__RTL
@@ -194,3 +199,14 @@ class SourceParser(AbstractSourceParser):
             self.__top_level.get_use_clauses(),
         )
 
+    def is_library_project(self) -> bool:
+        if not self.__RTL is RTL.VHDL:
+            return False
+        return any(p.is_dir() for p in self.__root_folder.iterdir())
+
+    def get_user_defined_libs(self) -> Iterator[str]:
+        if not self.__RTL is RTL.VHDL:
+            yield from ()
+        for p in self.__root_folder.iterdir():
+            if p.is_dir():
+                yield p.name

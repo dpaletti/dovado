@@ -1,9 +1,7 @@
--- libraries read from the module to be boxed
 library ieee;
+-- library containing entity to be boxed
+library neorv32;
 use ieee.std_logic_1164.all;
-use work.pp_types.all;
-use work.pp_utilities.all;
-
 entity box is
   port (
     clk: in std_logic
@@ -14,17 +12,22 @@ architecture box_arch of box is
   attribute DONT_TOUCH : string;
   attribute DONT_TOUCH of BOXED : label is "TRUE";
 begin
-  BOXED:  entity Work.pp_potato
+  BOXED:  entity neorv32.neorv32_top
     generic map(
-ICACHE_LINE_SIZE => 41,
-ICACHE_NUM_LINES => 386)
+CLOCK_FREQUENCY => 120)
     port map(
-    clk => clk,
+    clk_i => clk,
     -- remaining input ports are attached to internal clocks
-    reset => '1',
-irq => std_logic_vector'((others => '1')),
-wb_dat_in => std_logic_vector'((others => '1')),
-wb_ack_in => '1'
+    rstn_i => std_ulogic'('1'),
+wb_dat_i => std_ulogic_vector'((others => std_logic'('1'))),
+wb_ack_i => std_ulogic'('1'),
+wb_err_i => std_ulogic'('1'),
+gpio_i => std_ulogic_vector'((others => std_logic'('1'))),
+uart_rxd_i => std_ulogic'('1'),
+spi_sdi_i => std_ulogic'('1'),
+mtime_irq_i => std_ulogic'('1'),
+msw_irq_i => std_ulogic'('1'),
+mext_irq_i => std_ulogic'('1')
 
     );
 

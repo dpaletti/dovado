@@ -21,12 +21,12 @@ from dovado_rtl.antlr.hdl_representation import (
 )
 
 
-def list_rtl_files(src_path: Path) -> Set[str]:
+def list_rtl_files(src_path: Path) -> Set[Path]:
     rtl_extensions = ["vhd", "vhdl", "v", "sv"]
     files = []
     for extension in rtl_extensions:
         files += [
-            str(pth) for pth in src_path.rglob("*." + extension) if pth.is_file
+            pth for pth in src_path.rglob("*." + extension) if pth.is_file
         ]
     return set(files)
 
@@ -49,51 +49,32 @@ def ask_code_dir() -> str:
 
 
 def get_top_module(
-    src_folder: str, module: str, config: Configuration
-) -> Tuple[Entity, str]:
-    # TODO optimize this search
-
+    src_folder: str, module_file: str, config: Configuration
+) -> Tuple[Entity, str, SourceParser]:
     for src in list_rtl_files(Path(src_folder)):
-        entities: List[Entity] = SourceParser(src).get_entities()
-        for e in entities:
-            if e.get_name() == module:
-                return e, src
-    raise ValueError("Could not find module")
-
-
-def default_top_module(src_folder: str) -> Tuple[Entity, str]:
-    for src in list_rtl_files(Path(src_folder)):
-        modules: List[Entity] = SourceParser(src).get_entities()
-        if modules:
-            return modules[0], src
-    print("No module found in the given source files")
-    raise ValueError(
-        "No module found in "
-        + src_folder
-        + " at default_top_module(src_folder)"
-    )
+        if src.name == module_file:
+            sp = SourceParser(src_folder, str(src))
+            entities = sp.get_entities()
+            if len(entities) > 1:
+                print(
+                    "Discarding all entities except the first from "
+                    + str(src)
+                    + " please refactor your code for a more consistent behaviour."
+                    + " Put your target module in a file by itself"
+                )
+            return entities[0], str(src), sp
+    raise ValueError("Could not find " + module_file + " in " + src_folder)
 
 
 def ask_top_module(
     src_folder: str, config: Configuration
-) -> Tuple[Entity, str]:
-    default, def_src = default_top_module(src_folder)
+) -> Tuple[Entity, str, SourceParser]:
     while True:
-        user_input = input(
-            "Enter top module identifier [default = "
-            + default.get_name()
-            + "]: "
-        )
+        user_input = input("Enter top file (including suffix): ")
         try:
-            print("Looking for top_module among source files")
-            mod: Tuple[Entity, str] = get_top_module(
-                src_folder,
-                user_input if user_input != "" else default.get_name(),
-                config,
-            )
-            return (default, def_src) if user_input == "" else (mod[0], mod[1])
-        except ValueError:
-            print("Module does not exist among the files in the code folder\n")
+            return get_top_module(src_folder, user_input, config,)
+        except ValueError as e:
+            print(e)
             continue
 
 
@@ -277,14 +258,6 @@ def ask_clock() -> int:
             continue
 
 
-def get_default_clock_identifier(parsed_src: SourceParser) -> List[str]:
-    return [
-        i
-        for i in [j.get_name() for j in parsed_src.get_ports()]
-        if re.match(".*(clk|clock),*", i)
-    ]
-
-
 def is_valid_clock(
     parsed_src: SourceParser, port: Optional[Port]
 ) -> Tuple[Optional[Port], Optional[PortDirection], Optional[PortType]]:
@@ -320,6 +293,8 @@ def ask_identifiers(parsed_src: SourceParser) -> Port:
             + " (must be an input port) port type = "
             + str(clock_port_type)
             + " (must be binary)\n"
+            + "available ports: "
+            + str(parsed_src.get_ports())
         )
 
 
@@ -488,7 +463,7 @@ def ask_is_point_evaluation() -> bool:
             + "or design space evaluation?\n"
             + "Please input 'p' for point evaluation "
             + "or 'd' for design space evaluation "
-            "[default = " + default + "]"
+            "[default = " + default + "]: "
         )
         user_input = user_input.strip()
         if not (user_input == "p" or user_input == "d"):
@@ -509,7 +484,7 @@ def ask_parameters_value(param_list: List[Parameter]) -> List[int]:
     i = 0
     while i < len(param_list):
         user_input = input(
-            "Enter value for parameter " + param_list[i].get_name() + ":"
+            "Enter value for parameter " + param_list[i].get_name() + ": "
         )
         try:
             parameter_value_accumulator.append(int(user_input))

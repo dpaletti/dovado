@@ -1,15 +1,19 @@
-# All lines starting with #! may be eventually stripped on user preference
+# All lines starting with #! may be eventually uncommented on user preference
+package require Tcl 8.0
+package require struct::set
 
-proc read_all_files { dir } {
-    set contents [glob -directory $dir *]
+proc read_all_files { dir libs} {
+    set contents [glob -nocomplain -directory $dir *]
 
     foreach item $contents {
         # recurse - go into the sub directory
         if { [file isdirectory $item] } {
-            read_all_files $item
+            read_all_files $item $libs
             }
         if { [file extension $item] == ".vhd" } {
-            read_vhdl -library bftLib $item
+            set path [file split  [file normalize $item]]
+            set lib [::struct::set intersect $libs $path]
+            read_vhdl -library $lib $item
         }
         if { [file extension $item] == ".v" } {
             read_verilog $item
@@ -27,9 +31,9 @@ file mkdir $outputDir
 # Design Sources and Constraints
 set src ____
 set xdcFile ____
+set libs_list ____
+read_all_files $src $libs_list
 ____
-read_all_files $src
-#____
 read_xdc $xdcFile
 
 # Run synthesis and write checkpoint
