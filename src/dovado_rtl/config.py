@@ -69,7 +69,7 @@ class Configuration:
     }
 
     def __init__(self):
-        config_path = Path("config.yaml")
+        config_path = Path("dovado.yaml")
         self.config: Dict[str, Union[str, int]] = yaml.safe_load(
             config_path.open()
         ) if config_path.is_file() else self.__config_dict

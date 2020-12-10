@@ -1,4 +1,3 @@
-import argparse as ap
 from pathlib import Path
 import dovado_rtl.user_input as user_input
 from dovado_rtl.config import Configuration
@@ -16,9 +15,7 @@ from dovado_rtl.genetic_algorithm import optimize
 
 
 def main():
-
     vivado.start()
-    parser = ap.ArgumentParser()
     config = Configuration()
     Path(str(config.get_config("WORK_DIR"))).mkdir(parents=True, exist_ok=True)
 

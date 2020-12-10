@@ -1,4 +1,3 @@
-from cmath import pi
 from collections import OrderedDict
 from typing import Tuple, List, Optional
 from pathlib import Path
@@ -7,13 +6,14 @@ import numpy as np
 from sklearn.kernel_ridge import KernelRidge
 from scipy import stats
 from dovado_rtl.enums import RegressionModel
-from sklearn.model_selection import LeaveOneOut, RandomizedSearchCV
+from sklearn.model_selection import ShuffleSplit, RandomizedSearchCV
 from dovado_rtl.config import Configuration
 from dovado_rtl.abstract_classes import (
     AbstractEstimator,
     AbstractDesignPointEvaluator,
 )
 from dovado_rtl.simple_types import Example, Metric
+import os
 
 
 class Estimator(AbstractEstimator):
@@ -78,11 +78,11 @@ class Estimator(AbstractEstimator):
         y = y.astype("float64").reshape(-1, 1)
         reg = KernelRidge()
         parameters = {
-            "alpha": stats.reciprocal(a=1e-7, b=1e2, size=10),
+            "alpha": stats.loguniform(a=1e-7, b=1e2),
             "gamma": stats.expon(scale=0.1),
             "kernel": ["rbf"],
         }
-        cv = LeaveOneOut()
+        cv = ShuffleSplit(n_splits=5, test_size=0.25, random_state=0)
         cv_reg = RandomizedSearchCV(
             reg,
             parameters,

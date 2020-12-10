@@ -53,10 +53,13 @@ class FitnessEvaluator(AbstractFitnessEvaluator):
             print("Fitness estimating")
             design_value = self.estimator.estimate(list(design_point), metric)
             if not design_value:
-                print("Disabling estimator")
-                self.estimate_working = False
-                full_design_value = self.evaluator.evaluate(design_point)
-                design_value = full_design_value.value[metric]
+                if metric.is_frequency:
+                    design_value = 0
+                else:
+                    design_value = 100
+                print(
+                    "An empty prediction was retrieved from the estimator, setting it to arbitrarily bad values"
+                )
         print("design_point: " + str(design_point))
         print("metric: " + str(metric))
         print("Design Value: " + str(design_value))

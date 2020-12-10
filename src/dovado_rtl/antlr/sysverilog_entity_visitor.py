@@ -350,7 +350,6 @@ class SysVerilogHDLEntityVisitor(SysVerilogHDLVisitor):
             self.entities[-1].add_parameter(Parameter(d[0], d[1]))
         if ctx.usertype_variable_declaration():
             print("UserType parameters are not supported, skipping")
-            pass
         else:
             # non numeric or non synthesizable types skipped
             pass
@@ -359,13 +358,19 @@ class SysVerilogHDLEntityVisitor(SysVerilogHDLVisitor):
         self, ctx: SysVerilogHDLParser.Param_declarationContext
     ) -> Iterator[Tuple[str, ParameterType]]:
         if ctx.Signed():
-            for v in ctx.list_of_hierarchical_variable_descriptions():
+            for v in self.visitList_of_hierarchical_variable_descriptions(
+                ctx.list_of_hierarchical_variable_descriptions()
+            ):
                 yield v, ParameterType(ParameterTypeEnum.INTEGER, "Signed")
         if ctx.Unsigned():
-            for v in ctx.list_of_hierarchical_variable_descriptions():
+            for v in self.visitList_of_hierarchical_variable_descriptions(
+                ctx.list_of_hierarchical_variable_descriptions()
+            ):
                 yield v, ParameterType(ParameterTypeEnum.INTEGER, "Unsigned")
         else:
-            for v in ctx.list_of_hierarchical_variable_descriptions():
+            for v in self.visitList_of_hierarchical_variable_descriptions(
+                ctx.list_of_hierarchical_variable_descriptions()
+            ):
                 yield v, ParameterType(ParameterTypeEnum.INTEGER, "")
 
     def visitBits_declaration(
