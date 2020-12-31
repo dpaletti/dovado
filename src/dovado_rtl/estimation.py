@@ -104,6 +104,7 @@ class Estimator(AbstractEstimator):
     def __generate_dataset(
         self, parameters_range: "OrderedDict[str, Tuple[int, int]]",
     ) -> None:
+        design_value = None
         for _ in range(0, self.__dataset_size):
             design_point = []
             for k in parameters_range.keys():
@@ -113,8 +114,16 @@ class Estimator(AbstractEstimator):
             design_value = self.__design_point_evaluator.evaluate(
                 tuple(design_point)
             )
-            self.add_example(
-                Example(design_point=design_point, design_value=design_value)
+            if design_value:
+                self.add_example(
+                    Example(
+                        design_point=design_point, design_value=design_value
+                    )
+                )
+        if not design_value:
+            raise Exception(
+                "Could not find any valid design point while sampling from the given ranges"
+                + " please make sure the ranges are correct. You may try again or modify dataset size if ranges are correct."
             )
 
     def __get_dependent_variables(self, metric: Metric) -> "np.ndarray":

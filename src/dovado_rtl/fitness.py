@@ -1,4 +1,5 @@
 import math
+from random import uniform
 from functools import lru_cache
 from heapq import nlargest
 from dovado_rtl.simple_types import Metric, Example
@@ -6,6 +7,7 @@ from dovado_rtl.estimation import Estimator
 from dovado_rtl.point_evaluation import DesignPointEvaluator
 from dovado_rtl.config import Configuration
 import numpy as np
+from collections import OrderedDict
 from typing import Tuple, List
 
 from dovado_rtl.abstract_classes import AbstractFitnessEvaluator
@@ -19,7 +21,6 @@ class FitnessEvaluator(AbstractFitnessEvaluator):
         config: Configuration,
     ):
         self.threshold: int = 0
-        self.estimate_working: bool = True
         self.estimator: Estimator = estimator
         self.evaluator: DesignPointEvaluator = evaluator
         self.config: Configuration = config
@@ -36,27 +37,26 @@ class FitnessEvaluator(AbstractFitnessEvaluator):
             int(self.config.get_config("N")),
         )
         print("Nth nearest distance: " + str(sample_distance))
-        if (
-            (sample_distance == 0)
-            or (sample_distance > self.threshold)
-            or (not self.estimate_working)
-        ):
+        if (sample_distance == 0) or (sample_distance > self.threshold):
             print("Fitness calling Vivado directly")
             full_design_value = self.evaluator.evaluate(design_point)
             design_value = full_design_value.value[metric]
-            if self.estimate_working:
-                self.estimator.add_example(
-                    Example(list(design_point), full_design_value)
-                )
-                self.__set_threshold(self.estimator.get_examples())
+            self.estimator.add_example(
+                Example(list(design_point), full_design_value)
+            )
+            self.__set_threshold(self.estimator.get_examples())
         else:
             print("Fitness estimating")
             design_value = self.estimator.estimate(list(design_point), metric)
             if not design_value:
                 if metric.is_frequency:
-                    design_value = 0
+                    design_value = uniform(
+                        0, 10000
+                    )  # guessing from 0 to 10 GHz
                 else:
-                    design_value = 100
+                    design_value = uniform(
+                        0, 100
+                    )  # gussing from 0 to 100% utilisation
                 print(
                     "An empty prediction was retrieved from the estimator, setting it to arbitrarily bad values"
                 )

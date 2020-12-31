@@ -88,6 +88,26 @@ class SourceParser(AbstractSourceParser):
         visitor.visit(tree)
         return visitor.entities, visitor.top_level
 
+    @staticmethod
+    def get_project_path(file_path: Path) -> Path:
+        # file_path is resolved by typer, it is always an solved path (no symlinks)
+        # assumption: if a dir exists in the parent directory such that it contains a RTL file
+        # the top file is considered as part of a library
+
+        parent_content = next(file_path.parents[1].iterdir())
+        if parent_content.is_dir() and next(
+            parent_content.iterdir()
+        ).suffix in {".vhdl", ".v", ".sv", "vhd"}:
+            return file_path.parents[1].absolute()
+        return file_path.parents[0].absolute()
+
+    def get_selected_entity(self) -> Entity:
+        if self.__selected_entity:
+            return self.__selected_entity
+        raise Exception(
+            "Trying to retrieve selected entity when it is not yet set"
+        )
+
     def get_entity(self, entity: str) -> Entity:
         for e in self.__entities:
             if e.get_name() == entity:
@@ -113,7 +133,7 @@ class SourceParser(AbstractSourceParser):
         return str(self.__posix_path)
 
     def get_folder(self) -> str:
-        return str(self.__posix_path.parents[0].name)
+        return str(self.__root_folder.name)
 
     def get_hdl(self) -> RTL:
         return self.__RTL
@@ -200,13 +220,16 @@ class SourceParser(AbstractSourceParser):
         )
 
     def is_library_project(self) -> bool:
-        if not self.__RTL is RTL.VHDL:
+        if self.__RTL is not RTL.VHDL:
             return False
         return any(p.is_dir() for p in self.__root_folder.iterdir())
 
     def get_user_defined_libs(self) -> Iterator[str]:
-        if not self.__RTL is RTL.VHDL:
+        if self.__RTL is not RTL.VHDL:
             yield from ()
         for p in self.__root_folder.iterdir():
             if p.is_dir():
                 yield p.name
+
+    def get_root_folder(self) -> Path:
+        return self.__root_folder

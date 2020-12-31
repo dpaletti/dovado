@@ -49,7 +49,7 @@ class DesignPointEvaluator(AbstractDesignPointEvaluator):
         self.__estimator: Optional[AbstractEstimator] = None
 
     @lru_cache()
-    def evaluate(self, design_point: Tuple[int, ...]) -> DesignValue:
+    def evaluate(self, design_point: Tuple[int, ...]) -> Optional[DesignValue]:
 
         self.__parsed_file.write_parameter_values(
             self.__hdl_handler,
@@ -63,6 +63,8 @@ class DesignPointEvaluator(AbstractDesignPointEvaluator):
 
         print(vivado_out)
         if self.__is_first_evaluation:
+            if not success:
+                return None
             self.__metrics = ask_utilization_metrics(
                 get_available_indices(
                     str(self.__config.get_config("WORK_DIR"))

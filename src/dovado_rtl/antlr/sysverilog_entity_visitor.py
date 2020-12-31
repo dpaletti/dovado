@@ -10,7 +10,7 @@ from dovado_rtl.antlr.hdl_representation import (
     PortTypeEnum,
 )
 from itertools import chain
-from typing import List, Tuple, Iterator
+from typing import List, Tuple, Iterator, Union
 from dovado_rtl.antlr.generated.SysVerilogHDL.SysVerilogHDLVisitor import (
     SysVerilogHDLVisitor,
 )
@@ -32,6 +32,8 @@ class SysVerilogHDLEntityVisitor(SysVerilogHDLVisitor):
     def visitDescription_star(
         self, ctx: SysVerilogHDLParser.Description_starContext
     ) -> None:
+        if not ctx.description():
+            return
         for d in ctx.description():
             self.visitDescription(d)
 
@@ -74,7 +76,7 @@ class SysVerilogHDLEntityVisitor(SysVerilogHDLVisitor):
         self, ctx: SysVerilogHDLParser.Module_port_interfaceContext
     ) -> None:
         if ctx.list_of_interface_ports():
-            self.visitList_of_tf_interface_ports(ctx.list_of_interface_ports())
+            self.visitList_of_interface_ports(ctx.list_of_interface_ports())
 
     def visitList_of_interface_ports(
         self, ctx: SysVerilogHDLParser.List_of_interface_portsContext
@@ -109,6 +111,8 @@ class SysVerilogHDLEntityVisitor(SysVerilogHDLVisitor):
     def visitComma_attr_port_declaration_star(
         self, ctx: SysVerilogHDLParser.Comma_attr_port_declaration_starContext
     ) -> None:
+        if not ctx.comma_attr_port_declaration():
+            return
         for a in ctx.comma_attr_port_declaration():
             self.visitComma_attr_port_declaration(a)
 
@@ -152,7 +156,7 @@ class SysVerilogHDLEntityVisitor(SysVerilogHDLVisitor):
         if ctx.output_declaration():
             self.visitOutput_declaration(ctx.output_declaration())
         if ctx.ref_declaration():
-            print("Ref variables not supported, skipping")
+            print("Ref ports not supported, skipping")
 
     def visitInout_declaration(
         self, ctx: SysVerilogHDLParser.Inout_declarationContext
@@ -275,6 +279,8 @@ class SysVerilogHDLEntityVisitor(SysVerilogHDLVisitor):
     def visitComma_port_identifier_star(
         self, ctx: SysVerilogHDLParser.Comma_port_identifier_starContext
     ) -> None:
+        if not ctx.comma_port_identifier():
+            return
         for i in ctx.comma_port_identifier():
             self.visitComma_port_identifier(i)
 
@@ -313,6 +319,8 @@ class SysVerilogHDLEntityVisitor(SysVerilogHDLVisitor):
     def visitComma_parameter_declaration_star(
         self, ctx: SysVerilogHDLParser.Comma_parameter_declaration_starContext
     ) -> None:
+        if not ctx.comma_parameter_declaration():
+            return
         for p in ctx.comma_parameter_declaration():
             self.visitComma_parameter_declaration(p)
 
@@ -356,22 +364,28 @@ class SysVerilogHDLEntityVisitor(SysVerilogHDLVisitor):
 
     def visitParam_declaration(
         self, ctx: SysVerilogHDLParser.Param_declarationContext
-    ) -> Iterator[Tuple[str, ParameterType]]:
+    ) -> List[Tuple[str, ParameterType]]:
+        out = []
         if ctx.Signed():
             for v in self.visitList_of_hierarchical_variable_descriptions(
                 ctx.list_of_hierarchical_variable_descriptions()
             ):
-                yield v, ParameterType(ParameterTypeEnum.INTEGER, "Signed")
+                out.append(
+                    (v, ParameterType(ParameterTypeEnum.INTEGER, "Signed"))
+                )
         if ctx.Unsigned():
             for v in self.visitList_of_hierarchical_variable_descriptions(
                 ctx.list_of_hierarchical_variable_descriptions()
             ):
-                yield v, ParameterType(ParameterTypeEnum.INTEGER, "Unsigned")
+                out.append(
+                    (v, ParameterType(ParameterTypeEnum.INTEGER, "Unsigned"))
+                )
         else:
             for v in self.visitList_of_hierarchical_variable_descriptions(
                 ctx.list_of_hierarchical_variable_descriptions()
             ):
-                yield v, ParameterType(ParameterTypeEnum.INTEGER, "")
+                out.append((v, ParameterType(ParameterTypeEnum.INTEGER, "")))
+        return out
 
     def visitBits_declaration(
         self, ctx: SysVerilogHDLParser.Bits_declarationContext
@@ -431,20 +445,30 @@ class SysVerilogHDLEntityVisitor(SysVerilogHDLVisitor):
             return PortType(PortTypeEnum.VECTOR, ctx.Wand().getText())
         if ctx.Wor():
             return PortType(PortTypeEnum.VECTOR, ctx.Wor().getText())
-        else:
-            return PortType(PortTypeEnum.VECTOR, ctx.NONE().getText())
+        return PortType(PortTypeEnum.VECTOR, ctx.NONE().getText())
 
     def visitLogic_declaration(
         self, ctx: SysVerilogHDLParser.Logic_declarationContext
-    ) -> Iterator[Tuple[str, ParameterType]]:
+    ) -> Union[
+        Iterator[Tuple[str, ParameterType]], Iterator[Tuple[str, PortType]]
+    ]:
         for v in self.visitList_of_variable_descriptions(
             ctx.list_of_variable_descriptions()
         ):
-            yield v, ParameterType(ParameterTypeEnum.INTEGER, "Logic")
+            if isinstance(
+                ctx.parentCtx.parentCtx.parentCtx,
+                SysVerilogHDLParser.Port_declarationContext,
+            ):
+                yield v, PortType(PortTypeEnum.SCALAR, "Logic")
+
+            else:
+                yield v, ParameterType(ParameterTypeEnum.INTEGER, "Logic")
 
     def visitInteger_declaration(
         self, ctx: SysVerilogHDLParser.Integer_declarationContext
-    ) -> Iterator[Tuple[str, ParameterType]]:
+    ) -> Union[
+        Iterator[Tuple[str, ParameterType]], Iterator[Tuple[str, PortType]]
+    ]:
         for v in self.visitList_of_variable_descriptions(
             ctx.list_of_variable_descriptions()
         ):
@@ -452,11 +476,19 @@ class SysVerilogHDLEntityVisitor(SysVerilogHDLVisitor):
             p_type += "integer"
             p_type += "signed" if ctx.Signed() else ""
             p_type += "unsigned" if ctx.Unsigned() else ""
-            yield v, ParameterType(ParameterTypeEnum.INTEGER, p_type)
+            if isinstance(
+                ctx.parentCtx.parentCtx.parentCtx,
+                SysVerilogHDLParser.Port_declarationContext,
+            ):
+                yield v, PortType(PortTypeEnum.SCALAR, p_type)
+            else:
+                yield v, ParameterType(ParameterTypeEnum.INTEGER, p_type)
 
     def visitInt_declaration(
         self, ctx: SysVerilogHDLParser.Int_declarationContext
-    ) -> Iterator[Tuple[str, ParameterType]]:
+    ) -> Union[
+        Iterator[Tuple[str, ParameterType]], Iterator[Tuple[str, PortType]]
+    ]:
         for v in self.visitList_of_variable_descriptions(
             ctx.list_of_variable_descriptions()
         ):
@@ -467,16 +499,30 @@ class SysVerilogHDLEntityVisitor(SysVerilogHDLVisitor):
             p_type += "integer"
             p_type += "signed" if ctx.Signed() else ""
             p_type += "unsigned" if ctx.Unsigned() else ""
-            yield v, ParameterType(ParameterTypeEnum.INTEGER, p_type)
+            if isinstance(
+                ctx.parentCtx.parentCtx.parentCtx,
+                SysVerilogHDLParser.Port_declarationContext,
+            ):
+                yield v, PortType(PortTypeEnum.SCALAR, p_type)
+            else:
+                yield v, ParameterType(ParameterTypeEnum.INTEGER, p_type)
 
     def visitTime_declaration(
         self, ctx: SysVerilogHDLParser.Time_declarationContext
-    ) -> Iterator[Tuple[str, ParameterType]]:
+    ) -> Union[
+        Iterator[Tuple[str, ParameterType]], Iterator[Tuple[str, PortType]]
+    ]:
 
         for v in self.visitList_of_variable_descriptions(
             ctx.list_of_variable_descriptions()
         ):
-            yield v, ParameterType(ParameterTypeEnum.INTEGER, "Time")
+            if isinstance(
+                ctx.parentCtx.parentCtx.parentCtx,
+                SysVerilogHDLParser.Port_declarationContext,
+            ):
+                yield v, PortType(PortTypeEnum.SCALAR, "Time")
+            else:
+                yield v, ParameterType(ParameterTypeEnum.INTEGER, "Time")
 
     def visitList_of_hierarchical_variable_descriptions(
         self,

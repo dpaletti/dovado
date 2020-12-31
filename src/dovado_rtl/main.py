@@ -1,5 +1,6 @@
 from pathlib import Path
-import dovado_rtl.user_input as user_input
+from typing import Tuple, List
+from collections import OrderedDict
 from dovado_rtl.config import Configuration
 import dovado_rtl.vivado_interaction as vivado
 from dovado_rtl.frame_handling import (
@@ -7,41 +8,103 @@ from dovado_rtl.frame_handling import (
     HdlBoxFrameHandler,
     XdcFrameHandler,
 )
-from dovado_rtl.enums import RTL, RegressionModel
+from dovado_rtl.enums import RTL, RegressionModel, StopStep
+from dovado_rtl.simple_types import IsIncremental
 from dovado_rtl.point_evaluation import DesignPointEvaluator
 from dovado_rtl.estimation import Estimator
 from dovado_rtl.fitness import FitnessEvaluator
 from dovado_rtl.genetic_algorithm import optimize
+from dovado_rtl.cli_utility import (
+    validate_board,
+    validate_parameters,
+    validate_clock_port,
+    validate_directives,
+    validate_target_clock,
+)
+import typer
+
+app = typer.Typer()
+vivado.start()
 
 
 def main():
-    vivado.start()
+    app()
+
+
+@app.callback()
+def dovado(
+    ctx: typer.Context,
+    # Arguments
+    file_path: Path = typer.Option(  # pylint: disable=unused-argument
+        ...,
+        exists=True,
+        file_okay=True,
+        readable=True,
+        resolve_path=True,
+        help=(
+            "path of the rtl file containing the top level entity, please check the documentation"
+            + " for the directory structure your RTL project should comply with"
+        ),
+    ),
+    # file_path is used through the context in cli_utility during parameters validation and is then passed through context
+    # until it reaches this method where it is extracted and used as parsed_src
+    # Required Cli options
+    board: str = typer.Option(
+        ...,
+        callback=validate_board,
+        help="Part name for synthesis/implementation, inserting the wrong one"
+        + " will get an error message with all the parts available with your Vivado installation",
+    ),
+    parameters: List[str] = typer.Option(
+        ...,
+        callback=validate_parameters,
+        help="parameters to use for point/space exploration, only integer and integer subtypes are supported",
+    ),
+    clock_port: str = typer.Option(
+        ...,
+        callback=validate_clock_port,
+        help="clock port name of the top module/entity",
+    ),
+    # Optional Cli options
+    implementation: bool = typer.Option(
+        False,
+        help="flag to set point/space exploration to stop at implementation instead of synthesis",
+    ),
+    incremental: bool = typer.Option(
+        False,
+        help="flag to choose whether to choose incrementaly synthesis/implementation",
+    ),
+    directives: Tuple[str, str, str] = typer.Option(
+        default=(
+            "runtimeoptimized",
+            "RuntimeOptimized",
+            "RuntimeOptimized",
+        ),  # capitalization is necessary to comply with vivado directives specification
+        callback=validate_directives,
+        help="directives to pass respectively to synthesis, place and route",
+    ),
+    target_clock: float = typer.Option(
+        default=1000,
+        callback=validate_target_clock,
+        help="target clock on which the worst negative slack is computed,"
+        + "make sure this is sufficiently large to never be reached by your design",
+    ),
+):  # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-locals
     config = Configuration()
     Path(str(config.get_config("WORK_DIR"))).mkdir(parents=True, exist_ok=True)
 
-    src_folder = user_input.ask_code_dir()
-    top_module, _, parsed_source = user_input.ask_top_module(
-        src_folder, config
-    )
-    parsed_source.set_entity(top_module.get_name())
-    synthesis_part = user_input.ask_part()
+    parsed_src = ctx.obj
+    project_path = parsed_src.get_root_folder()
 
-    stop_step = user_input.ask_stop_step()
-
-    free_parameters = user_input.ask_parameters(parsed_source)
-
-    clock_port = user_input.ask_identifiers(parsed_source)
-
-    incremental_mode = user_input.ask_incremental_mode(stop_step)
-
-    (
-        synthesis_directive,
-        place_directive,
-        route_directive,
-    ) = user_input.ask_directives(stop_step, incremental_mode)
-
-    # Clock given in Mhz
-    target_clock = user_input.ask_clock()
+    if implementation:
+        stop_step = StopStep.IMPLEMENTATION
+    else:
+        stop_step = StopStep.SYNTHESIS
+    if incremental:
+        incremental_mode = IsIncremental(True, True)
+    else:
+        incremental_mode = IsIncremental(False, False)
 
     XdcFrameHandler(
         str(config.get_config("PLACEHOLDER")),
@@ -54,14 +117,14 @@ def main():
 
     tcl_handler = TclFrameHandler(
         config,
-        parsed_source,
-        src_folder,
-        synthesis_part,
-        synthesis_directive,
+        parsed_src,
+        str(project_path),
+        board,
+        directives[0],
         incremental_mode,
         stop_step,
-        place_directive,
-        route_directive,
+        directives[1],
+        directives[2],
     )
     tcl_handler.fill()
 
@@ -69,59 +132,102 @@ def main():
         str(config.get_config("PLACEHOLDER")),
         str(config.get_config("VHDL_DIR"))
         + str(config.get_config("VHDL_BOX_FRAME"))
-        if parsed_source.get_hdl() is RTL.VHDL
+        if parsed_src.get_hdl() is RTL.VHDL
         else str(config.get_config("VERILOG_DIR"))
         + str(config.get_config("VERILOG_BOX_FRAME")),
-        top_module.get_name(),
-        parsed_source.get_ports(),
-        parsed_source.get_port(clock_port.get_name()),
+        parsed_src.get_selected_entity().get_name(),
+        parsed_src.get_ports(),
+        parsed_src.get_port(clock_port),
         str(config.get_config("WORK_DIR")) + str(config.get_config("VHDL_BOX"))
-        if parsed_source.get_hdl() is RTL.VHDL
+        if parsed_src.get_hdl() is RTL.VHDL
         else str(config.get_config("WORK_DIR"))
         + str(config.get_config("VERILOG_BOX")),
-        parsed_source.get_hdl(),
-        parsed_source.get_folder()
-        if parsed_source.get_hdl() is RTL.VHDL
-        else None,
+        parsed_src.get_hdl(),
+        parsed_src.get_folder() if parsed_src.get_hdl() is RTL.VHDL else None,
     )
 
     point_evaluator = DesignPointEvaluator(
         config,
-        parsed_source,
+        parsed_src,
         box_handler,
         tcl_handler,
         target_clock,
         incremental_mode,
         stop_step,
-        [p.get_name() for p in free_parameters],
+        list(parameters),
     )
+    ctx.obj = {
+        "parameters": parameters,
+        "point_evaluator": point_evaluator,
+        "config": config,
+    }
 
-    if user_input.ask_is_point_evaluation():
-        print(
-            "Point Evaluation result\n"
-            + str(
-                point_evaluator.evaluate(
-                    tuple(user_input.ask_parameters_value(free_parameters))
-                )
-            )
-        )
-        return
 
-    free_parameters_range = user_input.ask_parameters_range(
-        free_parameters, config
+@app.command("points")
+def points(
+    ctx: typer.Context,
+    param_values_path: Path = typer.Argument(
+        ...,
+        exists=True,
+        file_okay=True,
+        readable=True,
+        resolve_path=True,
+        help="path to a csv file containing on each line values for each parameter previously selected"
+        + " (values won't be recorded until the first valid design point, e.g. the first set"
+        + " of values which won't make synthesis/implementation fail)",
+    ),
+):
+    out_file = Path(ctx.obj["config"].get_config("WORK_DIR")).joinpath(
+        "point_evaluation.csv"
     )
+    out_file.open("w").close()
+    first_evaluation = True
+    for input_line in Path(param_values_path).read_text().splitlines():
+        design_point = input_line.split(",")
+        design_value = ctx.obj["point_evaluator"].evaluate(tuple(design_point))
+        if design_value and first_evaluation:
+            output_line = "Design Point,"
+            for k in design_value.value.keys():
+                output_line += (
+                    (k.utilisation[0] + "-" + k.utilisation[1])
+                    if not k.is_frequency
+                    else "Frequency"
+                ) + ","
+            out_file.open("a").writelines([output_line[:-1] + "\n"])
+            first_evaluation = False
+        if design_value and not first_evaluation:
+            output_line = ""
+            output_line += "("
+            for point_value in design_point:
+                output_line += point_value + "-"
+            output_line = output_line[:-1]
+            output_line += "),"
+            for v in design_value.value.values():
+                output_line += str(v) + ","
+            out_file.open("a").writelines([output_line[:-1] + "\n"])
+
+
+@app.command("space")
+def space(
+    ctx: typer.Context, param_ranges: List[int] = typer.Argument(...),
+):
+    it = iter(param_ranges)
+    ranges_dict = OrderedDict(zip(ctx.obj["parameters"], zip(it, it)))
 
     estimator = Estimator(
         RegressionModel.KERNEL_RIDGE,
-        point_evaluator,
-        free_parameters_range,
-        int(config.get_config("INITIAL_SAMPLES")),
-        config,
+        ctx.obj["point_evaluator"],
+        ranges_dict,
+        int(ctx.obj["config"].get_config("INITIAL_SAMPLES")),
+        ctx.obj["config"],
     )
 
-    fitness_evaluator = FitnessEvaluator(estimator, point_evaluator, config)
+    fitness_evaluator = FitnessEvaluator(
+        estimator, ctx.obj["point_evaluator"], ctx.obj["config"]
+    )
 
-    metrics = point_evaluator.get_metrics()
+    # TODO ask user for initial parameters so as to be sure to have a correct first synthesis/implementation
+    metrics = ctx.obj["point_evaluator"].get_metrics()
 
     if not metrics:
         raise Exception(
@@ -131,9 +237,9 @@ def main():
 
     result = optimize(
         fitness_evaluator,
-        free_parameters_range,
+        ranges_dict,
         metrics,
-        str(config.get_config("GENETIC_RUN_TIME")),
+        str(ctx.obj["config"].get_config("GENETIC_RUN_TIME")),
     )
     print("Optimization Result: " + str(result))
 
