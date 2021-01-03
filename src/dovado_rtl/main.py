@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Tuple, List
+from typing import Tuple, List, Optional
 from collections import OrderedDict
 from dovado_rtl.config import Configuration
 import dovado_rtl.vivado_interaction as vivado
@@ -20,10 +20,11 @@ from dovado_rtl.cli_utility import (
     validate_clock_port,
     validate_directives,
     validate_target_clock,
+    validate_estimator,
 )
 import typer
 
-app = typer.Typer()
+app = typer.Typer(help="Dovado RTL design automation and space exploration")
 vivado.start()
 
 
@@ -177,6 +178,9 @@ def points(
         + " of values which won't make synthesis/implementation fail)",
     ),
 ):
+    """
+    RTL Design automation
+    """
     out_file = Path(ctx.obj["config"].get_config("WORK_DIR")).joinpath(
         "point_evaluation.csv"
     )
@@ -209,17 +213,49 @@ def points(
 
 @app.command("space")
 def space(
-    ctx: typer.Context, param_ranges: List[int] = typer.Argument(...),
+    ctx: typer.Context,
+    param_ranges: List[int] = typer.Argument(
+        ...,
+        help="list of integers in which each odd indexed element starts"
+        + " a range and the consecutive closes it (start counting from 1)",
+    ),
+    fitness_estimator: str = typer.Option(
+        "STREAM_LEARNING",
+        callback=validate_estimator,
+        help="estimator to use for fitness function approximation,"
+        + "'kernel_ridge' is default. 'stream_learning' selects a Hoeffding Adaptive Tree Regressor trained incrementally",
+    ),
+    test_estimation: bool = typer.Option(
+        False,
+        help="record all estimated values along with the real "
+        + "computed values (slows down computation a lot)",
+    ),
+    record_design_values: bool = typer.Option(
+        False, help="record all design values in a csv file"
+    ),
+    read_design_values: bool = typer.Option(
+        False,
+        help="read design values from a csv file recorded with "
+        + "the --record-design-values flag",
+    ),
 ):
+    """
+    RTL design space exploration
+    """
     it = iter(param_ranges)
     ranges_dict = OrderedDict(zip(ctx.obj["parameters"], zip(it, it)))
 
     estimator = Estimator(
-        RegressionModel.KERNEL_RIDGE,
+        RegressionModel.KERNEL_RIDGE
+        if fitness_estimator.upper() == "KERNEL_RIDGE"
+        else RegressionModel.STREAM_LEARNING,
         ctx.obj["point_evaluator"],
         ranges_dict,
         int(ctx.obj["config"].get_config("INITIAL_SAMPLES")),
         ctx.obj["config"],
+        test_estimation,
+        record_design_values,
+        read_design_values,
     )
 
     fitness_evaluator = FitnessEvaluator(

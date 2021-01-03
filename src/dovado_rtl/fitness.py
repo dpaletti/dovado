@@ -7,8 +7,7 @@ from dovado_rtl.estimation import Estimator
 from dovado_rtl.point_evaluation import DesignPointEvaluator
 from dovado_rtl.config import Configuration
 import numpy as np
-from collections import OrderedDict
-from typing import Tuple, List
+from typing import Tuple, List, Optional
 
 from dovado_rtl.abstract_classes import AbstractFitnessEvaluator
 
@@ -25,6 +24,7 @@ class FitnessEvaluator(AbstractFitnessEvaluator):
         self.evaluator: DesignPointEvaluator = evaluator
         self.config: Configuration = config
         self.__set_threshold(self.estimator.get_examples())
+        self.__last_design_point: Optional[Tuple[int, ...]] = None
 
     @lru_cache()
     def fitness(self, design_point: Tuple[int, ...], metric: Metric):
@@ -40,15 +40,18 @@ class FitnessEvaluator(AbstractFitnessEvaluator):
         if (sample_distance == 0) or (sample_distance > self.threshold):
             print("Fitness calling Vivado directly")
             full_design_value = self.evaluator.evaluate(design_point)
+            if not full_design_value:
+                raise Exception("Evaluator returned a None design value")
             design_value = full_design_value.value[metric]
-            self.estimator.add_example(
-                Example(list(design_point), full_design_value)
-            )
-            self.__set_threshold(self.estimator.get_examples())
+            if design_point != self.__last_design_point:
+                self.estimator.add_example(
+                    Example(list(design_point), full_design_value)
+                )
+                self.__set_threshold(self.estimator.get_examples())
         else:
             print("Fitness estimating")
             design_value = self.estimator.estimate(list(design_point), metric)
-            if not design_value:
+            if design_value is None:
                 if metric.is_frequency:
                     design_value = uniform(
                         0, 10000
@@ -58,11 +61,17 @@ class FitnessEvaluator(AbstractFitnessEvaluator):
                         0, 100
                     )  # gussing from 0 to 100% utilisation
                 print(
-                    "An empty prediction was retrieved from the estimator, setting it to arbitrarily bad values"
+                    "An empty prediction was retrieved from the estimator for "
+                    + str(design_point)
+                    + " on "
+                    + str(metric)
+                    + "setting it to arbitrarily bad value "
+                    + str(design_value)
                 )
         print("design_point: " + str(design_point))
         print("metric: " + str(metric))
         print("Design Value: " + str(design_value))
+        self.__last_design_point = design_point
         return design_value
 
     @staticmethod

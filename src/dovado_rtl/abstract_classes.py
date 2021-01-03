@@ -40,7 +40,11 @@ class AbstractDesignPointEvaluator(abc.ABC):
         pass
 
     @abstractmethod
-    def get_metrics():
+    def get_metrics(self):
+        pass
+
+    @abstractmethod
+    def set_metrics(self, metrics):
         pass
 
 

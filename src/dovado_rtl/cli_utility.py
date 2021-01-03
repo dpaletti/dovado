@@ -6,6 +6,18 @@ from dovado_rtl.doc_parsing import get_directives, get_directives_paragraph
 from dovado_rtl.src_parsing import SourceParser
 from dovado_rtl.vivado_interaction import get_parts
 from dovado_rtl.antlr.hdl_representation import PortDirectionEnum
+from dovado_rtl.enums import RegressionModel
+
+
+def validate_estimator(value: str) -> str:
+    if value.upper() not in RegressionModel.__members__.keys():
+        raise typer.BadParameter(
+            "Invalid estimator "
+            + value
+            + " available estimators are "
+            + str(set(RegressionModel.__members__.keys()))
+        )
+    return value
 
 
 def validate_board(value: str) -> str:
@@ -13,7 +25,7 @@ def validate_board(value: str) -> str:
     if value in set(parts.keys()):
         return value
     raise typer.BadParameter(
-        "Invalide board " + value + " available boards are: " + str(parts)
+        "Invalid board " + value + " available boards are: " + str(parts)
     )
 
 

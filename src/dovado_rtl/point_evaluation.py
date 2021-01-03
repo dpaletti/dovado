@@ -65,16 +65,17 @@ class DesignPointEvaluator(AbstractDesignPointEvaluator):
         if self.__is_first_evaluation:
             if not success:
                 return None
-            self.__metrics = ask_utilization_metrics(
-                get_available_indices(
-                    str(self.__config.get_config("WORK_DIR"))
-                    + str(
-                        self.__config.get_config(
-                            self.__stop_step.name + "_UTILISATION"
+            if not self.__metrics:
+                self.__metrics = ask_utilization_metrics(
+                    get_available_indices(
+                        str(self.__config.get_config("WORK_DIR"))
+                        + str(
+                            self.__config.get_config(
+                                self.__stop_step.name + "_UTILISATION"
+                            )
                         )
                     )
                 )
-            )
             self.__is_first_evaluation = False
 
         if not success:
@@ -106,12 +107,14 @@ class DesignPointEvaluator(AbstractDesignPointEvaluator):
             )
             for i in self.__metrics:
                 if i.is_frequency:
-                    design_value.value[i] = -report.get_wns(
-                        str(self.__config.get_config("WORK_DIR"))
-                        + (
-                            str(
-                                self.__config.get_config(
-                                    self.__stop_step.name + "_TIMING"
+                    design_value.value[i] = -self.get_max_frequency(
+                        report.get_wns(
+                            str(self.__config.get_config("WORK_DIR"))
+                            + (
+                                str(
+                                    self.__config.get_config(
+                                        self.__stop_step.name + "_TIMING"
+                                    )
                                 )
                             )
                         )
@@ -123,6 +126,16 @@ class DesignPointEvaluator(AbstractDesignPointEvaluator):
     def get_max_frequency(self, wns: float) -> float:
 
         return 1000 / ((1 / 1000 * self.__target_clock) - wns)
+
+    def set_metrics(self, metrics: List[Metric]):
+        if self.__metrics:
+            raise Exception(
+                "Metrics already set with value: "
+                + str(self.__metrics)
+                + " resetting forbidden. Trying to reset with value "
+                + str(metrics)
+            )
+        self.__metrics = metrics
 
     def __write_csv(
         self, estimated_value: float, real_value: float, metric: str

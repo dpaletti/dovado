@@ -27,7 +27,7 @@ packages = [
     { include = "tcl" },
 ]
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.6.1"
 pathvalidate = "^2.3.0"
 BeautifulSoup4 = "^4.9.1"
 lxml = "^4.5.2"
@@ -42,6 +42,8 @@ sklearn = "^0.0"
 scipy = "^1.5.4"
 click = "^7.1.2"
 typer = "^0.3.2"
+scikit-multiflow = "^0.5.3"
+statsmodels = "^0.12.1"
 
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"

@@ -8,6 +8,7 @@ class Configuration:
         # This switch controls if at each estimate call
         # also vivado is called in order to record approximation accuracy
         # against the real value
+        "SAMPLE_RECORD_CSV": "sample_record.csv",
         "ESTIMATION_TESTING": True,
         "EST_TEST_CSV": "estimation_accuracy.csv",
         # Dovado Working Dir

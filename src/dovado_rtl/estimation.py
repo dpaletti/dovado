@@ -3,6 +3,7 @@ from typing import Tuple, List, Optional
 from pathlib import Path
 from random import randint, shuffle
 import numpy as np
+import skmultiflow as skm
 from sklearn.kernel_ridge import KernelRidge
 from scipy import stats
 from dovado_rtl.enums import RegressionModel
@@ -12,8 +13,7 @@ from dovado_rtl.abstract_classes import (
     AbstractEstimator,
     AbstractDesignPointEvaluator,
 )
-from dovado_rtl.simple_types import Example, Metric
-import os
+from dovado_rtl.simple_types import DesignValue, Example, Metric
 
 
 class Estimator(AbstractEstimator):
@@ -24,32 +24,59 @@ class Estimator(AbstractEstimator):
         free_parameters_range: "OrderedDict[str, Tuple[int, int]]",
         dataset_size: int,
         config: Configuration,
+        testing_estimation: bool,
+        recording_design_values: bool,
+        reading_design_values: bool,
     ):
         self.__regression_model = regression_model
+        self.__reg = None
+        self.__last_design_point = None
+        self.__last_len = None
         self.__examples: List[Example] = []
-        self.__examples_updated: bool = True
-        self.__estimator = None
         self.__design_point_evaluator: AbstractDesignPointEvaluator = design_point_evaluator
         self.__dataset_size: int = dataset_size
+        self.__free_parameters_range = free_parameters_range
         self.__config: Configuration = config
+        self.__testing_estimation: bool = testing_estimation
+        self.__recording_design_values = recording_design_values
+        self.__reading_design_values = reading_design_values
         self.__design_point_evaluator.set_estimator(self)
         self.__metrics: Optional[List[Metric]] = None
-        if self.__config.get_config("ESTIMATION_TESTING"):
-            self.__fname = str(self.__config.get_config("WORK_DIR")) + str(
-                self.__config.get_config("EST_TEST_CSV")
+        if testing_estimation:
+            self.__estimation_fname = str(
+                self.__config.get_config("WORK_DIR")
+            ) + str(self.__config.get_config("EST_TEST_CSV"))
+            Path(self.__estimation_fname).open("w").close()
+            Path(self.__estimation_fname).open("a").write(
+                "Real, Estimated, Metric\n"
             )
-            Path(self.__fname).open("w").close()
-        self.__generate_dataset(free_parameters_range,)
+        if self.__recording_design_values:
+            self.__sample_fname = str(
+                self.__config.get_config("WORK_DIR")
+            ) + str(self.__config.get_config("SAMPLE_RECORD_CSV"))
+            Path(self.__sample_fname).open("w").close()
+            top_line = ""
+            for k in free_parameters_range.keys():
+                top_line += k + ","
+            Path(self.__sample_fname).open("a").write(top_line)
+
+        self.__generate_dataset()
 
     def estimate(self, design_point: List[int], metric: Metric) -> float:
         if self.__regression_model is RegressionModel.KERNEL_RIDGE:
             estimate = self.__kernel_ridge(design_point, metric)
+        elif self.__regression_model is RegressionModel.STREAM_LEARNING:
+            estimate = self.__stream_learner(design_point, metric)
         else:
-            raise Exception("Other models still need to be implemented")
+            raise Exception(
+                "Learinig method "
+                + str(self.__regression_model)
+                + " is not implemented"
+            )
 
-        if self.__config.get_config("ESTIMATION_TESTING") and len(
-            self.__examples
-        ) > max(len(list(design_point)), 5):
+        if self.__testing_estimation and len(self.__examples) > max(
+            len(list(design_point)), 5
+        ):
             evaluated = self.__design_point_evaluator.evaluate(
                 tuple(design_point)
             )
@@ -67,32 +94,88 @@ class Estimator(AbstractEstimator):
                 )
             )
 
-            Path(self.__fname).open("a").writelines([line + "\n"])
+            Path(self.__estimation_fname).open("a").writelines([line + "\n"])
 
         return estimate
 
-    def __kernel_ridge(self, design_point: List[int], metric: Metric) -> float:
+    def __prepare_data(
+        self, design_point: List[int], metric: Optional[Metric] = None,
+    ):
         X = self.__get_independent_variables()
         X = X.astype("int64").reshape(-1, len(design_point))
-        y = self.__get_dependent_variables(metric)
-        y = y.astype("float64").reshape(-1, 1)
-        reg = KernelRidge()
-        parameters = {
-            "alpha": stats.loguniform(a=1e-7, b=1e2),
-            "gamma": stats.expon(scale=0.1),
-            "kernel": ["rbf"],
-        }
-        cv = ShuffleSplit(n_splits=5, test_size=0.25, random_state=0)
-        cv_reg = RandomizedSearchCV(
-            reg,
-            parameters,
-            cv=cv,
-            scoring="neg_root_mean_squared_error",
-            n_jobs=-1,
-        )
-        cv_reg.fit(X, y)
+        if metric:
+            y = self.__get_dependent_variables(metric=metric)
+            y = y.astype("float64").reshape(-1, 1)
+        else:
+            y = self.__get_dependent_variables(metric=metric)
+            if self.__metrics:
+                y = y.astype("float64").reshape(-1, len(self.__metrics))
+            else:
+                raise Exception(
+                    "Metrics not set while building data for estimator"
+                )
+        return X, y
+
+    def __stream_learner(
+        self, design_point: List[int], metric: Metric
+    ) -> float:
+        X, y = None, None
+        if self.__last_design_point != design_point:
+            X, y = self.__prepare_data(design_point)
+        if not self.__last_design_point:
+            self.__reg = skm.trees.iSOUPTreeRegressor()
+            self.__reg.fit(X, y)
+            self.__last_design_point = design_point
+            self.__last_len = len(X)
+        elif self.__last_design_point != design_point:
+            if self.__last_len != len(X):
+                Xl = X[-1]
+                yl = y[-1]
+                Xl.astype("int64").reshape(1, len(design_point))
+                if self.__metrics:
+                    yl.astype("float64").reshape(1, len(self.__metrics))
+                else:
+                    raise Exception(
+                        "Metrics not initialized while partially fitting streaming learner"
+                    )
+                self.__reg.partial_fit(Xl, yl)
+                self.__last_len = len(X)
+            self.__last_design_point = design_point
         design_point = np.reshape(design_point, (1, -1))
-        return cv_reg.predict(design_point)[0][0]
+        return self.__reg.predict(design_point)[0][
+            self.__metrics.index(metric)
+        ]
+
+    def __kernel_ridge(self, design_point: List[int], metric: Metric) -> float:
+        X, y = None, None
+        if self.__last_design_point != design_point:
+            X, y = self.__prepare_data(design_point)
+
+        if (
+            self.__last_design_point != design_point
+            and self.__last_len != len(X)
+        ):
+            self.__reg = KernelRidge()
+            parameters = {
+                "alpha": stats.loguniform(a=1e-7, b=1e2),
+                "gamma": stats.expon(scale=0.1),
+                "kernel": ["rbf"],
+            }
+            cv = ShuffleSplit(n_splits=5, test_size=0.25, random_state=0)
+            self.__reg = RandomizedSearchCV(
+                self.__reg,
+                parameters,
+                cv=cv,
+                scoring="neg_root_mean_squared_error",
+                n_jobs=-1,
+            )
+            self.__reg.fit(X, y)
+            self.__last_design_point = design_point
+            self.__last_len = len(X)
+        design_point = np.reshape(design_point, (1, -1))
+        return self.__reg.predict(design_point)[0][
+            self.__metrics.index(metric)
+        ]
 
     def add_example(self, example: Example) -> None:
         if not self.__metrics:
@@ -100,16 +183,83 @@ class Estimator(AbstractEstimator):
         self.__examples.append(example)
         shuffle(self.__examples)
         self.__examples_updated = True
+        if self.__recording_design_values:
+            opened_file = Path(self.__sample_fname).open("a")
+            if Path(self.__sample_fname).read_text()[-1] == ",":
+                top_line = ""
+                for m in example.design_value.value.keys():
+                    top_line += (
+                        m.utilisation[0] + "-" + m.utilisation[1]
+                        if not m.is_frequency
+                        else "Frequency"
+                    ) + ","
+                opened_file.write(top_line[:-1] + "\n")
+            line = ""
+            for i in example.design_point:
+                line += str(i) + ","
+            for j in example.design_value.value.values():
+                line += str(j) + ","
+            opened_file.write(line[:-1] + "\n")
+            opened_file.close()
 
-    def __generate_dataset(
-        self, parameters_range: "OrderedDict[str, Tuple[int, int]]",
-    ) -> None:
+    def __generate_dataset(self,) -> None:
         design_value = None
+        if self.__reading_design_values:
+            lines = (
+                Path(
+                    str(self.__config.get_config("WORK_DIR"))
+                    + str(self.__config.get_config("SAMPLE_RECORD_CSV"))
+                )
+                .read_text()
+                .split("\n")
+            )
+            splitted_top_line = lines[0].split(",")
+            metrics_to_set = True
+            metrics = []
+            for line in lines[1:]:
+                try:
+                    design_point = []
+                    splitted_line = line.split(",")
+                    i = 0
+                    for k in self.__free_parameters_range.keys():
+                        design_point.append(float(splitted_line[i]))
+                        i += 1
+
+                    design_value = DesignValue({})
+                    for v in splitted_line[i:]:
+                        if splitted_top_line[i] == "Frequency":
+                            metric = Metric(None, True)
+                        else:
+                            util = splitted_top_line[i].split("-")
+                            metric = Metric((util[0], util[1]), False)
+                        if metrics_to_set:
+                            metrics.append(metric)
+                        design_value.value[metric] = float(v)
+                        i += 1
+                    if metrics_to_set:
+                        self.__design_point_evaluator.set_metrics(metrics)
+                        metrics_to_set = False
+
+                    self.add_example(
+                        Example(
+                            design_point=design_point,
+                            design_value=design_value,
+                        )
+                    )
+                except Exception:
+                    print(
+                        "Error while parsing line '" + str(line) + "' skipping"
+                    )
+            return
+
         for _ in range(0, self.__dataset_size):
             design_point = []
-            for k in parameters_range.keys():
+            for k in self.__free_parameters_range.keys():
                 design_point.append(
-                    randint(parameters_range[k][0], parameters_range[k][1])
+                    randint(
+                        self.__free_parameters_range[k][0],
+                        self.__free_parameters_range[k][1],
+                    )
                 )
             design_value = self.__design_point_evaluator.evaluate(
                 tuple(design_point)
@@ -126,10 +276,18 @@ class Estimator(AbstractEstimator):
                 + " please make sure the ranges are correct. You may try again or modify dataset size if ranges are correct."
             )
 
-    def __get_dependent_variables(self, metric: Metric) -> "np.ndarray":
+    def __get_dependent_variables(
+        self, metric: Optional[Metric] = None
+    ) -> "np.ndarray":
         dependent_variable = []
-        for example in self.__examples:
-            dependent_variable.append(example.design_value.value[metric])
+        if not metric:
+            for example in self.__examples:
+                dependent_variable.append(
+                    list(example.design_value.value.values())
+                )
+        else:
+            for example in self.__examples:
+                dependent_variable.append(example.design_value.value[metric])
         return np.array(dependent_variable)
 
     def __get_independent_variables(self) -> "np.ndarray":
