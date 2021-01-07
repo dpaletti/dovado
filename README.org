@@ -43,7 +43,7 @@ No further parameters can be passed to points
 
 Directory structure is vital for the functioning of the tool:
 - VHDL: if a package is used the corresponding folder must be named exactly as the package; if one wants to analyse a module in a project with multiple packages each file belonging to a given package must reside in a subfolder with the same name as the package it belongs to:
-  - package_name (top folder must have the name of the top package if it exists or any name if it does not exist)
+  - package-name (top folder must have the name of the top package if it exists or any name if it does not exist)
     - file-1 (belonging to package-name)
     - file-2 (belonging to package-name)
     - subpackage1-name

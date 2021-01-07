@@ -1,17 +1,17 @@
 
 # Table of Contents
 
-1.  [Installation](#org04ca09a)
-2.  [Usage](#orgba0406e)
-    1.  [Examples](#orgaddc1de)
-        1.  [neorv32 (VHDL)](#org6544b8e)
-        2.  [corundum (VERILOG)](#org16319ad)
-        3.  [cv32e40p (SYSTEM-VERILOG)](#org4f4326a)
+1.  [Installation](#orgc020a3e)
+2.  [Usage](#org4f8647b)
+    1.  [Examples](#org12b2aea)
+        1.  [neorv32 (VHDL)](#orgd8de369)
+        2.  [corundum (VERILOG)](#org43556a3)
+        3.  [cv32e40p (SYSTEM-VERILOG)](#org6e54816)
 
 DoVado is a RTL design automation and exploration CLI tool.
 
 
-<a id="org04ca09a"></a>
+<a id="orgc020a3e"></a>
 
 # Installation
 
@@ -20,7 +20,7 @@ DoVado needs python 3.6 or higher. Install it through pip, on many Linux systems
     pip3 install --user --no-cache dovado-rtl
 
 
-<a id="orgba0406e"></a>
+<a id="org4f8647b"></a>
 
 # Usage
 
@@ -177,7 +177,7 @@ No further parameters can be passed to points
 Directory structure is vital for the functioning of the tool:
 
 -   VHDL: if a package is used the corresponding folder must be named exactly as the package; if one wants to analyse a module in a project with multiple packages each file belonging to a given package must reside in a subfolder with the same name as the package it belongs to:
-    -   package<sub>name</sub> (top folder must have the name of the top package if it exists or any name if it does not exist)
+    -   package-name (top folder must have the name of the top package if it exists or any name if it does not exist)
         -   file-1 (belonging to package-name)
         -   file-2 (belonging to package-name)
         -   subpackage1-name
@@ -190,12 +190,12 @@ Directory structure is vital for the functioning of the tool:
 -   VERILOG/SYSTEM-VERILOG: include directives are not supported all files must be in the same folder, no subfolders allowed.
 
 
-<a id="orgaddc1de"></a>
+<a id="org12b2aea"></a>
 
 ## Examples
 
 
-<a id="org6544b8e"></a>
+<a id="orgd8de369"></a>
 
 ### neorv32 (VHDL)
 
@@ -218,7 +218,7 @@ Above we are optimizing two memory parameters (MEM<sub>INT</sub><sub>IMEM</sub><
 Ranges are specified after space and we also specify that we want to search only among power of 2&rsquo;s solutions.
 
 
-<a id="org16319ad"></a>
+<a id="org43556a3"></a>
 
 ### corundum (VERILOG)
 
@@ -230,7 +230,7 @@ Exploring the parameter space of the top module:
     dovado --file-path <path to "corundum/fpga/common/rtl/cpl_queue_manager.v"> --board xc7k70tfbv676-1 --target-clock 100000 --parameters OP_TABLE_SIZE --parameters QUEUE_INDEX_WIDTH --parameters PIPELINE --clock-port clk --metrics 0 --metrics 1 --metrics 4 --metrics 9 space 8 64 4 11 2 32 --record-design-values
 
 
-<a id="org4f4326a"></a>
+<a id="org6e54816"></a>
 
 ### cv32e40p (SYSTEM-VERILOG)
 
