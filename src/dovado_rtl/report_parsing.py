@@ -72,7 +72,10 @@ def get_utilisation(report_path: str, section_name: str, row_name: str):
         "tablecell",
         {"contents": re.compile("[ \t\r\n]*" + row_name + r"(\*)?[ \t\r\n]*")},
     )
-    return float(_get_percentage_util(columns, row))
+    try:
+        return float(_get_percentage_util(columns, row))
+    except Exception:
+        return 0
 
 
 def get_wns(report_path: str) -> float:

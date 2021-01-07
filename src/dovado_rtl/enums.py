@@ -19,5 +19,6 @@ class ImplementationStep(Enum):
 
 class RegressionModel(Enum):
     KERNEL_RIDGE = auto()
-    STREAM_LEARNING = auto()
+    STREAM_LEARNING_ISOUP = auto()
+    STREAM_LEARNING_STACKED = auto()
 

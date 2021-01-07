@@ -15,42 +15,49 @@ from dovado_rtl.abstract_classes import AbstractFitnessEvaluator
 class FitnessEvaluator(AbstractFitnessEvaluator):
     def __init__(
         self,
-        estimator: Estimator,
+        nearest_distance: int,
+        estimator: Optional[Estimator],
         evaluator: DesignPointEvaluator,
         config: Configuration,
     ):
-        self.threshold: int = 0
-        self.estimator: Estimator = estimator
-        self.evaluator: DesignPointEvaluator = evaluator
-        self.config: Configuration = config
-        self.__set_threshold(self.estimator.get_examples())
+        self.__nearest_distance = nearest_distance
+        self.__threshold: int = 0
+        self.__estimator: Optional[Estimator] = estimator
+        self.__evaluator: DesignPointEvaluator = evaluator
+        self.__config: Configuration = config
+        if self.__estimator:
+            self.__set_threshold(self.__estimator.get_examples())
         self.__last_design_point: Optional[Tuple[int, ...]] = None
 
     @lru_cache()
     def fitness(self, design_point: Tuple[int, ...], metric: Metric):
         # design_point is a Tuple because lists are unhashable
         # and caching is allowed only with hashable parameters
-
-        sample_distance = self.__nth_nearest_distance(
-            list(design_point),
-            self.estimator.get_examples(),
-            int(self.config.get_config("N")),
-        )
-        print("Nth nearest distance: " + str(sample_distance))
-        if (sample_distance == 0) or (sample_distance > self.threshold):
+        if self.__estimator:
+            sample_distance = self.__nth_nearest_distance(
+                list(design_point),
+                self.__estimator.get_examples(),
+                int(self.__nearest_distance),
+            )
+            print("Nth nearest distance: " + str(sample_distance))
+        if (
+            not self.__estimator
+            or (sample_distance == 0)
+            or (sample_distance > self.__threshold)
+        ):
             print("Fitness calling Vivado directly")
-            full_design_value = self.evaluator.evaluate(design_point)
+            full_design_value = self.__evaluator.evaluate(design_point)
             if not full_design_value:
                 raise Exception("Evaluator returned a None design value")
             design_value = full_design_value.value[metric]
-            if design_point != self.__last_design_point:
-                self.estimator.add_example(
+            if design_point != self.__last_design_point and self.__estimator:
+                self.__estimator.add_example(
                     Example(list(design_point), full_design_value)
                 )
-                self.__set_threshold(self.estimator.get_examples())
+                self.__set_threshold(self.__estimator.get_examples())
         else:
             print("Fitness estimating")
-            design_value = self.estimator.estimate(list(design_point), metric)
+            design_value = self.__estimator.estimate(design_point, metric)
             if design_value is None:
                 if metric.is_frequency:
                     design_value = uniform(
@@ -106,8 +113,8 @@ class FitnessEvaluator(AbstractFitnessEvaluator):
         largest_list = nlargest(n, distances)
         if len(largest_list) > n - 1:
             return largest_list[n - 1]
-        else:
-            return largest_list[-2]
+
+        return largest_list[-2]
 
     @staticmethod
     def __mean(numbers: List[float]) -> float:
@@ -120,9 +127,9 @@ class FitnessEvaluator(AbstractFitnessEvaluator):
                 self.__nth_nearest_distance(
                     example.design_point,
                     examples,
-                    int(self.config.get_config("N")),
+                    int(self.__nearest_distance),
                 )
             )
         print("Distances for threshold: " + str(distances))
-        self.threshold = int(round(self.__mean(distances)))
-        print("Set Threshold: " + str(self.threshold))
+        self.__threshold = int(round(self.__mean(distances)))
+        print("Set Threshold: " + str(self.__threshold))

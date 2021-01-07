@@ -1,13 +1,9 @@
 from functools import lru_cache
-from genericpath import exists
 from typing import Tuple, Dict, List, Optional
 from pathlib import Path
 
-from numpy.lib.function_base import append
-
 import dovado_rtl.vivado_interaction as vivado
 import dovado_rtl.report_parsing as report
-import numpy as np
 from dovado_rtl.frame_handling import (
     HdlBoxFrameHandler,
     TclFrameHandler,
@@ -15,7 +11,7 @@ from dovado_rtl.frame_handling import (
 from dovado_rtl.config import Configuration
 from dovado_rtl.simple_types import IsIncremental, DesignValue, Metric
 from dovado_rtl.enums import StopStep
-from dovado_rtl.user_input import ask_utilization_metrics
+from dovado_rtl.cli_utility import ask_utilization_metrics
 from dovado_rtl.report_parsing import get_available_indices
 from dovado_rtl.abstract_classes import (
     AbstractDesignPointEvaluator,
@@ -35,6 +31,7 @@ class DesignPointEvaluator(AbstractDesignPointEvaluator):
         is_incremental: IsIncremental,
         stop_step: StopStep,
         free_parameters: List[str],
+        int_metrics: Optional[List[int]],
     ):
         self.__hdl_handler: HdlBoxFrameHandler = hdl_handler
         self.__stop_step: StopStep = stop_step
@@ -46,6 +43,7 @@ class DesignPointEvaluator(AbstractDesignPointEvaluator):
         self.__config: Configuration = config
         self.__tcl_handler: TclFrameHandler = tcl_handler
         self.__metrics: Optional[List[Metric]] = None
+        self.__int_metrics: Optional[List[int]] = int_metrics
         self.__estimator: Optional[AbstractEstimator] = None
 
     @lru_cache()
@@ -74,7 +72,8 @@ class DesignPointEvaluator(AbstractDesignPointEvaluator):
                                 self.__stop_step.name + "_UTILISATION"
                             )
                         )
-                    )
+                    ),
+                    self.__int_metrics,
                 )
             self.__is_first_evaluation = False
 

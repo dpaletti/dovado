@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Tuple, List, Optional
 from collections import OrderedDict
+
 from dovado_rtl.config import Configuration
 import dovado_rtl.vivado_interaction as vivado
 from dovado_rtl.frame_handling import (
@@ -21,6 +22,8 @@ from dovado_rtl.cli_utility import (
     validate_directives,
     validate_target_clock,
     validate_estimator,
+    validate_nearest_distance,
+    validate_int_metrics,
 )
 import typer
 
@@ -87,8 +90,14 @@ def dovado(
     target_clock: float = typer.Option(
         default=1000,
         callback=validate_target_clock,
-        help="target clock on which the worst negative slack is computed,"
+        help="target clock (Mhz) on which the worst negative slack is computed,"
         + "make sure this is sufficiently large to never be reached by your design",
+    ),
+    metrics: Optional[List[int]] = typer.Option(
+        None,
+        callback=validate_int_metrics,
+        help="list of integers representing selected metrics, "
+        + "wait for first synthesis/implementation if you do not know the mapping",
     ),
 ):  # pylint: disable=too-many-arguments
     # pylint: disable=too-many-locals
@@ -156,6 +165,7 @@ def dovado(
         incremental_mode,
         stop_step,
         list(parameters),
+        metrics,
     )
     ctx.obj = {
         "parameters": parameters,
@@ -219,11 +229,31 @@ def space(
         help="list of integers in which each odd indexed element starts"
         + " a range and the consecutive closes it (start counting from 1)",
     ),
+    power_of_2: Optional[List[str]] = typer.Option(
+        None,
+        help="list of 'y'/'n' where y indicates that the corresponding, in order, parameter must be a power of 2",
+    ),
+    param_initial_values: Optional[List[int]] = typer.Option(
+        None,
+        help="state initial values for parameters which are guaranteed to synthesize/implement",
+    ),
+    optimization_runtime: Optional[str] = typer.Option(
+        None, help="optimization timeout as hh:mm:ss"
+    ),
+    approximate: bool = typer.Option(
+        False, help="enable approximations for fitness function"
+    ),
     fitness_estimator: str = typer.Option(
-        "STREAM_LEARNING",
+        "KERNEL_RIDGE",
         callback=validate_estimator,
         help="estimator to use for fitness function approximation,"
-        + "'kernel_ridge' is default. 'stream_learning' selects a Hoeffding Adaptive Tree Regressor trained incrementally",
+        + "'kernel_ridge' is default. 'stream_learning_isoup' selects a ISOUP Adaptive Tree Regressor trained incrementally "
+        + "while 'stream_learning_stacked' selects a Stacked tree regressor",
+    ),
+    nearest_distance: int = typer.Option(
+        3,
+        callback=validate_nearest_distance,
+        help="Set which nearest distance is considered against the threshold",
     ),
     test_estimation: bool = typer.Option(
         False,
@@ -244,22 +274,57 @@ def space(
     """
     it = iter(param_ranges)
     ranges_dict = OrderedDict(zip(ctx.obj["parameters"], zip(it, it)))
-
-    estimator = Estimator(
-        RegressionModel.KERNEL_RIDGE
-        if fitness_estimator.upper() == "KERNEL_RIDGE"
-        else RegressionModel.STREAM_LEARNING,
-        ctx.obj["point_evaluator"],
-        ranges_dict,
-        int(ctx.obj["config"].get_config("INITIAL_SAMPLES")),
-        ctx.obj["config"],
-        test_estimation,
-        record_design_values,
-        read_design_values,
-    )
+    estimator = None
+    if approximate:
+        estimator = Estimator(
+            RegressionModel.STREAM_LEARNING_ISOUP
+            if fitness_estimator.upper() == "STREAM_LEARNING_ISOUP"
+            else RegressionModel.STREAM_LEARNING_STACKED
+            if fitness_estimator.upper() == "STREAM_LEARNING_STACKED"
+            else RegressionModel.KERNEL_RIDGE,
+            ctx.obj["point_evaluator"],
+            ranges_dict,
+            int(ctx.obj["config"].get_config("INITIAL_SAMPLES")),
+            ctx.obj["config"],
+            test_estimation,
+            record_design_values,
+            read_design_values,
+        )
+    else:
+        if param_initial_values:
+            design_value = ctx.obj["point_evaluator"].evaluate(
+                tuple(param_initial_values)
+            )
+            if not design_value:
+                raise Exception(
+                    "Could not synthesize/implement "
+                    + str(param_initial_values)
+                )
+        else:
+            # first estimation is to retrieve available utilization metrics
+            (
+                design_point,
+                design_value,
+            ) = Estimator.evaluate_random_design_point(
+                ranges_dict, ctx.obj["point_evaluator"]
+            )
+            i = 0
+            while (not design_value) and (i < 10):
+                print("Could not synthesize/implement " + str(design_point))
+                _, design_value = Estimator.evaluate_random_design_point(
+                    ranges_dict, ctx.obj["point_evaluator"]
+                )
+                i += 1
+            if i == 10:
+                raise Exception(
+                    "Could not find a valid design point in 10 attempts"
+                )
 
     fitness_evaluator = FitnessEvaluator(
-        estimator, ctx.obj["point_evaluator"], ctx.obj["config"]
+        nearest_distance,
+        estimator,
+        ctx.obj["point_evaluator"],
+        ctx.obj["config"],
     )
 
     # TODO ask user for initial parameters so as to be sure to have a correct first synthesis/implementation
@@ -275,7 +340,8 @@ def space(
         fitness_evaluator,
         ranges_dict,
         metrics,
-        str(ctx.obj["config"].get_config("GENETIC_RUN_TIME")),
+        optimization_runtime,
+        power_of_2,
     )
     print("Optimization Result: " + str(result))
 

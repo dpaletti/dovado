@@ -385,24 +385,6 @@ def ask_parameters(parsed_src: SourceParser) -> List[Parameter]:
             )
 
 
-def parse_comma_separated_list(
-    regexp_element: str, to_parse: str
-) -> Optional[List[str]]:
-    return (
-        None
-        if not re.fullmatch(
-            "^("
-            + regexp_element
-            + ")"
-            + "(([ \t]*,[ \t]*)("
-            + regexp_element
-            + "))*$",
-            to_parse,
-        )
-        else [i for i in re.sub(r"[ \t]*", "", to_parse).split(",")]
-    )
-
-
 def ask_utilization_metrics(
     util_indices: Dict[str, List[str]]
 ) -> List[Metric]:

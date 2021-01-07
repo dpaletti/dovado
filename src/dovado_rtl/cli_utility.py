@@ -1,12 +1,116 @@
 from click import BadParameter
+import re
 import typer
-from typing import Tuple, List
+from typing import Tuple, List, Dict, Optional
 from pathlib import Path
 from dovado_rtl.doc_parsing import get_directives, get_directives_paragraph
 from dovado_rtl.src_parsing import SourceParser
 from dovado_rtl.vivado_interaction import get_parts
 from dovado_rtl.antlr.hdl_representation import PortDirectionEnum
+from dovado_rtl.simple_types import Metric
 from dovado_rtl.enums import RegressionModel
+
+
+def validate_power_of_2(value: List[str], ctx: typer.Context):
+    if len(ctx.params["parameters"]) != len(value):
+        raise BadParameter(
+            "power of 2 constraint must be specified for each parameter, mismatching list lengths"
+            + ", parameter list lenght:"
+            + str(len(ctx.params["parameters"]))
+            + ", constraint list length: "
+            + str(len(value))
+        )
+    for i in value:
+        if i not in {"y", "n"}:
+            raise BadParameter("Accepted input are only y/n")
+    return value
+
+
+def validate_int_metrics(value: List[int]):
+    for i in value:
+        if i < 0:
+            raise BadParameter(
+                "Invalid metric '" + str(i) + ", all parameters must be >= 0"
+            )
+    return value
+
+
+def parse_comma_separated_list(
+    regexp_element: str, to_parse: str,
+) -> Optional[List[str]]:
+    return (
+        None
+        if not re.fullmatch(
+            "^("
+            + regexp_element
+            + ")"
+            + "(([ \t]*,[ \t]*)("
+            + regexp_element
+            + "))*$",
+            to_parse,
+        )
+        else [i for i in re.sub(r"[ \t]*", "", to_parse).split(",")]
+    )
+
+
+def ask_utilization_metrics(
+    util_indices: Dict[str, List[str]],
+    pre_selected_metrics: Optional[List[int]] = None,
+) -> List[Metric]:
+    info_prompt = "Percentage Utilisation indices available:\n"
+    i = 0
+    counter_dict = {}
+    for section in util_indices.keys():
+        info_prompt += section + "\n"
+        for util_metric in util_indices[section]:
+            i = i + 1
+            counter_dict[i] = Metric(
+                utilisation=(section, util_metric), is_frequency=False
+            )
+            info_prompt += "\t(" + str(i) + ") " + util_metric + "\n"
+
+    while True:
+        if not pre_selected_metrics:
+            typer.echo(info_prompt)
+            user_input = typer.prompt(
+                "Enter a comma-separated list of percentage "
+                + "indices to optimize, input 0 to select frequency"
+            )
+        try:
+            if not pre_selected_metrics:
+                parsed_list = [
+                    int(i)
+                    for i in parse_comma_separated_list(r"[+]?\d+", user_input)
+                ]
+            else:
+                parsed_list = pre_selected_metrics
+                pre_selected_metrics = None
+            if parsed_list and (
+                parsed_list == []
+                or max([i for i in parsed_list if i > 0]) < len(counter_dict)
+            ):
+                out: List[Metric] = [
+                    counter_dict[i] for i in {i for i in parsed_list if i > 0}
+                ]
+                return (
+                    (out + [Metric(None, True)]) if (0 in parsed_list) else out
+                )
+        except Exception as e:
+            print(e)
+            print(
+                "Invalid input, please enter"
+                + " a comma separated list of integer numbers"
+            )
+
+
+def validate_nearest_distance(value: int) -> int:
+    if value < 0:
+        raise typer.BadParameter(
+            "Invalid distance value: "
+            + str(value)
+            + " non-negative integer expected"
+        )
+    return value
 
 
 def validate_estimator(value: str) -> str:

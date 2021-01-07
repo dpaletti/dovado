@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from functools import lru_cache
 from typing import Tuple, List, Optional
 from pathlib import Path
 from random import randint, shuffle
@@ -62,11 +63,15 @@ class Estimator(AbstractEstimator):
 
         self.__generate_dataset()
 
-    def estimate(self, design_point: List[int], metric: Metric) -> float:
+    @lru_cache()
+    def estimate(self, design_point: Tuple[int, ...], metric: Metric) -> float:
         if self.__regression_model is RegressionModel.KERNEL_RIDGE:
-            estimate = self.__kernel_ridge(design_point, metric)
-        elif self.__regression_model is RegressionModel.STREAM_LEARNING:
-            estimate = self.__stream_learner(design_point, metric)
+            estimate = self.__kernel_ridge(list(design_point), metric)
+        elif self.__regression_model in {
+            RegressionModel.STREAM_LEARNING_ISOUP,
+            RegressionModel.STREAM_LEARNING_STACKED,
+        }:
+            estimate = self.__stream_learner(list(design_point), metric)
         else:
             raise Exception(
                 "Learinig method "
@@ -123,17 +128,31 @@ class Estimator(AbstractEstimator):
         if self.__last_design_point != design_point:
             X, y = self.__prepare_data(design_point)
         if not self.__last_design_point:
-            self.__reg = skm.trees.iSOUPTreeRegressor()
+            if (
+                self.__regression_model
+                is RegressionModel.STREAM_LEARNING_ISOUP
+            ):
+                self.__reg = skm.trees.iSOUPTreeRegressor()
+            elif (
+                self.__regression_model
+                is RegressionModel.STREAM_LEARNING_STACKED
+            ):
+                self.__reg = (
+                    skm.trees.StackedSingleTargetHoeffdingTreeRegressor()
+                )
+            else:
+                Exception("Streaming regression model not implemented")
             self.__reg.fit(X, y)
             self.__last_design_point = design_point
             self.__last_len = len(X)
         elif self.__last_design_point != design_point:
             if self.__last_len != len(X):
-                Xl = X[-1]
-                yl = y[-1]
-                Xl.astype("int64").reshape(1, len(design_point))
+                start_index = -(self.__last_len - len(X))
+                Xl = X[start_index:]
+                yl = y[start_index:]
+                Xl = Xl.astype("int64").reshape(-1, len(design_point))
                 if self.__metrics:
-                    yl.astype("float64").reshape(1, len(self.__metrics))
+                    yl = yl.astype("float64").reshape(-1, len(self.__metrics))
                 else:
                     raise Exception(
                         "Metrics not initialized while partially fitting streaming learner"
@@ -157,15 +176,16 @@ class Estimator(AbstractEstimator):
         ):
             self.__reg = KernelRidge()
             parameters = {
-                "alpha": stats.loguniform(a=1e-7, b=1e2),
+                "alpha": stats.loguniform(a=1e-4, b=1e2),
                 "gamma": stats.expon(scale=0.1),
                 "kernel": ["rbf"],
             }
-            cv = ShuffleSplit(n_splits=5, test_size=0.25, random_state=0)
+            cv = ShuffleSplit(n_splits=10, test_size=0.2, random_state=0)
             self.__reg = RandomizedSearchCV(
                 self.__reg,
                 parameters,
                 cv=cv,
+                n_iter=50,
                 scoring="neg_root_mean_squared_error",
                 n_jobs=-1,
             )
@@ -202,7 +222,22 @@ class Estimator(AbstractEstimator):
             opened_file.write(line[:-1] + "\n")
             opened_file.close()
 
-    def __generate_dataset(self,) -> None:
+    @staticmethod
+    def evaluate_random_design_point(
+        free_parameters_range: "OrderedDict[str, Tuple[int, int]]",
+        evaluator: AbstractDesignPointEvaluator,
+    ) -> Tuple[List[int], DesignValue]:
+
+        design_point = []
+        for k in free_parameters_range.keys():
+            design_point.append(
+                randint(
+                    free_parameters_range[k][0], free_parameters_range[k][1],
+                )
+            )
+        return design_point, evaluator.evaluate(tuple(design_point))
+
+    def __generate_dataset(self) -> None:
         design_value = None
         if self.__reading_design_values:
             lines = (
@@ -221,7 +256,7 @@ class Estimator(AbstractEstimator):
                     design_point = []
                     splitted_line = line.split(",")
                     i = 0
-                    for k in self.__free_parameters_range.keys():
+                    for _ in self.__free_parameters_range.keys():
                         design_point.append(float(splitted_line[i]))
                         i += 1
 
@@ -253,16 +288,11 @@ class Estimator(AbstractEstimator):
             return
 
         for _ in range(0, self.__dataset_size):
-            design_point = []
-            for k in self.__free_parameters_range.keys():
-                design_point.append(
-                    randint(
-                        self.__free_parameters_range[k][0],
-                        self.__free_parameters_range[k][1],
-                    )
-                )
-            design_value = self.__design_point_evaluator.evaluate(
-                tuple(design_point)
+            (
+                design_point,
+                design_value,
+            ) = Estimator.evaluate_random_design_point(
+                self.__free_parameters_range, self.__design_point_evaluator
             )
             if design_value:
                 self.add_example(
