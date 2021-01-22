@@ -2,24 +2,67 @@
 package require Tcl 8.0
 package require struct::set
 
-proc read_all_files { dir libs} {
+proc create_file_list { dir} {
     set contents [glob -nocomplain -directory $dir *]
-
+    set subdirs {}
+    set files {}
     foreach item $contents {
-        # recurse - go into the sub directory
         if { [file isdirectory $item] } {
-            read_all_files $item $libs
-            }
+            lappend subdirs $item
+        } else {
+            lappend files $item
+        }
+    }
+
+    foreach item $subdirs {
+        set contents [glob -nocomplain -directory $item *]
+        foreach iitem $contents {
+            lappend files $iitem
+        }
+    }
+    
+    return $files
+}
+
+proc get_depth string {
+    regexp -all / $string
+}
+
+proc lmap_depth { in_list} {
+    # for some reason Vivado TCL does not recognise lmap as a valid command
+    set out {}
+    foreach item $in_list {
+        lappend out [get_depth $item]
+    }
+    return $out
+}
+
+proc lmap_idx { filenames indices} {
+    set out {}
+    foreach item $indices {
+        lappend out [lindex $filenames $item]
+    }
+    return $out
+}
+
+proc read_all_files { dir libs} {
+    set filenames [create_file_list $dir]
+    set depths [lmap_depth $filenames]
+    set indices [lsort -indices -integer -decreasing $depths]
+    set filenames [lmap_idx $filenames $indices]
+
+    foreach item $filenames {
+        set path [file split  [file normalize $item]]
+        set lib [::struct::set intersect $libs $path]
+        puts $path
         if { [file extension $item] == ".vhd" } {
-            set path [file split  [file normalize $item]]
-            set lib [::struct::set intersect $libs $path]
             read_vhdl -library $lib $item
         }
         if { [file extension $item] == ".v" } {
-            read_verilog $item
+            read_verilog -library $lib $item
         }
         if { [file extension $item] == ".sv" } {
-            read_verilog $item
+            read_verilog -sv -library $lib $item
         }
     }
 }

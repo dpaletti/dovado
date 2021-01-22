@@ -91,17 +91,11 @@ class TclFrameHandler(FillHandler):
             )
             if top_lang is RTL.VHDL
             else (
-                "read_verilog "
+                "read_verilog -sv -library "
+                + ("dovado " if is_library else (folder + " "))
                 + str(self.config.get_config("WORK_DIR"))
                 + str(self.config.get_config("VERILOG_BOX"))
             ),
-            # (
-            # "set_property IS_ENABLED 0 [get_files "
-            # + self.parsed_source.get_path()
-            # + "]"
-            # )
-            # if top_lang is RTL.VHDL
-            # else "# no disabling needed",
             "box",
             self.synthesis_part,
             self.synthesis_directive,
@@ -134,13 +128,15 @@ class TclFrameHandler(FillHandler):
             else synthesis_replacements[:3]
             + [
                 (
-                    "read_vhdl -library bftLib "
+                    "read_vhdl -library "
+                    + ("dovado " if is_library else (folder + " "))
                     + str(self.config.get_config("WORK_DIR"))
                     + str(self.config.get_config("VHDL_BOX"))
                 )
                 if top_lang is RTL.VHDL
                 else (
-                    "read_verilog "
+                    "read_verilog -sv -library "
+                    + ("dovado " if is_library else (folder + " "))
                     + str(self.config.get_config("WORK_DIR"))
                     + str(self.config.get_config("VERILOG_BOX"))
                 )
@@ -207,12 +203,10 @@ class HdlBoxFrameHandler(FillHandler):
         if self.__hdl is RTL.VHDL:
             if self.__lib:
                 return self.__vhdl_fill_box(self.__lib)
-            else:
-                raise ValueError(
-                    "Cannot retrieve lib in which the top level resides"
-                )
-        else:
-            return self.__verilog_fill_box()
+            raise ValueError(
+                "Cannot retrieve lib in which the top level resides"
+            )
+        return self.__verilog_fill_box()
 
     def __vhdl_parameter_map(self) -> str:
         parameter_section: str = "generic map(\n"
@@ -284,7 +278,7 @@ class HdlBoxFrameHandler(FillHandler):
         )
         return parameter_section
 
-    def __verilog_fill_box(self,) -> bool:
+    def __verilog_fill_box(self) -> bool:
         input_mapping = [
             "." + port.get_name() + " ('1),\n"
             for port in self.__ports

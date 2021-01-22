@@ -220,8 +220,6 @@ class SourceParser(AbstractSourceParser):
         )
 
     def is_library_project(self) -> bool:
-        if self.__RTL is not RTL.VHDL:
-            return False
         return any(p.is_dir() for p in self.__root_folder.iterdir())
 
     def get_user_defined_libs(self) -> Iterator[str]:

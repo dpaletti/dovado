@@ -43,6 +43,7 @@ def execute_command(command: str) -> str:
 
 
 def source(tcl_script: str) -> Tuple[str, bool]:
+
     vivado_out = execute_command("source " + tcl_script)
     return vivado_out, not re.findall("ERROR:", vivado_out)
 

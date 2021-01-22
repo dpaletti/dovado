@@ -153,7 +153,7 @@ def dovado(
         else str(config.get_config("WORK_DIR"))
         + str(config.get_config("VERILOG_BOX")),
         parsed_src.get_hdl(),
-        parsed_src.get_folder() if parsed_src.get_hdl() is RTL.VHDL else None,
+        parsed_src.get_folder(),
     )
 
     point_evaluator = DesignPointEvaluator(
