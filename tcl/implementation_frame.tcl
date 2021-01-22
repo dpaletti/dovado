@@ -1,4 +1,3 @@
-# All lines starting with #! may be eventually uncommented on user preference
 package require Tcl 8.0
 package require struct::set
 
@@ -28,11 +27,28 @@ proc get_depth string {
     regexp -all / $string
 }
 
+proc lmap_depth { in_list} {
+    # for some reason Vivado TCL does not recognise lmap as a valid command
+    set out {}
+    foreach item $in_list {
+        lappend out [get_depth $item]
+    }
+    return $out
+}
+
+proc lmap_idx { filenames indices} {
+    set out {}
+    foreach item $indices {
+        lappend out [lindex $filenames $item]
+    }
+    return $out
+}
+
 proc read_all_files { dir libs} {
     set filenames [create_file_list $dir]
-    set depths [lmap f $filenames {get_depth $f}]
+    set depths [lmap_depth $filenames]
     set indices [lsort -indices -integer -decreasing $depths]
-    set filenames [lmap idx $indices {lindex $filenames $idx}]
+    set filenames [lmap_idx $filenames $indices]
 
     foreach item $filenames {
         set path [file split  [file normalize $item]]
