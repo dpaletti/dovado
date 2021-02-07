@@ -35,8 +35,10 @@ class FillHandler:
             Path(self.out_path).write_text(out)
             self.replacements = None
             return True
-        except Exception:
-            return False
+        except Exception as e:
+            raise Exception(
+                "Exception during frame filling at fill handling: " + str(e)
+            )
 
     def set_parameters(self, parameters: List[Parameter]) -> None:
         "Optional override"

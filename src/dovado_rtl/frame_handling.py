@@ -125,7 +125,7 @@ class TclFrameHandler(FillHandler):
         self.replacements = (
             synthesis_replacements
             if self.stop_step is StopStep.SYNTHESIS
-            else synthesis_replacements[:3]
+            else synthesis_replacements[:4]
             + [
                 (
                     "read_vhdl -library "
