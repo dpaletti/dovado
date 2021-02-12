@@ -1,6 +1,8 @@
 package require Tcl 8.0
 package require struct::set
 
+set_param general.maxThreads 8
+
 proc create_file_list { dir} {
     set contents [glob -nocomplain -directory $dir *]
     set subdirs {}
@@ -58,10 +60,10 @@ proc read_all_files { dir libs} {
             read_vhdl -library $lib $item
         }
         if { [file extension $item] == ".v" } {
-            read_verilog -library $lib $item
+            read_verilog $item
         }
         if { [file extension $item] == ".sv" } {
-            read_verilog -sv -library $lib $item
+            read_verilog -sv $item
         }
     }
 }
