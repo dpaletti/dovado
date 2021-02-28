@@ -2,7 +2,8 @@
 package require Tcl 8.0
 package require struct::set
 
-set_param general.maxThreads 8
+# causes segfault on some machines
+# set_param general.maxThreads 8
 
 proc create_file_list { dir} {
     set contents [glob -nocomplain -directory $dir *]

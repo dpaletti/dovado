@@ -124,7 +124,7 @@ class DesignPointEvaluator(AbstractDesignPointEvaluator):
 
     def get_max_frequency(self, wns: float) -> float:
 
-        return 1000 / ((1 / 1000 * self.__target_clock) - wns)
+        return 1000 / (1 / (1 / 1000 * self.__target_clock) - wns)
 
     def set_metrics(self, metrics: List[Metric]):
         if self.__metrics:

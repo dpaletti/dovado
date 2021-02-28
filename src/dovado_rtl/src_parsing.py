@@ -90,16 +90,10 @@ class SourceParser(AbstractSourceParser):
 
     @staticmethod
     def get_project_path(file_path: Path) -> Path:
-        # file_path is resolved by typer, it is always an solved path (no symlinks)
-        # assumption: if a dir exists in the parent directory such that it contains a RTL file
-        # the top file is considered as part of a library
+        # this only supports files which are at project's root
+        # TODO support files in project's subdir
 
-        parent_content = next(file_path.parents[1].iterdir())
-        if parent_content.is_dir() and next(
-            parent_content.iterdir()
-        ).suffix in {".vhdl", ".v", ".sv", "vhd"}:
-            return file_path.parents[1].absolute()
-        return file_path.parents[0].absolute()
+        return file_path.parent.absolute()
 
     def get_selected_entity(self) -> Entity:
         if self.__selected_entity:
