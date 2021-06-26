@@ -1,5 +1,7 @@
 from typing import List, Tuple, Optional
 from collections import OrderedDict
+
+from pymoo.model.callback import Callback
 from pymoo.model.problem import Problem
 from pymoo.algorithms.nsga2 import NSGA2
 from pymoo.factory import (
@@ -15,7 +17,7 @@ from pymoo.model.repair import Repair
 import numpy as np
 from dovado_rtl.simple_types import Metric
 from dovado_rtl.fitness import FitnessEvaluator
-import pickle
+from pathlib import Path
 
 
 class MyRepair(Repair):
@@ -71,12 +73,8 @@ class MyProblem(Problem):
         )
 
     def _evaluate(self, x: List[int], out, *args, **kwargs):
-        out["F"] = np.column_stack(
-            [
-                self.evaluator.fitness(tuple(x), metric)
-                for metric in self.metrics
-            ]
-        )
+        fitness = self.evaluator.fitness(x)
+        out["F"] = np.column_stack(fitness)
 
     def __is_power_of_2(self, n) -> int:
         return 0 if (n & (n - 1) == 0) and (n != 0) else 1
@@ -88,7 +86,7 @@ def optimize(
     metrics: List[Metric],
     execution_time: Optional[str],
     power_of_2: Optional[List[str]],
-) -> List[float]:
+) -> float:
     problem = MyProblem(evaluator, free_parameters_range, metrics)
 
     algorithm = NSGA2(
@@ -113,10 +111,17 @@ def optimize(
         )
     else:
         res = minimize(
-            problem, algorithm, seed=1, save_history=True, verbose=True,
+            problem,
+            algorithm,
+            seed=1,
+            save_history=True,
+            verbose=True,
         )
-    with open("objs.pkl", "wb") as f:
-        pickle.dump([res, algorithm], f)
-    # with open('objs.pkl', 'rb') as f:
-    #     obj0, obj1, obj2 = pickle.load(f)
-    return res.F[-1].tolist()
+    # TODO take this out and write file
+    design_space_path = "dovado_work/design_space.csv"
+    objective_space_path = "dovado_work/objective_space.csv"
+    Path(design_space_path).open("w")
+    Path(objective_space_path).open("w")
+    np.savetxt(design_space_path, res.X, delimiter=",")
+    np.savetxt(objective_space_path, res.F, delimiter=",")
+    return res.exec_time

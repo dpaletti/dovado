@@ -2,7 +2,6 @@ from typing import Optional
 from pathlib import Path
 import typer
 import pickle
-from pymoo.visualization.pcp import PCP
 
 
 def visualize(

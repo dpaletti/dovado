@@ -50,7 +50,7 @@ class AbstractDesignPointEvaluator(abc.ABC):
 
 class AbstractFitnessEvaluator(abc.ABC):
     @abstractmethod
-    def fitness(self, design_point: Tuple[int, ...], metric: Tuple[str, str]):
+    def fitness(self, design_point: Tuple[int, ...]):
         pass
 
 

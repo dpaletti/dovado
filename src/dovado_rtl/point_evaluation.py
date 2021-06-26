@@ -151,3 +151,6 @@ class DesignPointEvaluator(AbstractDesignPointEvaluator):
 
     def get_metrics(self):
         return self.__metrics
+
+    def get_parsed_src(self):
+        return self.__parsed_file

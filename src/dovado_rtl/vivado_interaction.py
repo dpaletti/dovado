@@ -30,7 +30,7 @@ def execute_command(command: str) -> str:
             + " debug why it does not start"
         )
     global t_vivado_init
-    if t_vivado_init is not None:
+    if t_vivado_init:
         print("Waiting for Vivado to start ...")
         t_vivado_init.join()
         vivado.sendline("set_param tcl.collectionResultDisplayLimit Inf")

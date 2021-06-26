@@ -1,4 +1,3 @@
-import argparse
 from pathlib import Path
 from typing import List, Optional
 from dovado_rtl.src_parsing import SourceParser

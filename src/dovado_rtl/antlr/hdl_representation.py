@@ -17,7 +17,8 @@ class PortTypeEnum(Enum):
 
 class ParameterTypeEnum(Enum):
     INTEGER = auto()
-    NOT_INTEGER = auto()
+    BOOL = auto()
+    OTHER = auto()
 
 
 @dataclass

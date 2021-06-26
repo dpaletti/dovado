@@ -29,6 +29,7 @@ from dovado_rtl.antlr.hdl_representation import (
     TopLevel,
     Parameter,
     Port,
+    ParameterTypeEnum,
 )
 from dovado_rtl.abstract_classes import AbstractSourceParser
 from dovado_rtl.enums import RTL
@@ -161,12 +162,20 @@ class SourceParser(AbstractSourceParser):
         self.get_parameter(parameter).set_value(value)
 
     def write_parameter_values(
-        self, hdl_handler: FillHandler, values: Dict[str, int],
+        self,
+        hdl_handler: FillHandler,
+        values: Dict[str, int],
     ):
         # FrameHandler is too broad, should use HdlBoxHandler but in python 3.6 is not
         # possible to solve the circular dependency
 
         for p, v in values.items():
+            if p in [
+                full_param.get_name()
+                for full_param in self.__selected_entity.get_parameters()
+                if full_param.get_type().type is ParameterTypeEnum.BOOL
+            ] and v not in {"false", "true"}:
+                v = "false" if v == 0 else "true"
             self.__set_parameter_value(p, v)
 
         hdl_handler.replacements = [

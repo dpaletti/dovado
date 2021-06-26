@@ -1,7 +1,12 @@
 from pathlib import Path
 from typing import Tuple, List, Optional
 from collections import OrderedDict
+from random import randrange
 
+from dovado_rtl.antlr.hdl_representation import (
+    ParameterType,
+    ParameterTypeEnum,
+)
 from dovado_rtl.config import Configuration
 import dovado_rtl.vivado_interaction as vivado
 from dovado_rtl.frame_handling import (
@@ -9,10 +14,9 @@ from dovado_rtl.frame_handling import (
     HdlBoxFrameHandler,
     XdcFrameHandler,
 )
-from dovado_rtl.enums import RTL, RegressionModel, StopStep
+from dovado_rtl.enums import RTL, StopStep
 from dovado_rtl.simple_types import IsIncremental
 from dovado_rtl.point_evaluation import DesignPointEvaluator
-from dovado_rtl.estimation import Estimator
 from dovado_rtl.fitness import FitnessEvaluator
 from dovado_rtl.genetic_algorithm import optimize
 from dovado_rtl.cli_utility import (
@@ -22,10 +26,12 @@ from dovado_rtl.cli_utility import (
     validate_directives,
     validate_target_clock,
     validate_estimator,
-    validate_nearest_distance,
     validate_int_metrics,
+    validate_controller,
 )
 import typer
+
+from dovado_rtl.src_parsing import SourceParser
 
 app = typer.Typer(help="Dovado RTL design automation and space exploration")
 vivado.start()
@@ -39,6 +45,9 @@ def main():
 def dovado(
     ctx: typer.Context,
     # Arguments
+    # file_path is used through the context in cli_utility during parameters validation
+    # and is then passed through context
+    # until it reaches this method where it is extracted and used as parsed_src
     file_path: Path = typer.Option(  # pylint: disable=unused-argument
         ...,
         exists=True,
@@ -50,8 +59,6 @@ def dovado(
             + " for the directory structure your RTL project should comply with"
         ),
     ),
-    # file_path is used through the context in cli_utility during parameters validation and is then passed through context
-    # until it reaches this method where it is extracted and used as parsed_src
     # Required Cli options
     board: str = typer.Option(
         ...,
@@ -221,7 +228,13 @@ def points(
             out_file.open("a").writelines([output_line[:-1] + "\n"])
 
 
-@app.command("space")
+@app.command(
+    "space",
+    context_settings={
+        "allow_extra_args": True,
+        "ignore_unknown_options": True,
+    },
+)
 def space(
     ctx: typer.Context,
     param_ranges: List[int] = typer.Argument(
@@ -240,110 +253,85 @@ def space(
     optimization_runtime: Optional[str] = typer.Option(
         None, help="optimization timeout as hh:mm:ss"
     ),
-    approximate: bool = typer.Option(
+    disable_approximate: Optional[bool] = typer.Option(
         False, help="enable approximations for fitness function"
     ),
-    fitness_estimator: str = typer.Option(
-        "KERNEL_RIDGE",
+    estimation_model: Optional[str] = typer.Option(
+        "HoeffdingAdaptiveTree",
         callback=validate_estimator,
-        help="estimator to use for fitness function approximation,"
-        + "'kernel_ridge' is default. 'stream_learning_isoup' selects a ISOUP Adaptive Tree Regressor trained incrementally "
-        + "while 'stream_learning_stacked' selects a Stacked tree regressor",
+        help="estimator to use for fitness function approximation (see movado docs for more information),"
+        + "'HoeffdingAdaptiveTree' is default. 'KernelRidge' selects a kernel regression",
     ),
-    nearest_distance: int = typer.Option(
-        3,
-        callback=validate_nearest_distance,
-        help="Set which nearest distance is considered against the threshold",
+    controller_model: Optional[str] = typer.Option(
+        "Distance",
+        callback=validate_controller,
+        help="controller to use for fitness function approximation (see movado docs for more information),"
+        + "'Distance' is default. 'Mab' selects a pure multi-armed bandit controller",
     ),
-    test_estimation: bool = typer.Option(
-        False,
-        help="record all estimated values along with the real "
-        + "computed values (slows down computation a lot)",
-    ),
-    record_design_values: bool = typer.Option(
-        False, help="record all design values in a csv file"
-    ),
-    read_design_values: bool = typer.Option(
-        False,
-        help="read design values from a csv file recorded with "
-        + "the --record-design-values flag",
+    disable_controller_mab_weight: Optional[bool] = typer.Option(
+        False, help="disable loss weighting in Distance Controller"
     ),
 ):
     """
     RTL design space exploration
     """
+    for idx, param in enumerate(ctx.obj["parameters"]):
+        parsed_src: SourceParser = ctx.obj["point_evaluator"].get_parsed_src()
+        full_param = parsed_src.get_parameter(param)
+        if full_param.get_type().type is ParameterTypeEnum.BOOL:
+            param_ranges = (
+                list(param_ranges[: idx * 2])
+                + [0, 1]
+                + (
+                    list(param_ranges[idx * 2 :])
+                    if (idx * 2) < len(param_ranges)
+                    else []
+                )
+            )
+
     it = iter(param_ranges)
     ranges_dict = OrderedDict(zip(ctx.obj["parameters"], zip(it, it)))
-    estimator = None
-    if approximate:
-        estimator = Estimator(
-            RegressionModel.STREAM_LEARNING_ISOUP
-            if fitness_estimator.upper() == "STREAM_LEARNING_ISOUP"
-            else RegressionModel.STREAM_LEARNING_STACKED
-            if fitness_estimator.upper() == "STREAM_LEARNING_STACKED"
-            else RegressionModel.KERNEL_RIDGE,
-            ctx.obj["point_evaluator"],
-            ranges_dict,
-            int(ctx.obj["config"].get_config("INITIAL_SAMPLES")),
-            ctx.obj["config"],
-            test_estimation,
-            record_design_values,
-            read_design_values,
+    if param_initial_values:
+        design_value = ctx.obj["point_evaluator"].evaluate(
+            tuple(param_initial_values)
         )
+        if not design_value:
+            raise Exception(
+                "Could not synthesize/implement " + str(param_initial_values)
+            )
     else:
-        if param_initial_values:
+        print(
+            "Trying random parameter values in the range given to get first synthesis/implementation"
+        )
+        design_value = ctx.obj["point_evaluator"].evaluate(
+            tuple([randrange(i, j) for i, j in ranges_dict.values()])
+        )
+        while not design_value:
+            print(
+                "Trying random parameter values in the range given to get first synthesis/implementation"
+            )
             design_value = ctx.obj["point_evaluator"].evaluate(
-                tuple(param_initial_values)
+                tuple([randrange(i, j) for i, j in ranges_dict.values()])
             )
-            if not design_value:
-                raise Exception(
-                    "Could not synthesize/implement "
-                    + str(param_initial_values)
-                )
-        else:
-            # first estimation is to retrieve available utilization metrics
-            (
-                design_point,
-                design_value,
-            ) = Estimator.evaluate_random_design_point(
-                ranges_dict, ctx.obj["point_evaluator"]
-            )
-            i = 0
-            while (not design_value) and (i < 10):
-                print("Could not synthesize/implement " + str(design_point))
-                _, design_value = Estimator.evaluate_random_design_point(
-                    ranges_dict, ctx.obj["point_evaluator"]
-                )
-                i += 1
-            if i == 10:
-                raise Exception(
-                    "Could not find a valid design point in 10 attempts"
-                )
+        print("First synthesis succeeded")
 
+    metrics = ctx.obj["point_evaluator"].get_metrics()
     fitness_evaluator = FitnessEvaluator(
-        nearest_distance,
-        estimator,
         ctx.obj["point_evaluator"],
-        ctx.obj["config"],
+        disable=disable_approximate,
+        controller=controller_model,
+        estimator=estimation_model,
+        controller_mab_weight=not disable_controller_mab_weight,
     )
 
-    # TODO ask user for initial parameters so as to be sure to have a correct first synthesis/implementation
-    metrics = ctx.obj["point_evaluator"].get_metrics()
-
-    if not metrics:
-        raise Exception(
-            "INITIAL_SAMPLES must be at least one in order to analyze "
-            + "which utilization metrics are available for the given board"
-        )
-
-    result = optimize(
+    execution_time = optimize(
         fitness_evaluator,
         ranges_dict,
         metrics,
         optimization_runtime,
         power_of_2,
     )
-    print("Optimization Result: " + str(result))
+    print("\n\nExecution Time: " + str(execution_time) + "\n\n")
 
 
 main()

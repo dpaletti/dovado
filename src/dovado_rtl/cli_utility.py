@@ -8,7 +8,7 @@ from dovado_rtl.src_parsing import SourceParser
 from dovado_rtl.vivado_interaction import get_parts
 from dovado_rtl.antlr.hdl_representation import PortDirectionEnum
 from dovado_rtl.simple_types import Metric
-from dovado_rtl.enums import RegressionModel
+from movado import models, controllers
 
 
 def validate_power_of_2(value: List[str], ctx: typer.Context):
@@ -36,7 +36,8 @@ def validate_int_metrics(value: List[int]):
 
 
 def parse_comma_separated_list(
-    regexp_element: str, to_parse: str,
+    regexp_element: str,
+    to_parse: str,
 ) -> Optional[List[str]]:
     return (
         None
@@ -114,14 +115,25 @@ def validate_nearest_distance(value: int) -> int:
 
 
 def validate_estimator(value: str) -> str:
-    if value.upper() not in RegressionModel.__members__.keys():
-        raise typer.BadParameter(
-            "Invalid estimator "
-            + value
-            + " available estimators are "
-            + str(set(RegressionModel.__members__.keys()))
-        )
-    return value
+    if value in models:
+        return value
+    raise typer.BadParameter(
+        "Invalid estimation model "
+        + value
+        + " available models are: "
+        + str(models)
+    )
+
+
+def validate_controller(value: str) -> str:
+    if value in controllers:
+        return value
+    raise typer.BadParameter(
+        "Invalid controller "
+        + value
+        + " available controllers are: "
+        + str(controllers)
+    )
 
 
 def validate_board(value: str) -> str:

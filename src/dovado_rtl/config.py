@@ -5,12 +5,6 @@ import yaml
 
 class Configuration:
     __config_dict = {
-        # This switch controls if at each estimate call
-        # also vivado is called in order to record approximation accuracy
-        # against the real value
-        "SAMPLE_RECORD_CSV": "sample_record.csv",
-        "ESTIMATION_TESTING": True,
-        "EST_TEST_CSV": "estimation_accuracy.csv",
         # Dovado Working Dir
         # This directory will be created in the same directory
         # in which the "dovado" command is executed
@@ -61,10 +55,6 @@ class Configuration:
         "IMPLEMENTATION_TIMING": "post_impl_setup_timing.rpt",
         # Maximum integer value considered for RTL parameters
         "INTEGER_HIGH": 2147483647,
-        # Initial sample size for the estimator
-        "INITIAL_SAMPLES": 100,
-        # N-parameter to choose which example to calculate the distance from
-        "N": 3,
         # Run time set as a constraint for the genetic algorithm, format "hh:mm:ss"
         "GENETIC_RUN_TIME": "04:00:00",
     }

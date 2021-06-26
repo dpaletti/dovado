@@ -272,7 +272,8 @@ class VhdlEntityVisitor(vhdlParserVisitor):
             return ParameterType(ParameterTypeEnum.INTEGER, "signed")
         elif type == "unsigned":
             return ParameterType(ParameterTypeEnum.INTEGER, "unsigned")
-
+        elif type == "boolean":
+            return ParameterType(ParameterTypeEnum.BOOL, "boolean")
         else:
             pass
 
