@@ -4,7 +4,6 @@ from collections import OrderedDict
 from random import randrange
 
 from dovado_rtl.antlr.hdl_representation import (
-    ParameterType,
     ParameterTypeEnum,
 )
 from dovado_rtl.config import Configuration
