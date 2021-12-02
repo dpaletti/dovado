@@ -8,7 +8,6 @@ DoVado needs python 3.6 or higher. Install it through pip, on many Linux systems
 pip3 install --user --no-cache dovado-rtl
 #+end_src
 
-
 * Usage
 Dovado has two modes:
 - points: design automation mode in which a file containing parameter values must be given and a file containing all the evaluations is returned for some given metrics,
@@ -19,13 +18,14 @@ Dovado has two modes:
 |------------------+------------------------------------------------------------------------------------------------------------------------------------------------+-----------|
 | --file-path      | path to the target file                                                                                                                        | yes       |
 | --board          | vivado descriptor of a board                                                                                                                   | yes       |
-| --parameters     | parameters to use either for points/space                                                                                                      | yes       |
+| --parameters     | parameters to use either for points/space (integers and booleans supported, see [[neorv32 (VHDL)]])                                                | yes       |
 | --clock-port     | RTL identifier of the clock port                                                                                                               | yes       |
 | --implementation | switch to evaluate designs after implementation (default is after synthesis)                                                                   | no        |
 | --incremental    | switch to use incremental synthesis/implementation                                                                                             | no        |
 | --directives     | list of directives to pass to synthesis, place and route (default is RuntimeOptimized for all three)                                           | no        |
 | --target-clock   | clock (Mhz) to give as a constraint to Vivado (default=1000)                                                                                   | no        |
 | --metrics        | list of metrics to target using their integer identifier (default mode is interactive, you will be asked after first synthesis/implementation) | no        |
+|                  |                                                                                                                                                |           |
 
 After those parameters specify points/space both these modes take an argument:
 - points argument: specify the path to the csv file containing the design points to be analyzed. The csv file must contain on each line the value for each of the parameters stated through --parameters in the same order,
@@ -33,13 +33,19 @@ After those parameters specify points/space both these modes take an argument:
 No further parameters can be passed to points
 
 #+CAPTION: dovado space parameters
-| parameter              | description                                                                                                                                                          | mandatory |
-|------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-----------|
-| --power-of-2           | list of 'y' or 'n' where each corresponding parameter, in the same order, is specified as a power of 2 (default is "n" for all parameters)                           | no        |
-| --param-initial-values | state parameters which are guaranteed to synthesize/implement in order to retrieve the usage metrics after first synthesis                                           | no        |
-| --optimization-runtime | set as a termination condition a timeout (which will be taken as a hint and not strictly respected) as hh:mm:ss (default is a tolerance based termination criterion) | no        |
-| --record-design-values | record all design values in a csv file                                                                                                                               | no        |
-| --read-design-values   | read design values from a csv file                                                                                                                                   | no        |
+
+| parameter                       | description                                                                                                            | mandatory |
+|---------------------------------+------------------------------------------------------------------------------------------------------------------------+-----------|
+| --power-of-2                    | list of 'y/n' to state whether a parameter must be explored stepping power of 2s                                       | no        |
+| --param-initial-values          | parameter values which are guaranteed to be synthesizable to retrieve metric mapping                                   | no        |
+| --optimization-runtime          | set as a termination condition a timeout as hh:mm:ss                                                                   | no        |
+| --record-design-values          | record all design values in a csv                                                                                      | no        |
+| --read-desgn-values             | read design values from a csv                                                                                          | no        |
+| --disable-approximate           | disable approximation                                                                                                  | no        |
+| --estimation-model              | choose Hoeffding Adaptive Tree (default) or Kernel Ridge regressor or Shadow to not use the controller but log anyways | no        |
+| --controller-model              | choose Mab or Distance-based (default) controller                                                                      | no        |
+| --disable-controller-mab-weight | disable loss weighting in distance controller                                                                          | no        |
+| --n-controllers                 | set the number of voting controllers (default is 500, too high for many applications)                                  | no        |
 
 Directory structure is vital for the functioning of the tool:
 - VHDL: if a package is used the corresponding folder must be named exactly as the package; if one wants to analyse a module in a project with multiple packages each file belonging to a given package must reside in a subfolder with the same name as the package it belongs to:
@@ -72,6 +78,12 @@ Above we are optimizing two memory parameters (MEM_INT_IMEM_SIZE, MEM_INT_DMEM_S
 - REGISTER occupation (4)
 - BRAM occupation (9)
 Ranges are specified after space and we also specify that we want to search only among power of 2's solutions.
+
+Here an example of *exploring boolean parameters*, the trick here is to explore them as normal parameters but use as range [0, 1] obviously they can be mixed up with non-boolean parameters during exploration:
+#+begin_src bash
+ dovado --file-path <path to "neorv32/rtl/neorv32/neorv32_top.vhd"> --board xc7k70tfbv676-1 --parameters BOOTLOADER_EN --parameters CPU_EXTENSION_RISCV_A --parameters CPU_EXTENSION_RISCV_B --parameters CPU_EXTENSION_RISCV_C --clock-port clk_i --metrics 0 --metrics 1 --metrics 4 --metrics 9 space 0 1 0 1 0 1 0 1 --disable-approximate
+
+#+end_src
 *** corundum (VERILOG)
 #+begin_src bash
 git clone https://github.com/corundum/corundum
@@ -79,7 +91,12 @@ cd corundum/
 #+end_src
 Exploring the parameter space of the top module:
 #+begin_src bash
-dovado --file-path <path to "corundum/fpga/common/rtl/cpl_queue_manager.v"> --board xc7k70tfbv676-1 --target-clock 100000 --parameters OP_TABLE_SIZE --parameters QUEUE_INDEX_WIDTH --parameters PIPELINE --clock-port clk --metrics 0 --metrics 1 --metrics 4 --metrics 9 space 8 64 4 11 2 32 --record-design-values
+dovado --file-path <path to "corundum/fpga/common/rtl/cpl_queue_manager.v"> --board xc7k70tfbv676-1 --target-clock 100000 --parameters OP_TABLE_SIZE --parameters QUEUE_INDEX_WIDTH --parameters PIPELINE --clock-port clk --metrics 0 --metrics 1 --metrics 4 --metrics 9 space 8 64 4 11 2 32 --record-design-values --disable-approximate
+#+end_src
+
+Using *approximation* parameters:
+#+begin_src bash
+dovado --file-path <path to "corundum/fpga/common/rtl/cpl_queue_manager.v"> --board xc7k70tfbv676-1 --target-clock 100000 --parameters OP_TABLE_SIZE --parameters QUEUE_INDEX_WIDTH --parameters PIPELINE --clock-port clk --metrics 0 --metrics 1 --metrics 4 --metrics 9 space 8 64 4 11 2 32 --controller-model Mab --n-controllers 80
 #+end_src
 *** cv32e40p (SYSTEM-VERILOG)
 #+begin_src bash
@@ -90,5 +107,5 @@ cp cv32e40p_fifo.sv testing/
 #+end_src
 In this project an include directory is used but dovado does not currently support it thus we create a subfolder, name may be whatever, where to isolate the module we are interested in studying. This workaround is only possible if the module one wants to study works standalone without include directives.
 #+begin_src bash
-dovado --file-path ../../test_projects/cv32e40p/rtl/testing/cv32e40p_fifo.sv --board xc7k70tfbv676-1 --target-clock 100000 --parameters DEPTH --parameters DATA_WIDTH --clock-port clk_i --metrics 0 --metrics 1 --metrics 4 --metrics 9 space 2 4294967296 2 64 --power-of-2 y --power-of-2 y
+dovado --file-path ../../test_projects/cv32e40p/rtl/testing/cv32e40p_fifo.sv --board xc7k70tfbv676-1 --target-clock 100000 --parameters DEPTH --parameters DATA_WIDTH --clock-port clk_i --metrics 0 --metrics 1 --metrics 4 --metrics 9 space 2 4294967296 2 64 --power-of-2 y --power-of-2 y --disable-approximate
 #+end_src

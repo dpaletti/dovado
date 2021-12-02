@@ -12,7 +12,6 @@ class FitnessEvaluator(AbstractFitnessEvaluator):
         disable: bool = False,
         controller: str = "Distance",
         estimator: str = "HoeffdingAdaptiveTree",
-        controller_mab_weight: bool = False,
         **kwargs
     ):
 
@@ -23,7 +22,6 @@ class FitnessEvaluator(AbstractFitnessEvaluator):
             estimator=estimator,
             controller=controller,
             controller_debug=True,
-            controller_mab_weight=controller_mab_weight,
             **kwargs
         )(self.fitness)
 

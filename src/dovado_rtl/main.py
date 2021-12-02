@@ -68,7 +68,7 @@ def dovado(
     parameters: List[str] = typer.Option(
         ...,
         callback=validate_parameters,
-        help="parameters to use for point/space exploration, only integer and integer subtypes are supported",
+        help="parameters to use for point/space exploration, only integer (subtypes) and booleans are supported",
     ),
     clock_port: str = typer.Option(
         ...,
@@ -253,7 +253,7 @@ def space(
         None, help="optimization timeout as hh:mm:ss"
     ),
     disable_approximate: Optional[bool] = typer.Option(
-        False, help="enable approximations for fitness function"
+        False, help="disable approximations for fitness function"
     ),
     estimation_model: Optional[str] = typer.Option(
         "HoeffdingAdaptiveTree",
@@ -265,11 +265,12 @@ def space(
         "Distance",
         callback=validate_controller,
         help="controller to use for fitness function approximation (see movado docs for more information),"
-        + "'Distance' is default. 'Mab' selects a pure multi-armed bandit controller",
+        + "'Distance' is default. 'Mab' selects a pure multi-armed bandit controller, ",
     ),
     disable_controller_mab_weight: Optional[bool] = typer.Option(
         False, help="disable loss weighting in Distance Controller"
     ),
+    n_controllers: Optional[int] = typer.Option(500, help="set the number of controllers for movado (voters)")
 ):
     """
     RTL design space exploration
@@ -321,6 +322,7 @@ def space(
         controller=controller_model,
         estimator=estimation_model,
         controller_mab_weight=not disable_controller_mab_weight,
+        voters=n_controllers
     )
 
     execution_time = optimize(

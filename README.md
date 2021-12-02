@@ -1,17 +1,17 @@
 
 # Table of Contents
 
-1.  [Installation](#orgc020a3e)
-2.  [Usage](#org4f8647b)
-    1.  [Examples](#org12b2aea)
-        1.  [neorv32 (VHDL)](#orgd8de369)
-        2.  [corundum (VERILOG)](#org43556a3)
-        3.  [cv32e40p (SYSTEM-VERILOG)](#org6e54816)
+1.  [Installation](#org58d3187)
+2.  [Usage](#org9136593)
+    1.  [Examples](#org132071a)
+        1.  [neorv32 (VHDL)](#org7a2f677)
+        2.  [corundum (VERILOG)](#org3b84b15)
+        3.  [cv32e40p (SYSTEM-VERILOG)](#org678be8b)
 
 DoVado is a RTL design automation and exploration CLI tool.
 
 
-<a id="orgc020a3e"></a>
+<a id="org58d3187"></a>
 
 # Installation
 
@@ -20,7 +20,7 @@ DoVado needs python 3.6 or higher. Install it through pip, on many Linux systems
     pip3 install --user --no-cache dovado-rtl
 
 
-<a id="org4f8647b"></a>
+<a id="org9136593"></a>
 
 # Usage
 
@@ -64,7 +64,7 @@ Dovado has two modes:
 
 <tr>
 <td class="org-left">&#x2013;parameters</td>
-<td class="org-left">parameters to use either for points/space</td>
+<td class="org-left">parameters to use either for points/space (integers and booleans supported, see <a href="#orgb931113">2.1.1.1</a>)</td>
 <td class="org-left">yes</td>
 </tr>
 
@@ -108,6 +108,13 @@ Dovado has two modes:
 <td class="org-left">&#x2013;metrics</td>
 <td class="org-left">list of metrics to target using their integer identifier (default mode is interactive, you will be asked after first synthesis/implementation)</td>
 <td class="org-left">no</td>
+</tr>
+
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
 </tr>
 </tbody>
 </table>
@@ -190,12 +197,12 @@ Directory structure is vital for the functioning of the tool:
 -   VERILOG/SYSTEM-VERILOG: include directives are not supported all files must be in the same folder, no subfolders allowed.
 
 
-<a id="org12b2aea"></a>
+<a id="org132071a"></a>
 
 ## Examples
 
 
-<a id="orgd8de369"></a>
+<a id="org7a2f677"></a>
 
 ### neorv32 (VHDL)
 
@@ -217,8 +224,14 @@ Above we are optimizing two memory parameters (MEM<sub>INT</sub><sub>IMEM</sub><
 
 Ranges are specified after space and we also specify that we want to search only among power of 2&rsquo;s solutions.
 
+1.  Exploring boolean values
 
-<a id="org43556a3"></a>
+    Here an example of exploring boolean parameters, the trick here is to explore them as normal parameters but use as range [0, 1] obviously they can be mixed up with non-boolean parameters during exploration:
+    
+        dovado --file-path <path to "neorv32/rtl/neorv32/neorv32_top.vhd"> --board xc7k70tfbv676-1 --parameters BOOTLOADER_EN --parameters CPU_EXTENSION_RISCV_A --parameters CPU_EXTENSION_RISCV_B --parameters CPU_EXTENSION_RISCV_C --clock-port clk_i --metrics 0 --metrics 1 --metrics 4 --metrics 9 space 0 1 0 1 0 1 0 1
+
+
+<a id="org3b84b15"></a>
 
 ### corundum (VERILOG)
 
@@ -230,7 +243,7 @@ Exploring the parameter space of the top module:
     dovado --file-path <path to "corundum/fpga/common/rtl/cpl_queue_manager.v"> --board xc7k70tfbv676-1 --target-clock 100000 --parameters OP_TABLE_SIZE --parameters QUEUE_INDEX_WIDTH --parameters PIPELINE --clock-port clk --metrics 0 --metrics 1 --metrics 4 --metrics 9 space 8 64 4 11 2 32 --record-design-values
 
 
-<a id="org6e54816"></a>
+<a id="org678be8b"></a>
 
 ### cv32e40p (SYSTEM-VERILOG)
 
