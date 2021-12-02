@@ -18,7 +18,7 @@ Dovado has two modes:
 |------------------+------------------------------------------------------------------------------------------------------------------------------------------------+-----------|
 | --file-path      | path to the target file                                                                                                                        | yes       |
 | --board          | vivado descriptor of a board                                                                                                                   | yes       |
-| --parameters     | parameters to use either for points/space (integers and booleans supported, see [[neorv32 (VHDL)]])                                                | yes       |
+| --parameters     | parameters to use either for points/space (integers and booleans supported)                                                          | yes       |
 | --clock-port     | RTL identifier of the clock port                                                                                                               | yes       |
 | --implementation | switch to evaluate designs after implementation (default is after synthesis)                                                                   | no        |
 | --incremental    | switch to use incremental synthesis/implementation                                                                                             | no        |
