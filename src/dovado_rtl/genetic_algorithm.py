@@ -74,6 +74,7 @@ class MyProblem(Problem):
 
     def _evaluate(self, x: List[int], out, *args, **kwargs):
         fitness = self.evaluator.fitness(x)
+        print(fitness)
         out["F"] = np.column_stack(fitness)
 
     def __is_power_of_2(self, n) -> int:
@@ -111,13 +112,8 @@ def optimize(
         )
     else:
         res = minimize(
-            problem,
-            algorithm,
-            seed=1,
-            save_history=True,
-            verbose=True,
+            problem, algorithm, seed=1, save_history=True, verbose=True,
         )
-    # TODO take this out and write file
     design_space_path = "dovado_work/design_space.csv"
     objective_space_path = "dovado_work/objective_space.csv"
     Path(design_space_path).open("w")

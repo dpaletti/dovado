@@ -3,9 +3,7 @@ from typing import Tuple, List, Optional
 from collections import OrderedDict
 from random import randrange
 
-from dovado_rtl.antlr.hdl_representation import (
-    ParameterTypeEnum,
-)
+from dovado_rtl.antlr.hdl_representation import ParameterTypeEnum
 from dovado_rtl.config import Configuration
 import dovado_rtl.vivado_interaction as vivado
 from dovado_rtl.frame_handling import (
@@ -270,7 +268,9 @@ def space(
     disable_controller_mab_weight: Optional[bool] = typer.Option(
         False, help="disable loss weighting in Distance Controller"
     ),
-    n_controllers: Optional[int] = typer.Option(500, help="set the number of controllers for movado (voters)")
+    n_controllers: Optional[int] = typer.Option(
+        500, help="set the number of controllers for movado (voters)"
+    ),
 ):
     """
     RTL design space exploration
@@ -322,7 +322,7 @@ def space(
         controller=controller_model,
         estimator=estimation_model,
         controller_mab_weight=not disable_controller_mab_weight,
-        voters=n_controllers
+        voters=n_controllers,
     )
 
     execution_time = optimize(

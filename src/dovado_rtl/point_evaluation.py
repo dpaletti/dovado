@@ -73,14 +73,14 @@ class DesignPointEvaluator(AbstractDesignPointEvaluator):
                             )
                         )
                     ),
+                    Path(str(self.__config.get_config("CUSTOM_METRICS_DIR"))),
                     self.__int_metrics,
                 )
             self.__is_first_evaluation = False
-
         if not success:
             met: Dict[Metric, float] = {}
             for i in self.__metrics:
-                if i.is_frequency:
+                if i.is_frequency or i.custom_metric:
                     met[i] = float(0)
                 else:
                     met[i] = float(100)
@@ -100,13 +100,8 @@ class DesignPointEvaluator(AbstractDesignPointEvaluator):
                         i.utilisation[0],
                         i.utilisation[1],
                     )
-                    for i in self.__metrics
-                    if not i.is_frequency and i.utilisation
-                },
-            )
-            for i in self.__metrics:
-                if i.is_frequency:
-                    design_value.value[i] = -self.get_max_frequency(
+                    if not i.is_frequency
+                    else -self.get_max_frequency(
                         report.get_wns(
                             str(self.__config.get_config("WORK_DIR"))
                             + (
@@ -118,6 +113,15 @@ class DesignPointEvaluator(AbstractDesignPointEvaluator):
                             )
                         )
                     )
+                    for i in self.__metrics
+                    if not i.custom_metric
+                },
+            )
+            for i in self.__metrics:
+                if i.custom_metric:
+                    design_value.value[i] = self.compute_custom_metric(
+                        i, design_value
+                    )
                     break
 
         return design_value
@@ -125,6 +129,19 @@ class DesignPointEvaluator(AbstractDesignPointEvaluator):
     def get_max_frequency(self, wns: float) -> float:
 
         return 1000 / (1 / (1 / 1000 * self.__target_clock) - wns)
+
+    def compute_custom_metric(self, metric: Metric, design_value: DesignValue):
+        if not metric.custom_metric:
+            raise Exception(
+                "Trying to execute metric '" + str(metric) + "' as custom"
+            )
+        return metric.custom_metric[1](
+            **{
+                "frequency" if m.is_frequency else m.utilisation[1]: v
+                for m, v in design_value.value.items()
+                if not m.custom_metric
+            }
+        )
 
     def set_metrics(self, metrics: List[Metric]):
         if self.__metrics:

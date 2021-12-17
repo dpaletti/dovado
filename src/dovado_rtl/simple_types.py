@@ -1,4 +1,4 @@
-from typing import List, Dict, Tuple, Optional
+from typing import List, Dict, Tuple, Optional, Any
 from dataclasses import dataclass
 
 
@@ -6,6 +6,7 @@ from dataclasses import dataclass
 class Metric:
     utilisation: Optional[Tuple[str, str]]
     is_frequency: bool
+    custom_metric: Optional[Tuple[str, Any]] = None
 
 
 @dataclass

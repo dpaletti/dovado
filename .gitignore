@@ -27,3 +27,4 @@ dist/
 .Xil/
 .vscode/
 .ipynb_checkpoints/
+venv/

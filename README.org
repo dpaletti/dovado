@@ -39,8 +39,7 @@ No further parameters can be passed to points
 | --power-of-2                    | list of 'y/n' to state whether a parameter must be explored stepping power of 2s                                       | no        |
 | --param-initial-values          | parameter values which are guaranteed to be synthesizable to retrieve metric mapping                                   | no        |
 | --optimization-runtime          | set as a termination condition a timeout as hh:mm:ss                                                                   | no        |
-| --record-design-values          | record all design values in a csv                                                                                      | no        |
-| --read-desgn-values             | read design values from a csv                                                                                          | no        |
+| --read-design-values            | read design values from a csv                                                                                          | no        |
 | --disable-approximate           | disable approximation                                                                                                  | no        |
 | --estimation-model              | choose Hoeffding Adaptive Tree (default) or Kernel Ridge regressor or Shadow to not use the controller but log anyways | no        |
 | --controller-model              | choose Mab or Distance-based (default) controller                                                                      | no        |
@@ -60,6 +59,53 @@ Directory structure is vital for the functioning of the tool:
       - ...
     - ...
 - VERILOG/SYSTEM-VERILOG: include directives are not supported all files must be in the same folder, no subfolders allowed.
+** Defining Custom Metrics
+Procedure:
+1. Create a folder named 'custom_metrics' in the same folder where you are running dovado
+   #+begin_src bash
+   mkdir custom_metrics
+   #+end_src
+2. Create the *python* file which will contain your custom metric
+   #+begin_src bash
+   touch test_metric.py
+   #+end_src
+3. Write your metric function, any function you need to carry out the computation and any import for the libraries
+   #+begin_src python
+# here any import works
+# e.g. import numpy as np
+import numpy as np
+
+
+def test_metric(**kwargs) -> float:
+    # only one metric per file is admitted
+    # if you want another custom metric create a new file
+    print(kwargs)
+    return float(__helper_function(kwargs["frequency"]))
+
+
+def __helper_function(a):
+    # Care the underscores '__' are mandatory for helper functions
+    # This function won't show as a metric is here only for helping purposes
+    return a + 1000
+   #+end_src
+4. Run dovado without metric selected:
+   #+begin_src bash
+dovado --file-path <path to "neorv32/rtl/neorv32/neorv32_top.vhd"> --board xc7k70tfbv676-1 --parameters MEM_INT_IMEM_SIZE --parameters MEM_INT_DMEM_SIZE --clock-port clk_i space 16384 131072 8129 65536 --power-of-2 y --power-of-2 y
+   #+end_src
+5. Select your metrics, you will now find your custom metrics after all utilisation metrics provided by your board of choice:
+   [[./readme_resources/metrics_selection.png]]
+
+General advice:
+   - the function must return float (*highly recommended* to annotate the return type)
+   - all helper functions must start with double underscore "__"
+   - relative imports are not supported, use only absolute imports
+   - all subfolders of "custom_metrics" are ignored.
+   - from the **kwargs you can access all the other board metrics and the frequency by using either "frequency" or the name you find above e.g:
+     #+begin_src python
+     kwargs["frequency"]
+     kwargs["Slice LUTs*"]
+     #+end_src
+
 ** Examples
 *** neorv32 (VHDL)
 #+begin_src bash
@@ -91,7 +137,7 @@ cd corundum/
 #+end_src
 Exploring the parameter space of the top module:
 #+begin_src bash
-dovado --file-path <path to "corundum/fpga/common/rtl/cpl_queue_manager.v"> --board xc7k70tfbv676-1 --target-clock 100000 --parameters OP_TABLE_SIZE --parameters QUEUE_INDEX_WIDTH --parameters PIPELINE --clock-port clk --metrics 0 --metrics 1 --metrics 4 --metrics 9 space 8 64 4 11 2 32 --record-design-values --disable-approximate
+dovado --file-path <path to "corundum/fpga/common/rtl/cpl_queue_manager.v"> --board xc7k70tfbv676-1 --target-clock 100000 --parameters OP_TABLE_SIZE --parameters QUEUE_INDEX_WIDTH --parameters PIPELINE --clock-port clk --metrics 0 --metrics 1 --metrics 4 --metrics 9 space 8 64 4 11 2 32 --disable-approximate
 #+end_src
 
 Using *approximation* parameters:

@@ -1,18 +1,17 @@
 
 # Table of Contents
 
-1.  [Installation](#org648fc4e)
-2.  [Usage](#org4d8ab18)
-    1.  [Defining Custom Metrics](#org023397d)
-    2.  [Examples](#orge369aa6)
-        1.  [neorv32 (VHDL)](#orgcb021dc)
-        2.  [corundum (VERILOG)](#org9b66d30)
-        3.  [cv32e40p (SYSTEM-VERILOG)](#orgbda061b)
+1.  [Installation](#orgf77b7ab)
+2.  [Usage](#org8506c43)
+    1.  [Examples](#org0a6419b)
+        1.  [neorv32 (VHDL)](#org752f55e)
+        2.  [corundum (VERILOG)](#org109c903)
+        3.  [cv32e40p (SYSTEM-VERILOG)](#org45afa0f)
 
 DoVado is a RTL design automation and exploration CLI tool.
 
 
-<a id="org648fc4e"></a>
+<a id="orgf77b7ab"></a>
 
 # Installation
 
@@ -21,7 +20,7 @@ DoVado needs python 3.6 or higher. Install it through pip, on many Linux systems
     pip3 install --user --no-cache dovado-rtl
 
 
-<a id="org4d8ab18"></a>
+<a id="org8506c43"></a>
 
 # Usage
 
@@ -168,7 +167,14 @@ No further parameters can be passed to points
 
 
 <tr>
-<td class="org-left">&#x2013;read-design-values</td>
+<td class="org-left">&#x2013;record-design-values</td>
+<td class="org-left">record all design values in a csv</td>
+<td class="org-left">no</td>
+</tr>
+
+
+<tr>
+<td class="org-left">&#x2013;read-desgn-values</td>
 <td class="org-left">read design values from a csv</td>
 <td class="org-left">no</td>
 </tr>
@@ -226,60 +232,12 @@ Directory structure is vital for the functioning of the tool:
 -   VERILOG/SYSTEM-VERILOG: include directives are not supported all files must be in the same folder, no subfolders allowed.
 
 
-<a id="org023397d"></a>
-
-## Defining Custom Metrics
-
-Procedure:
-
-1.  Create a folder named &rsquo;custom<sub>metrics</sub>&rsquo; in the same folder where you are running dovado
-    
-        mkdir custom_metrics
-2.  Create the **python** file which will contain your custom metric
-    
-        touch test_metric.py
-3.  Write your metric function, any function you need to carry out the computation and any import for the libraries
-    
-        # here any import works
-        # e.g. import numpy as np
-        import numpy as np
-        
-        
-        def test_metric(**kwargs) -> float:
-            # only one metric per file is admitted
-            # if you want another custom metric create a new file
-            print(kwargs)
-            return float(__helper_function(kwargs["frequency"]))
-        
-        
-        def __helper_function(a):
-            # Care the underscores '__' are mandatory for helper functions
-            # This function won't show as a metric is here only for helping purposes
-            return a + 1000
-4.  Run dovado without metric selected:
-    
-        dovado --file-path <path to "neorv32/rtl/neorv32/neorv32_top.vhd"> --board xc7k70tfbv676-1 --parameters MEM_INT_IMEM_SIZE --parameters MEM_INT_DMEM_SIZE --clock-port clk_i space 16384 131072 8129 65536 --power-of-2 y --power-of-2 y
-5.  Select your metrics, you will now find your custom metrics after all utilisation metrics provided by your board of choice:
-    ![img](./readme_resources/metrics_selection.png)
-
-General advice:
-
--   the function must return float (**highly recommended** to annotate the return type)
--   all helper functions must start with double underscore &ldquo;\_\_&rdquo;
--   relative imports are not supported, use only absolute imports
--   all subfolders of &ldquo;custom<sub>metrics</sub>&rdquo; are ignored.
--   from the \*\*kwargs you can access all the other board metrics and the frequency by using either &ldquo;frequency&rdquo; or the name you find above e.g:
-    
-        kwargs["frequency"]
-        kwargs["Slice LUTs*"]
-
-
-<a id="orge369aa6"></a>
+<a id="org0a6419b"></a>
 
 ## Examples
 
 
-<a id="orgcb021dc"></a>
+<a id="org752f55e"></a>
 
 ### neorv32 (VHDL)
 
@@ -306,7 +264,7 @@ Here an example of **exploring boolean parameters**, the trick here is to explor
     dovado --file-path <path to "neorv32/rtl/neorv32/neorv32_top.vhd"> --board xc7k70tfbv676-1 --parameters BOOTLOADER_EN --parameters CPU_EXTENSION_RISCV_A --parameters CPU_EXTENSION_RISCV_B --parameters CPU_EXTENSION_RISCV_C --clock-port clk_i --metrics 0 --metrics 1 --metrics 4 --metrics 9 space 0 1 0 1 0 1 0 1 --disable-approximate
 
 
-<a id="org9b66d30"></a>
+<a id="org109c903"></a>
 
 ### corundum (VERILOG)
 
@@ -315,14 +273,14 @@ Here an example of **exploring boolean parameters**, the trick here is to explor
 
 Exploring the parameter space of the top module:
 
-    dovado --file-path <path to "corundum/fpga/common/rtl/cpl_queue_manager.v"> --board xc7k70tfbv676-1 --target-clock 100000 --parameters OP_TABLE_SIZE --parameters QUEUE_INDEX_WIDTH --parameters PIPELINE --clock-port clk --metrics 0 --metrics 1 --metrics 4 --metrics 9 space 8 64 4 11 2 32 --disable-approximate
+    dovado --file-path <path to "corundum/fpga/common/rtl/cpl_queue_manager.v"> --board xc7k70tfbv676-1 --target-clock 100000 --parameters OP_TABLE_SIZE --parameters QUEUE_INDEX_WIDTH --parameters PIPELINE --clock-port clk --metrics 0 --metrics 1 --metrics 4 --metrics 9 space 8 64 4 11 2 32 --record-design-values --disable-approximate
 
 Using **approximation** parameters:
 
     dovado --file-path <path to "corundum/fpga/common/rtl/cpl_queue_manager.v"> --board xc7k70tfbv676-1 --target-clock 100000 --parameters OP_TABLE_SIZE --parameters QUEUE_INDEX_WIDTH --parameters PIPELINE --clock-port clk --metrics 0 --metrics 1 --metrics 4 --metrics 9 space 8 64 4 11 2 32 --controller-model Mab --n-controllers 80
 
 
-<a id="orgbda061b"></a>
+<a id="org45afa0f"></a>
 
 ### cv32e40p (SYSTEM-VERILOG)
 
@@ -333,5 +291,8 @@ Using **approximation** parameters:
 
 In this project an include directory is used but dovado does not currently support it thus we create a subfolder, name may be whatever, where to isolate the module we are interested in studying. This workaround is only possible if the module one wants to study works standalone without include directives.
 
-    dovado --file-path ../../test_projects/cv32e40p/rtl/testing/cv32e40p_fifo.sv --board xc7k70tfbv676-1 --target-clock 100000 --parameters DEPTH --parameters DATA_WIDTH --clock-port clk_i --metrics 0 --metrics 1 --metrics 4 --metrics 9 space 2 4294967296 2 64 --power-of-2 y --power-of-2 y --disable-approximate
+    dovado --file-path ../../test_projects/cv32e40p/rtl/testing/cv32e40p_fifo.sv --board xc7k70tfbv676-1 --target-clock 100000 --parameters DEPTH --parameters DATA_WIDTH --clock-port clk_i --metrics 0 --metrics 1 --metrics 4 --metrics 9 space 2 4294967296 2 64 --powe
+# Table of Contents
+
+1.  [Installation](#org
 

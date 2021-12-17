@@ -1,0 +1,68 @@
+[tool.poetry]
+name = "dovado-rtl"
+version = "0.5.5"
+description = "CLI tool for RTL Design Space Exploration on top of Vivado"
+authors = ["Daniele Paletti <danielepaletti98@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/DPaletti/dovado"
+repository = "https://github.com/DPaletti/dovado"
+keywords = [
+    "Xilinx",
+    "Vivado",
+    "TCL",
+    "VHDL",
+    "Verilog",
+    "RTL",
+    "Design Space",
+    "Genetic Algorithm",
+    "Kernel Regression",
+    "Nadaraya-Watson Model",
+]
+packages = [
+    { include = "dovado_rtl", from = "src" },
+    { include = "vhdl" },
+    { include = "verilog" },
+    { include = "xdc" },
+    { include = "tcl" },
+]
+[tool.poetry.dependencies]
+python = "^3.6.1"
+pathvalidate = "^2.3.0"
+BeautifulSoup4 = "^4.9.1"
+lxml = "^4.5.2"
+pyyaml = "^5.3.1"
+pexpect = "^4.8.0"
+pymoo = "^0.4.2"
+numpy = "^1.19.2"
+antlr4-python3-runtime = "~4.8.0"
+importlib-resources = "^3.3.0"
+dataclasses = { version = "^0.8", python = "~3.6" }
+sklearn = "^0.0"
+scipy = "^1.5.4"
+click = "^7.1.2"
+typer = "^0.3.2"
+scikit-multiflow = "^0.5.3"
+
+[tool.poetry.dev-dependencies]
+black = "^19.10b0"
+pytest = "^6.0.1"
+pytest-cov = "^2.10.0"
+hypothesis = "^5.23.11"
+python-language-server = "^0.36.1"
+ptvsd = "^4.3.2"
+prospector = "^1.3.1"
+
+[tool.poetry.scripts]
+dovado = "dovado_rtl.main:main"
+
+[tool.black]
+line-length = 79
+
+[tool.pytest.ini_options]
+addopts = "--capture=sys --cov=dovado --cov-report html --ignore='tests/test_vivado_interaction.py'"
+testpaths = ["tests"]
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

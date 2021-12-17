@@ -1,0 +1,2 @@
+Majority_Model_Parameters, Majority_Size, Point, Exec_Time, Error, Exact_Estimated_Calls, Mean Weight, Estimation
+{'nth_nearest': 1, 'mab_epsilon': 0.18, 'mab_bandwidth': 1, 'mab_weight_epsilon': 0.07, 'mab_weight_bandwidth': 5}, 500, [65536 65536], 50.6682014465332, 0.0, [1, 0], 0.012834215782117098, 0

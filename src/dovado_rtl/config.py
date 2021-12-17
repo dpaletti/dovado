@@ -9,6 +9,8 @@ class Configuration:
         # This directory will be created in the same directory
         # in which the "dovado" command is executed
         "WORK_DIR": "dovado_work/",
+        # Directory holding custom metrics
+        "CUSTOM_METRICS_DIR": "custom_metrics/",
         # Directory holding tcl scripts
         "TCL_DIR": "tcl/",
         # Directory holding xdc files

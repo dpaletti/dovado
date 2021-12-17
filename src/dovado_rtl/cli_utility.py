@@ -3,6 +3,13 @@ import re
 import typer
 from typing import Tuple, List, Dict, Optional
 from pathlib import Path
+import os
+import importlib
+import importlib.util
+import importlib.machinery
+import sys
+from inspect import signature, _empty
+import inspect
 from dovado_rtl.doc_parsing import get_directives, get_directives_paragraph
 from dovado_rtl.src_parsing import SourceParser
 from dovado_rtl.vivado_interaction import get_parts
@@ -36,8 +43,7 @@ def validate_int_metrics(value: List[int]):
 
 
 def parse_comma_separated_list(
-    regexp_element: str,
-    to_parse: str,
+    regexp_element: str, to_parse: str,
 ) -> Optional[List[str]]:
     return (
         None
@@ -54,8 +60,94 @@ def parse_comma_separated_list(
     )
 
 
+def __is_mod_function(mod, func):
+    "checks that func is a function defined in module mod"
+    return inspect.isfunction(func) and inspect.getmodule(func) == mod
+
+
+def __list_functions(mod):
+    "list of functions defined in module mod"
+    return [
+        func.__name__
+        for func in mod.__dict__.values()
+        if __is_mod_function(mod, func)
+    ]
+
+
+def __import_path(path: str):
+    module_name = os.path.basename(path).replace("-", "_")
+    spec = importlib.util.spec_from_loader(
+        module_name, importlib.machinery.SourceFileLoader(module_name, path)
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    sys.modules[module_name] = module
+    return module
+
+
+def __is_custom_metric_valid(
+    module_function, module_functions: List[str], custom_metric_file: Path
+):
+    module_function_signature = signature(module_function)
+    module_function_parameters = list(
+        module_function_signature.parameters.keys()
+    )
+    module_function_signature_return = (
+        module_function_signature.return_annotation
+    )
+
+    if len(module_functions) == 0:
+        typer.echo(
+            "Custom metric file '"
+            + str(custom_metric_file)
+            + "' contains no public function, custom metric function name must not start with '__'"
+        )
+        return False
+    if len(module_functions) > 1:
+        typer.echo(
+            "Custom metric file '"
+            + str(custom_metric_file)
+            + "' contains more than one public function: "
+            + str(module_functions)
+            + " prepend '__' to all non-public functions"
+        )
+        return False
+    if (
+        len(module_function_parameters) > 1
+        or len(module_function_parameters) == 0
+        or module_function_parameters[0] != "kwargs"
+    ):
+        typer.echo(
+            "Custom metric function '"
+            + str(module_functions[0])
+            + "' must have **kwargs as parameter instead '"
+            + str(module_function_parameters)
+            + "' found"
+        )
+        return False
+    if module_function_signature_return != float:
+        if module_function_signature_return == _empty:
+            typer.echo(
+                "WARNING: custom metric function '"
+                + str(module_functions[0])
+                + "' does not have a return type annotated"
+                + " please annotate with -> float, the only return value supported"
+            )
+        else:
+            typer.echo(
+                "Custom metric function '"
+                + str(module_functions[0])
+                + "' must have 'float' as a return type + '"
+                + str(module_function_signature)
+                + "' found instead"
+            )
+            return False
+    return True
+
+
 def ask_utilization_metrics(
     util_indices: Dict[str, List[str]],
+    custom_metrics_path: Path,
     pre_selected_metrics: Optional[List[int]] = None,
 ) -> List[Metric]:
     info_prompt = "Percentage Utilisation indices available:\n"
@@ -69,6 +161,38 @@ def ask_utilization_metrics(
                 utilisation=(section, util_metric), is_frequency=False
             )
             info_prompt += "\t(" + str(i) + ") " + util_metric + "\n"
+    if not custom_metrics_path.is_dir():
+        typer.echo(
+            "No custom metrics folder found at: " + str(custom_metrics_path)
+        )
+    else:
+        custom_metric_dict = {}
+        for custom_metric_file in custom_metrics_path.iterdir():
+            if custom_metric_file.is_dir():
+                continue
+            module = __import_path(str(custom_metric_file))
+            module_functions = [
+                function
+                for function in __list_functions(module)
+                if function[0] != "_" and function[1] != "_"
+            ]
+            module_function = getattr(module, module_functions[0])
+            if __is_custom_metric_valid(
+                module_function, module_functions, custom_metric_file
+            ):
+                custom_metric_dict[module_functions[0]] = module_function
+        info_prompt += "Custom Metrics Available:\n"
+        for (
+            custom_metric_name,
+            custom_metric_function,
+        ) in custom_metric_dict.items():
+            i = i + 1
+            counter_dict[i] = Metric(
+                utilisation=None,
+                is_frequency=False,
+                custom_metric=(custom_metric_name, custom_metric_function),
+            )
+            info_prompt += "\t(" + str(i) + ") " + custom_metric_name + "\n"
 
     while True:
         if not pre_selected_metrics:
@@ -88,7 +212,9 @@ def ask_utilization_metrics(
                 pre_selected_metrics = None
             if parsed_list and (
                 parsed_list == []
-                or max([i for i in parsed_list if i > 0]) < len(counter_dict)
+                or any(
+                    [i in counter_dict.keys() for i in parsed_list if i > 0]
+                )
             ):
                 out: List[Metric] = [
                     counter_dict[i] for i in {i for i in parsed_list if i > 0}
@@ -97,8 +223,8 @@ def ask_utilization_metrics(
                     (out + [Metric(None, True)]) if (0 in parsed_list) else out
                 )
         except Exception as e:
-            print(e)
-            print(
+            typer.echo(str(e))
+            typer.echo(
                 "Invalid input, please enter"
                 + " a comma separated list of integer numbers"
             )
