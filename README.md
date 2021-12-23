@@ -267,7 +267,7 @@ General advice:
 -   the function must return float (**highly recommended** to annotate the return type)
 -   all helper functions must start with double underscore &ldquo;\_\_&rdquo;
 -   relative imports are not supported, use only absolute imports
--   all subfolders of &ldquo;custom<sub>metrics</sub>&rdquo; are ignored.
+-   all subfolders of `custom_metrics` are ignored.
 -   from the \*\*kwargs you can access all the other board metrics and the frequency by using either &ldquo;frequency&rdquo; or the name you find above e.g:
     
         kwargs["frequency"]
