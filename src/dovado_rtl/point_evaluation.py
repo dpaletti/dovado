@@ -46,6 +46,13 @@ class DesignPointEvaluator(AbstractDesignPointEvaluator):
         self.__int_metrics: Optional[List[int]] = int_metrics
         self.__estimator: Optional[AbstractEstimator] = None
 
+        self.__out_file = Path(config.get_config("WORK_DIR")).joinpath(
+            "space_exploration.csv"
+        )
+        self.__out_file_mapping: Dict[str, Metric] = {}
+        self.__out_file.open("w").close()
+        self.__is_file_header_to_write = True
+
     @lru_cache()
     def evaluate(self, design_point: Tuple[int, ...]) -> Optional[DesignValue]:
 
@@ -120,28 +127,66 @@ class DesignPointEvaluator(AbstractDesignPointEvaluator):
             for i in self.__metrics:
                 if i.custom_metric:
                     design_value.value[i] = self.compute_custom_metric(
-                        i, design_value
+                        i, design_point
                     )
                     break
-
+        self.__write_csv(design_point, design_value)
         return design_value
 
     def get_max_frequency(self, wns: float) -> float:
 
         return 1000 / (1 / (1 / 1000 * self.__target_clock) - wns)
 
-    def compute_custom_metric(self, metric: Metric, design_value: DesignValue):
+    def compute_custom_metric(
+        self, metric: Metric, design_point: Tuple[int, ...]
+    ):
         if not metric.custom_metric:
             raise Exception(
                 "Trying to execute metric '" + str(metric) + "' as custom"
             )
-        return metric.custom_metric[1](
-            **{
-                "frequency" if m.is_frequency else m.utilisation[1]: v
-                for m, v in design_value.value.items()
-                if not m.custom_metric
-            }
+
+        all_metrics = get_available_indices(
+            str(self.__config.get_config("WORK_DIR"))
+            + str(
+                self.__config.get_config(
+                    self.__stop_step.name + "_UTILISATION"
+                )
+            )
         )
+
+        metrics_value = {}
+        for section in all_metrics.keys():
+            for m in all_metrics[section]:
+                metrics_value[m] = report.get_utilisation(
+                    str(self.__config.get_config("WORK_DIR"))
+                    + (
+                        str(
+                            self.__config.get_config(
+                                self.__stop_step.name + "_UTILISATION"
+                            )
+                        )
+                    ),
+                    section,
+                    m,
+                )
+        metrics_value["frequency"] = self.get_max_frequency(
+            report.get_wns(
+                str(self.__config.get_config("WORK_DIR"))
+                + (
+                    str(
+                        self.__config.get_config(
+                            self.__stop_step.name + "_TIMING"
+                        )
+                    )
+                )
+            )
+        )
+
+        params_value = {
+            fp: dp for fp, dp in zip(self.__free_parameters, design_point)
+        }
+
+        return metric.custom_metric[1](**{**metrics_value, **params_value})
 
     def set_metrics(self, metrics: List[Metric]):
         if self.__metrics:
@@ -154,14 +199,34 @@ class DesignPointEvaluator(AbstractDesignPointEvaluator):
         self.__metrics = metrics
 
     def __write_csv(
-        self, estimated_value: float, real_value: float, metric: str
+        self, design_point: Tuple[int, ...], design_value: DesignValue
     ):
-        Path(
-            str(self.__config.get_config("WORK_DIRECTORY"))
-            + str(self.__config.get_config("EST_TEST_CSV"))
-        ).open(mode="a+").writelines(
-            [str(estimated_value) + "," + str(real_value) + "," + metric]
-        )
+        if self.__is_file_header_to_write and self.__metrics:
+            header = ",".join(self.__free_parameters)
+            for m in self.__metrics:
+                header += ","
+                if m.utilisation:
+                    header += m.utilisation[1]
+                    self.__out_file_mapping[m.utilisation[1]] = m
+                elif m.is_frequency:
+                    header += "Frequency"
+                    self.__out_file_mapping["Frequency"] = m
+                elif m.custom_metric:
+                    header += m.custom_metric[0]
+                    self.__out_file_mapping[m.custom_metric[0]] = m
+
+            header += "\n"
+            self.__is_file_header_to_write = False
+            self.__out_file.open(mode="a+").writelines(header)
+        with open(self.__out_file) as file:
+            header = file.readline()
+        line = ",".join([str(d) for d in design_point])
+        header = header[:-1].split(",")[len(design_point) :]
+        for metric in header:
+            line += ","
+            line += str(design_value.value[self.__out_file_mapping[metric]])
+        line += "\n"
+        self.__out_file.open(mode="a+").writelines(line)
 
     def set_estimator(self, estimator: AbstractEstimator) -> None:
         self.__estimator = estimator

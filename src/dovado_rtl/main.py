@@ -206,11 +206,13 @@ def points(
         if design_value and first_evaluation:
             output_line = "Design Point,"
             for k in design_value.value.keys():
-                output_line += (
-                    (k.utilisation[0] + "-" + k.utilisation[1])
-                    if not k.is_frequency
-                    else "Frequency"
-                ) + ","
+                if k.utilisation:
+                    output_line += k.utilisation[0] + "-" + k.utilisation[1]
+                elif k.is_frequency:
+                    output_line += "Frequency"
+                elif k.custom_metric:
+                    output_line += k.custom_metric[0]
+                output_line += ","
             out_file.open("a").writelines([output_line[:-1] + "\n"])
             first_evaluation = False
         if design_value and not first_evaluation:
