@@ -223,7 +223,7 @@ Directory structure is vital for the functioning of the tool:
         -   subpackage2-name
             -   &#x2026;
         -   &#x2026;
--   VERILOG/SYSTEM-VERILOG: include directives are not supported all files must be in the same folder, no subfolders allowed.
+-   VERILOG/SYSTEM-VERILOG: include directives are not supported all files must be in the same folder, no subfolders allowed;  no import package allowed.
 
 
 <a id="org023397d"></a>
@@ -232,7 +232,7 @@ Directory structure is vital for the functioning of the tool:
 
 Procedure:
 
-1.  Create a folder named &rsquo;custom<sub>metrics</sub>&rsquo; in the same folder where you are running dovado
+1.  Create a folder named `custom_metrics` in the same folder where you are running dovado
     
         mkdir custom_metrics
 2.  Create the **python** file which will contain your custom metric
