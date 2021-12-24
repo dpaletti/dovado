@@ -4,20 +4,16 @@ from antlr4 import CommonTokenStream, FileStream
 from dovado_rtl.antlr.generated.vhdl.vhdlLexer import vhdlLexer
 from dovado_rtl.antlr.generated.vhdl.vhdlParser import vhdlParser
 from dovado_rtl.antlr.vhdl_entity_visitor import VhdlEntityVisitor
-from dovado_rtl.antlr.generated.Verilog2001.Verilog2001Parser import (
-    Verilog2001Parser,
-)
-from dovado_rtl.antlr.generated.Verilog2001.Verilog2001Lexer import (
-    Verilog2001Lexer,
-)
+from dovado_rtl.antlr.generated.Verilog2001.VerilogParser import VerilogParser
+from dovado_rtl.antlr.generated.Verilog2001.VerilogLexer import VerilogLexer
 from dovado_rtl.antlr.verilog2001_entity_visitor import (
     Verilog2001EntityVisitor,
 )
-from dovado_rtl.antlr.generated.SysVerilogHDL.SysVerilogHDLParser import (
-    SysVerilogHDLParser,
+from dovado_rtl.antlr.generated.SystemVerilog.SystemVerilogParser import (
+    SystemVerilogParser,
 )
-from dovado_rtl.antlr.generated.SysVerilogHDL.SysVerilogHDLLexer import (
-    SysVerilogHDLLexer,
+from dovado_rtl.antlr.generated.SystemVerilog.SystemVerilogLexer import (
+    SystemVerilogLexer,
 )
 from dovado_rtl.antlr.sysverilog_entity_visitor import (
     SysVerilogHDLEntityVisitor,
@@ -74,15 +70,15 @@ class SourceParser(AbstractSourceParser):
             visitor = VhdlEntityVisitor()
             tree = parser.design_file()
         elif self.__RTL is RTL.VERILOG:
-            lexer = Verilog2001Lexer(self.__input_stream)
+            lexer = VerilogLexer(self.__input_stream)
             token_stream = CommonTokenStream(lexer)
-            parser = Verilog2001Parser(token_stream)
+            parser = VerilogParser(token_stream)
             visitor = Verilog2001EntityVisitor()
             tree = parser.source_text()
         else:
-            lexer = SysVerilogHDLLexer(self.__input_stream)
+            lexer = SystemVerilogLexer(self.__input_stream)
             token_stream = CommonTokenStream(lexer)
-            parser = SysVerilogHDLParser(token_stream)
+            parser = SystemVerilogParser(token_stream)
             visitor = SysVerilogHDLEntityVisitor()
             tree = parser.source_text()
 
@@ -162,9 +158,7 @@ class SourceParser(AbstractSourceParser):
         self.get_parameter(parameter).set_value(value)
 
     def write_parameter_values(
-        self,
-        hdl_handler: FillHandler,
-        values: Dict[str, int],
+        self, hdl_handler: FillHandler, values: Dict[str, int],
     ):
         # FrameHandler is too broad, should use HdlBoxHandler but in python 3.6 is not
         # possible to solve the circular dependency
