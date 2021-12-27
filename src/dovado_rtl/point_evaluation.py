@@ -129,7 +129,6 @@ class DesignPointEvaluator(AbstractDesignPointEvaluator):
                     design_value.value[i] = self.compute_custom_metric(
                         i, design_point
                     )
-                    break
         self.__write_csv(design_point, design_value)
         return design_value
 
