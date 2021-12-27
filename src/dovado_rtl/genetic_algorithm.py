@@ -114,8 +114,8 @@ def optimize(
         res = minimize(
             problem, algorithm, seed=1, save_history=True, verbose=True,
         )
-    design_space_path = "dovado_work/design_space.csv"
-    objective_space_path = "dovado_work/objective_space.csv"
+    design_space_path = "dovado_work/best_design_space.csv"
+    objective_space_path = "dovado_work/best_objective_space.csv"
     Path(design_space_path).open("w")
     Path(objective_space_path).open("w")
     np.savetxt(design_space_path, res.X, delimiter=",")
