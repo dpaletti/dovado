@@ -9,35 +9,27 @@ from dovado_rtl.antlr.hdl_representation import (
     PortType,
     PortTypeEnum,
 )
-from dovado_rtl.antlr.generated.Verilog2001.Verilog2001Visitor import (
-    Verilog2001Visitor,
+from dovado_rtl.antlr.generated.Verilog2001.VerilogParserVisitor import (
+    VerilogParserVisitor,
 )
-from dovado_rtl.antlr.generated.Verilog2001.Verilog2001Parser import (
-    Verilog2001Parser,
-)
+from dovado_rtl.antlr.generated.Verilog2001.VerilogParser import VerilogParser
 from typing import List, Optional
 
 
-class Verilog2001EntityVisitor(Verilog2001Visitor):
+class Verilog2001EntityVisitor(VerilogParserVisitor):
     def __init__(self):
         self.entities: List[Entity] = []
         self.top_level = None
 
-    def visitSource_text(
-        self, ctx: Verilog2001Parser.Source_textContext
-    ) -> None:
-        if ctx.timing_spec():
-            pass
+    def visitSource_text(self, ctx: VerilogParser.Source_textContext) -> None:
         for d in ctx.description():
             self.visitDescription(d)
 
-    def visitDescription(
-        self, ctx: Verilog2001Parser.DescriptionContext
-    ) -> None:
+    def visitDescription(self, ctx: VerilogParser.DescriptionContext) -> None:
         self.visitModule_declaration(ctx.module_declaration())
 
     def visitModule_declaration(
-        self, ctx: Verilog2001Parser.Module_declarationContext
+        self, ctx: VerilogParser.Module_declarationContext
     ) -> None:
         self.entities.append(
             Entity(self.visitModule_identifier(ctx.module_identifier()))
@@ -58,12 +50,8 @@ class Verilog2001EntityVisitor(Verilog2001Visitor):
             self.visitNon_port_module_item(nm)
 
     def visitNon_port_module_item(
-        self, ctx: Verilog2001Parser.Non_port_module_itemContext
+        self, ctx: VerilogParser.Non_port_module_itemContext
     ):
-        if ctx.local_parameter_declaration():
-            self.visitLocal_parameter_declaration(
-                ctx.local_parameter_declaration()
-            )
         if ctx.module_or_generate_item():
             self.visitModule_or_generate_item(ctx.module_or_generate_item())
         if ctx.parameter_declaration():
@@ -72,38 +60,22 @@ class Verilog2001EntityVisitor(Verilog2001Visitor):
             self.visitSpecify_block(ctx.specify_block())
         if ctx.specparam_declaration():
             self.visitSpecparam_declaration(ctx.specparam_declaration())
-        if ctx.generated_instantiation():
-            pass
         pass
 
-    def visitModule_item(
-        self, ctx: Verilog2001Parser.Module_itemContext
-    ) -> None:
-        if ctx.module_or_generate_item():
-            self.visitModule_or_generate_item(ctx.module_or_generate_item())
+    def visitModule_item(self, ctx: VerilogParser.Module_itemContext) -> None:
         if ctx.port_declaration():
             self.visitPort_declaration(ctx.port_declaration())
-        if ctx.generated_instantiation():
-            pass
-        if ctx.local_parameter_declaration():
-            self.visitLocal_parameter_declaration(
-                ctx.local_parameter_declaration()
-            )
-        if ctx.parameter_declaration():
-            self.visitParameter_declaration(ctx.parameter_declaration())
-        if ctx.specify_block():
-            self.visitSpecify_block(ctx.specify_block())
-        if ctx.specparam_declaration():
-            self.visitSpecparam_declaration(ctx.specparam_declaration())
+        if ctx.non_port_module_item():
+            self.visitNon_port_module_item(ctx.non_port_module_item)
 
     def visitSpecify_block(
-        self, ctx: Verilog2001Parser.Specify_blockContext
+        self, ctx: VerilogParser.Specify_blockContext
     ) -> None:
         for i in ctx.specify_item():
             self.visitSpecify_item(i)
 
     def visitSpecify_item(
-        self, ctx: Verilog2001Parser.Specify_itemContext
+        self, ctx: VerilogParser.Specify_itemContext
     ) -> None:
         if ctx.specparam_declaration():
             self.visitSpecparam_declaration(ctx.specparam_declaration())
@@ -111,7 +83,7 @@ class Verilog2001EntityVisitor(Verilog2001Visitor):
             pass
 
     def visitSpecparam_declaration(
-        self, ctx: Verilog2001Parser.Specparam_declarationContext
+        self, ctx: VerilogParser.Specparam_declarationContext
     ) -> None:
         for p in self.visitList_of_specparam_assignments(
             ctx.list_of_specparam_assignments()
@@ -123,7 +95,7 @@ class Verilog2001EntityVisitor(Verilog2001Visitor):
             )
 
     def visitList_of_specparam_assignments(
-        self, ctx: Verilog2001Parser.List_of_specparam_assignmentsContext
+        self, ctx: VerilogParser.List_of_specparam_assignmentsContext
     ) -> List[str]:
         specparams = []
         for s in ctx.specparam_assignment():
@@ -131,7 +103,7 @@ class Verilog2001EntityVisitor(Verilog2001Visitor):
         return specparams
 
     def visitSpecparam_assignment(
-        self, ctx: Verilog2001Parser.Specparam_assignmentContext
+        self, ctx: VerilogParser.Specparam_assignmentContext
     ) -> Optional[str]:
         if ctx.specparam_identifier():
             return self.visitSpecparam_identifier(ctx.specparam_identifier())
@@ -139,12 +111,12 @@ class Verilog2001EntityVisitor(Verilog2001Visitor):
             pass
 
     def visitSpecparam_identifier(
-        self, ctx: Verilog2001Parser.Specparam_identifierContext
+        self, ctx: VerilogParser.Specparam_identifierContext
     ) -> str:
         return self.visitIdentifier(ctx.identifier())
 
     def visitModule_or_generate_item(
-        self, ctx: Verilog2001Parser.Module_or_generate_itemContext
+        self, ctx: VerilogParser.Module_or_generate_itemContext
     ):
         if ctx.parameter_override():
             self.visitParameter_override(ctx.parameter_override())
@@ -152,7 +124,7 @@ class Verilog2001EntityVisitor(Verilog2001Visitor):
             pass
 
     def visitParameter_override(
-        self, ctx: Verilog2001Parser.Parameter_overrideContext
+        self, ctx: VerilogParser.Parameter_overrideContext
     ) -> None:
         for p in self.visitList_of_parameter_assignments(
             ctx.list_of_param_assignments()
@@ -160,7 +132,7 @@ class Verilog2001EntityVisitor(Verilog2001Visitor):
             self.entities[-1].add_parameter(Parameter(p, None))
 
     def visitLocal_parameter_declaration(
-        self, ctx: Verilog2001Parser.Local_parameter_declarationContext
+        self, ctx: VerilogParser.Local_parameter_declarationContext
     ):
         if ctx.range_():
             for p in self.visitList_of_param_assignments(
@@ -176,13 +148,13 @@ class Verilog2001EntityVisitor(Verilog2001Visitor):
                 )
 
     def visitList_of_port_declarations(
-        self, ctx: Verilog2001Parser.List_of_port_declarationsContext
+        self, ctx: VerilogParser.List_of_port_declarationsContext
     ) -> None:
         for pd in ctx.port_declaration():
             self.visitPort_declaration(pd)
 
     def visitPort_declaration(
-        self, ctx: Verilog2001Parser.Port_declarationContext
+        self, ctx: VerilogParser.Port_declarationContext
     ) -> None:
         if ctx.attribute_instance():
             pass
@@ -194,7 +166,7 @@ class Verilog2001EntityVisitor(Verilog2001Visitor):
             self.visitOutput_declaration(ctx.output_declaration())
 
     def visitInout_declaration(
-        self, ctx: Verilog2001Parser.Inout_declarationContext
+        self, ctx: VerilogParser.Inout_declarationContext
     ) -> None:
         for p in ctx.list_of_port_identifiers():
             self.entities[-1].add_port(
@@ -208,7 +180,7 @@ class Verilog2001EntityVisitor(Verilog2001Visitor):
             )
 
     def visitInput_declaration(
-        self, ctx: Verilog2001Parser.Input_declarationContext
+        self, ctx: VerilogParser.Input_declarationContext
     ) -> None:
         for p in self.visitList_of_port_identifiers(
             ctx.list_of_port_identifiers()
@@ -224,7 +196,7 @@ class Verilog2001EntityVisitor(Verilog2001Visitor):
             )
 
     def visitOutput_declaration(
-        self, ctx: Verilog2001Parser.Output_declarationContext
+        self, ctx: VerilogParser.Output_declarationContext
     ) -> None:
         if ctx.list_of_port_identifiers():
             for p in self.visitList_of_port_identifiers(
@@ -261,7 +233,7 @@ class Verilog2001EntityVisitor(Verilog2001Visitor):
                 )
 
     def visitList_of_variable_port_identifiers(
-        self, ctx: Verilog2001Parser.List_of_variable_port_identifiersContext
+        self, ctx: VerilogParser.List_of_variable_port_identifiersContext
     ) -> List[str]:
         ids = []
         for p in ctx.port_identifier():
@@ -272,30 +244,28 @@ class Verilog2001EntityVisitor(Verilog2001Visitor):
         return ids
 
     def visitList_of_port_identifiers(
-        self, ctx: Verilog2001Parser.List_of_port_identifiersContext
+        self, ctx: VerilogParser.List_of_port_identifiersContext
     ) -> List[str]:
         ids = []
         for pi in ctx.port_identifier():
             ids.append(self.visitPort_identifier(pi))
         return ids
 
-    def visitNet_type(
-        self, ctx: Verilog2001Parser.Net_typeContext
-    ) -> PortType:
+    def visitNet_type(self, ctx: VerilogParser.Net_typeContext) -> PortType:
         return PortType(PortTypeEnum.VECTOR, "")
 
     def visitOutput_variable_type(
-        self, ctx: Verilog2001Parser.Output_variable_typeContext
+        self, ctx: VerilogParser.Output_variable_typeContext
     ) -> PortType:
         return PortType(PortTypeEnum.VECTOR, "")
 
     def visitList_of_ports(
-        self, ctx: Verilog2001Parser.List_of_portsContext
+        self, ctx: VerilogParser.List_of_portsContext
     ) -> None:
         for p in ctx.port():
             self.visitPort(p)
 
-    def visitPort(self, ctx: Verilog2001Parser.PortContext) -> None:
+    def visitPort(self, ctx: VerilogParser.PortContext) -> None:
         if ctx.port_identifier():
             self.entities[-1].add_port(
                 Port(
@@ -309,12 +279,12 @@ class Verilog2001EntityVisitor(Verilog2001Visitor):
                 self.entities[-1].add_port(Port(p, None, None))
 
     def visitPort_identifier(
-        self, ctx: Verilog2001Parser.Port_identifierContext
+        self, ctx: VerilogParser.Port_identifierContext
     ) -> str:
         return self.visitIdentifier(ctx.identifier())
 
     def visitPort_expression(
-        self, ctx: Verilog2001Parser.Port_expressionContext
+        self, ctx: VerilogParser.Port_expressionContext
     ) -> List[str]:
         refs = []
         for pr in ctx.port_reference():
@@ -322,7 +292,7 @@ class Verilog2001EntityVisitor(Verilog2001Visitor):
         return refs
 
     def visitPort_reference(
-        self, ctx: Verilog2001Parser.Port_referenceContext
+        self, ctx: VerilogParser.Port_referenceContext
     ) -> str:
         if ctx.constant_expression():
             pass
@@ -332,19 +302,17 @@ class Verilog2001EntityVisitor(Verilog2001Visitor):
         return self.visitPort_identifier(ctx.port_identifier())
 
     def visitModule_parameter_port_list(
-        self, ctx: Verilog2001Parser.Module_parameter_port_listContext
+        self, ctx: VerilogParser.Module_parameter_port_listContext
     ) -> None:
-        for p in ctx.parameter_declaration_():
+        for p in ctx.parameter_declaration():
             self.visitParameter_declaration_(p)
 
     def visitParameter_declaration(
-        self, ctx: Verilog2001Parser.Parameter_declarationContext
+        self, ctx: VerilogParser.Parameter_declarationContext
     ) -> None:
-        self.visitParameter_declaration_(ctx.parameter_declaration_())
+        self.visitList_of_param_assignments(ctx.list_of_param_assignments())
 
-    def visitParameter_declaration_(
-        self, ctx: Verilog2001Parser.Parameter_declaration_Context
-    ) -> None:
+    def visitParameter_declaration_(self, ctx) -> None:
         for pa in self.visitList_of_param_assignments(
             ctx.list_of_param_assignments()
         ):
@@ -372,7 +340,7 @@ class Verilog2001EntityVisitor(Verilog2001Visitor):
                 pass
 
     def visitList_of_param_assignments(
-        self, ctx: Verilog2001Parser.List_of_param_assignmentsContext
+        self, ctx: VerilogParser.List_of_param_assignmentsContext
     ) -> List[str]:
         params = []
         for p in ctx.param_assignment():
@@ -380,23 +348,22 @@ class Verilog2001EntityVisitor(Verilog2001Visitor):
         return params
 
     def visitParam_assignment(
-        self, ctx: Verilog2001Parser.Param_assignmentContext
+        self, ctx: VerilogParser.Param_assignmentContext
     ) -> str:
         return self.visitParameter_identifier(ctx.parameter_identifier())
 
     def visitParameter_identifier(
-        self, ctx: Verilog2001Parser.Parameter_identifierContext
+        self, ctx: VerilogParser.Parameter_identifierContext
     ) -> str:
         return self.visitIdentifier(ctx.identifier())
 
     def visitModule_identifier(
-        self, ctx: Verilog2001Parser.Module_identifierContext
+        self, ctx: VerilogParser.Module_identifierContext
     ) -> str:
         return self.visitIdentifier(ctx.identifier())
 
-    def visitIdentifier(self, ctx: Verilog2001Parser.IdentifierContext) -> str:
-        if ctx.Simple_identifier():
-            return ctx.Simple_identifier().getText()
+    def visitIdentifier(self, ctx: VerilogParser.IdentifierContext) -> str:
+        if ctx.SIMPLE_IDENTIFIER():
+            return ctx.SIMPLE_IDENTIFIER().getText()
         else:
-            return ctx.Escaped_identifier().getText()
-
+            return ctx.ESCAPED_IDENTIFIER().getText()
