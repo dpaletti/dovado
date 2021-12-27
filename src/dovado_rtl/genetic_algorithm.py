@@ -113,11 +113,31 @@ def optimize(
         res = minimize(
             problem, algorithm, seed=1, save_history=True, verbose=True,
         )
-    # TODO take this out and write file
     design_space_path = "dovado_work/design_space.csv"
     objective_space_path = "dovado_work/objective_space.csv"
     Path(design_space_path).open("w")
     Path(objective_space_path).open("w")
-    np.savetxt(design_space_path, res.X, delimiter=",")
-    np.savetxt(objective_space_path, res.F, delimiter=",")
+    np.savetxt(
+        design_space_path,
+        res.X if res.X.ndim == 2 else np.reshape(res.X, (1, res.X.size)),
+        delimiter=",",
+        comments="",
+        header=",".join(list(free_parameters_range.keys())),
+    )
+    np.savetxt(
+        objective_space_path,
+        res.F if res.F.ndim == 2 else np.reshape(res.F, (1, res.F.size)),
+        delimiter=",",
+        comments="",
+        header=",".join(
+            [
+                i.utilisation[1]
+                if i.utilisation
+                else i.custom_metric[0]
+                if i.custom_metric
+                else "frequency"
+                for i in metrics
+            ]
+        ),
+    )
     return res.exec_time

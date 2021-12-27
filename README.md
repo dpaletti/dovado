@@ -28,7 +28,7 @@ DoVado needs python 3.6 or higher. Install it through pip, on many Linux systems
 Dovado has two modes:
 
 -   points: design automation mode in which a file containing parameter values must be given and a file containing all the evaluations is returned for some given metrics,
--   space: design exploration mode in which parameters and their ranges must be given together with some target metrics and the pareto set of design points with respect to the given metrics is returned. The output design space can be found in `dovado_work/design_space.csv` while the corresponding objective space is found in `dovado_work/objective_space.csv` (these files have no heading, parameter selection order and metric id order is conserved, you can check it in `dovado_work/space_exploration.csv` where a journal of the exploration is kept).
+-   space: design exploration mode in which parameters and their ranges must be given together with some target metrics and the pareto set of design points with respect to the given metrics is returned.
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 1:</span> dovado general parameters</caption>
@@ -225,9 +225,10 @@ Directory structure is vital for the functioning of the tool:
         -   &#x2026;
 -   VERILOG/SYSTEM-VERILOG: include directives are not supported all files must be in the same folder, no subfolders allowed;  no import package allowed.
 
-In order to inspect the tool while it is working you have two files at hand:
--  `dovado_work/point_evaluation.csv` which has one design evaluation per line, mapped with the points you give dovado
-- `dovado_work/space_exploration.csv` which has all the design points explored together with the design values, one per line
+In order to inspect the tool's work you have several files at hand:
+-  `dovado_work/point_evaluation.csv` which has one design evaluation per line, mapped with the points you give dovado; written online during tool's execution in points mode
+- `dovado_work/space_exploration.csv` which has all the design points explored together with the design values; written online during tool's execution both in points mode and in space mode
+- `dovado_work/design_space.csv` and `dovado_work/objective_space.csv` are written at the end of the design exploration process (space mode) and contain respectively the pareto set of design parameters and the corresponding evaluations
 
 
 <a id="org023397d"></a>
