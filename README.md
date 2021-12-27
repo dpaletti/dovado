@@ -225,6 +225,10 @@ Directory structure is vital for the functioning of the tool:
         -   &#x2026;
 -   VERILOG/SYSTEM-VERILOG: include directives are not supported all files must be in the same folder, no subfolders allowed;  no import package allowed.
 
+In order to inspect the tool while it is working you have two files at hand:
+-  `dovado_work/point_evaluation.csv` which has one design evaluation per line, mapped with the points you give dovado
+- `dovado_work/design_space.csv` which has all the design points explored together with the design values, one per line
+
 
 <a id="org023397d"></a>
 
@@ -268,10 +272,11 @@ General advice:
 -   all helper functions must start with double underscore &ldquo;\_\_&rdquo;
 -   relative imports are not supported, use only absolute imports
 -   all subfolders of `custom_metrics` are ignored.
--   from the \*\*kwargs you can access all the other board metrics and the frequency by using either &ldquo;frequency&rdquo; or the name you find above e.g:
+-   from the \*\*kwargs you can access all the other board metrics, the frequency and all the parameters you are using for explorationo by using either &ldquo;frequency&rdquo;,  the name you find above or the parameter name in dovado's call e.g:
     
         kwargs["frequency"]
         kwargs["Slice LUTs*"]
+        kwargs["MEM_INT_IMEM_SIZE"]
 
 
 <a id="orge369aa6"></a>
@@ -333,5 +338,5 @@ Using **approximation** parameters:
 
 In this project an include directory is used but dovado does not currently support it thus we create a subfolder, name may be whatever, where to isolate the module we are interested in studying. This workaround is only possible if the module one wants to study works standalone without include directives.
 
-    dovado --file-path ../../test_projects/cv32e40p/rtl/testing/cv32e40p_fifo.sv --board xc7k70tfbv676-1 --target-clock 100000 --parameters DEPTH --parameters DATA_WIDTH --clock-port clk_i --metrics 0 --metrics 1 --metrics 4 --metrics 9 space 2 4294967296 2 64 --power-of-2 y --power-of-2 y --disable-approximate
+    dovado --file-path <path to "cv32e40p/rtl/testing/cv32e40p_fifo.sv"> --board xc7k70tfbv676-1 --target-clock 100000 --parameters DEPTH --parameters DATA_WIDTH --clock-port clk_i --metrics 0 --metrics 1 --metrics 4 --metrics 9 space 2 4096 2 64 --power-of-2 y --power-of-2 y --disable-approximate
 
