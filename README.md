@@ -8,7 +8,7 @@
         1.  [neorv32 (VHDL)](#orgcb021dc)
         2.  [corundum (VERILOG)](#org9b66d30)
         3.  [cv32e40p (SYSTEM-VERILOG)](#orgbda061b)
-
+3. [Associated Publication](#paper_ref)
 DoVado is a RTL design automation and exploration CLI tool.
 
 
@@ -340,3 +340,18 @@ In this project an include directory is used but dovado does not currently suppo
 
     dovado --file-path <path to "cv32e40p/rtl/testing/cv32e40p_fifo.sv"> --board xc7k70tfbv676-1 --target-clock 100000 --parameters DEPTH --parameters DATA_WIDTH --clock-port clk_i --metrics 0 --metrics 1 --metrics 4 --metrics 9 space 2 4096 2 64 --power-of-2 y --power-of-2 y --disable-approximate
 
+<a id="paper_ref"></a>
+# Associated Publication
+
+If you find this repository useful, please use the following citation:
+
+```
+@inproceedings{paletti2021dovado,
+  title={Dovado: An Open-Source Design Space Exploration Framework},
+  author={Paletti, Daniele and Conficconi, Davide and Santambrogio, Marco D},
+  booktitle={2021 IEEE International Parallel and Distributed Processing Symposium Workshops (IPDPSW)},
+  pages={128--135},
+  year={2021},
+  organization={IEEE}
+}
+```
