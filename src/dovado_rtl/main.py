@@ -262,7 +262,7 @@ def space(
         + "'HoeffdingAdaptiveTree' is default. 'KernelRidge' selects a kernel regression",
     ),
     controller_model: Optional[str] = typer.Option(
-        "Distance",
+        "Mab",
         callback=validate_controller,
         help="controller to use for fitness function approximation (see movado docs for more information),"
         + "'Distance' is default. 'Mab' selects a pure multi-armed bandit controller, ",
@@ -271,7 +271,7 @@ def space(
         False, help="disable loss weighting in Distance Controller"
     ),
     n_controllers: Optional[int] = typer.Option(
-        500, help="set the number of controllers for movado (voters)"
+        1, help="set the number of controllers for movado (voters)"
     ),
 ):
     """

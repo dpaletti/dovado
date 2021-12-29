@@ -1,1 +1,6 @@
 Model_Parameters, Mean Cost, Action, Context, Probability
+{'Model_Parameters': {'cover': 3, 'mab_weight_epsilon': 0.2, 'mab_weight_bandwidth': 1}}, 0.0, 0, [31  9  2], 1
+{'Model_Parameters': {'cover': 3, 'mab_weight_epsilon': 0.2, 'mab_weight_bandwidth': 1}}, 0.09113924980163574, 0, [25  5  4], 1
+{'Model_Parameters': {'cover': 3, 'mab_weight_epsilon': 0.2, 'mab_weight_bandwidth': 1}}, -0.05528183539864214, 0, [18  6 14], 0.5
+{'Model_Parameters': {'cover': 3, 'mab_weight_epsilon': 0.2, 'mab_weight_bandwidth': 1}}, 0.04964377716572271, 0, [38  7 23], 0.5
+{'Model_Parameters': {'cover': 3, 'mab_weight_epsilon': 0.2, 'mab_weight_bandwidth': 1}}, 0.10912068683617775, 0, [19 11  2], 0.5

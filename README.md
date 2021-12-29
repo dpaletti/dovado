@@ -230,7 +230,6 @@ In order to inspect the tool's work you have several files at hand:
 - `dovado_work/space_exploration.csv` which has all the design points explored together with the design values; written online during tool's execution both in points mode and in space mode
 - `dovado_work/design_space.csv` and `dovado_work/objective_space.csv` are written at the end of the design exploration process (space mode) and contain respectively the pareto set of design parameters and the corresponding evaluations
 
-
 <a id="org023397d"></a>
 
 ## Defining Custom Metrics
