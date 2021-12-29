@@ -290,7 +290,10 @@ General advice:
 
     git clone https://github.com/stnolting/neorv32
     cd neorv32/rtl
-    mv core neorv32
+    mkdir neorv32
+    cp core/* neorv32/
+    cp  core/mem/neorv32_*.default.vhd neorv32/
+    sed -i "s/CLOCK_FREQUENCY\s*: natural;\s*-- clock frequency of clk_i in Hz/CLOCK_FREQUENCY              :natural:=100000000; -- clock frequency of clk_i in Hz/" neorv32/neorv32_top.vhd
 
 Changing the name of the core folder, which contains all vhdl files, to the name of the package which is used along the files is mandatory to make dovado get &rsquo;use&rsquo; directives right.
 Exploring the parameter space of the top module:
