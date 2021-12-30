@@ -111,7 +111,11 @@ def optimize(
         )
     else:
         res = minimize(
-            problem, algorithm, seed=1, save_history=True, verbose=True,
+            problem,
+            algorithm,
+            seed=1,
+            save_history=True,
+            verbose=True,
         )
     design_space_path = "dovado_work/design_space.csv"
     objective_space_path = "dovado_work/objective_space.csv"

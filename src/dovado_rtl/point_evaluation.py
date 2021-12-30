@@ -55,7 +55,6 @@ class DesignPointEvaluator(AbstractDesignPointEvaluator):
 
     @lru_cache()
     def evaluate(self, design_point: Tuple[int, ...]) -> Optional[DesignValue]:
-
         self.__parsed_file.write_parameter_values(
             self.__hdl_handler,
             dict(zip(self.__free_parameters, design_point)),
