@@ -16,6 +16,10 @@ class FitnessEvaluator(AbstractFitnessEvaluator):
     ):
 
         self.__evaluator: DesignPointEvaluator = evaluator
+        if not disable:
+            print("Approximating Design Space Exploration with Movado!")
+        else:
+            print("Exact Design Space Exploration")
         self.fitness = approximate(
             disabled=disable,
             outputs=len(self.__evaluator.get_metrics()),
