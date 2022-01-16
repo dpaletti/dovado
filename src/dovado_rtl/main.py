@@ -273,6 +273,11 @@ def space(
     n_controllers: Optional[int] = typer.Option(
         1, help="set the number of controllers for movado (voters)"
     ),
+    many_objective: Optional[bool] = typer.Option(
+        False,
+        help="use AGE-MOEA instead of NSGA-II as genetic algorithm,"
+        + " in case of many objectives (e.g. > 4) it may give better performance",
+    ),
 ):
     """
     RTL design space exploration
@@ -333,6 +338,7 @@ def space(
         metrics,
         optimization_runtime,
         power_of_2,
+        many_objective,
     )
     print("\n\nExecution Time: " + str(execution_time) + "\n\n")
 

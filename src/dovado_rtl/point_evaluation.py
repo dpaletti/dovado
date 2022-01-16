@@ -106,7 +106,7 @@ class DesignPointEvaluator(AbstractDesignPointEvaluator):
                         i.utilisation[0],
                         i.utilisation[1],
                     )
-                    if not i.is_frequency
+                    if i.utilisation
                     else -self.get_max_frequency(
                         report.get_wns(
                             str(self.__config.get_config("WORK_DIR"))
@@ -119,15 +119,11 @@ class DesignPointEvaluator(AbstractDesignPointEvaluator):
                             )
                         )
                     )
-                    for i in self.__metrics
                     if not i.custom_metric
+                    else self.compute_custom_metric(i, design_point)
+                    for i in self.__metrics
                 },
             )
-            for i in self.__metrics:
-                if i.custom_metric:
-                    design_value.value[i] = self.compute_custom_metric(
-                        i, design_point
-                    )
         self.__write_csv(design_point, design_value)
         return design_value
 

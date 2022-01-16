@@ -1,9 +1,10 @@
 from typing import List, Tuple, Optional
 from collections import OrderedDict
 
-from pymoo.model.callback import Callback
-from pymoo.model.problem import Problem
-from pymoo.algorithms.nsga2 import NSGA2
+from pymoo.core.callback import Callback
+from pymoo.core.problem import ElementwiseProblem
+from pymoo.algorithms.moo.nsga2 import NSGA2
+from pymoo.algorithms.moo.age import AGEMOEA
 from pymoo.factory import (
     get_sampling,
     get_crossover,
@@ -11,7 +12,7 @@ from pymoo.factory import (
     get_termination,
 )
 from pymoo.optimize import minimize
-from pymoo.model.repair import Repair
+from pymoo.core.repair import Repair
 
 
 import numpy as np
@@ -48,7 +49,7 @@ class MyRepair(Repair):
         return pop
 
 
-class MyProblem(Problem):
+class MyProblem(ElementwiseProblem):
     def __init__(
         self,
         fitness_evaluator: FitnessEvaluator,
@@ -69,7 +70,6 @@ class MyProblem(Problem):
                 for parameter in free_parameters_range.keys()
             ],
             type_var=np.int,
-            elementwise_evaluation=True,
         )
 
     def _evaluate(self, x: List[int], out, *args, **kwargs):
@@ -86,10 +86,15 @@ def optimize(
     metrics: List[Metric],
     execution_time: Optional[str],
     power_of_2: Optional[List[str]],
+    many_objective: bool = False,
 ) -> float:
     problem = MyProblem(evaluator, free_parameters_range, metrics)
 
-    algorithm = NSGA2(
+    if many_objective:
+        ga = AGEMOEA
+    else:
+        ga = NSGA2
+    algorithm = ga(
         repair=MyRepair(power_of_2) if power_of_2 else None,
         pop_size=10 * len(free_parameters_range.keys()),
         n_offsprings=10 * len(free_parameters_range.keys()),
