@@ -154,6 +154,13 @@ No further parameters can be passed to points
 
 
 <tr>
+<td class="org-left">&#x2013;many-objective</td>
+<td class="org-left"> replace default ga implementation (NSGA-II) with AGEMOEA which is a variant better suited for many objective (e.g. >4) optimization</td>
+<td class="org-left">no</td>
+</tr>
+
+
+<tr>
 <td class="org-left">&#x2013;param-initial-values</td>
 <td class="org-left">parameter values which are guaranteed to be synthesizable to retrieve metric mapping</td>
 <td class="org-left">no</td>

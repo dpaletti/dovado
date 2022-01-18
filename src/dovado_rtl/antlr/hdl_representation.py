@@ -106,6 +106,8 @@ class Parameter:
             + "', "
             + "type: '"
             + str(self.__type)
+            + "', value: '"
+            + str(self.__value)
             + "'}"
         )
 

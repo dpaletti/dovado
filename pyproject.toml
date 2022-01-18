@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dovado-rtl"
-version = "0.9.6"
+version = "0.9.11"
 description = "CLI tool for RTL Design Space Exploration on top of Vivado"
 authors = ["Daniele Paletti <danielepaletti98@gmail.com>"]
 license = "MIT"
@@ -31,16 +31,14 @@ BeautifulSoup4 = "^4.9.1"
 lxml = "^4.5.2"
 pyyaml = "^5.3.1"
 pexpect = "^4.8.0"
-pymoo = "0.4.1"
+pymoo = "^0.5.0"
 antlr4-python3-runtime = "4.9.3"
 dataclasses = { version = "^0.8", python = "~3.6" }
 typer = "^0.3.2"
-#movado = { path = "../movado/dist/Movado-0.5.12-py3-none-any.whl" }
+#movado = { path = "../movado/dist/Movado-0.6.3-py3-none-any.whl" }
 importlib-resources = "^5.1.4"
-movado = "^0.5.12"
+movado = "^0.6.0"
 
-[tool.poetry.dev-dependencies]
-black = "^19.10b0"
 
 [tool.poetry.scripts]
 dovado = "dovado_rtl.main:main"

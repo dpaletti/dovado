@@ -210,11 +210,13 @@ class HdlBoxFrameHandler(FillHandler):
     def __vhdl_parameter_map(self) -> str:
         parameter_section: str = "generic map(\n"
         for parameter in self.get_parameters()[:-1]:
-            if not parameter.get_value():
+            if parameter.get_value() is None:
                 raise Exception(
                     "Please provide default values for all parameters, "
                     + str(parameter.get_name())
                     + " does not have one."
+                    + "\n Parameter List:\n"
+                    + str(self.__parameters)
                 )
             parameter_section += (
                 parameter.get_name()
