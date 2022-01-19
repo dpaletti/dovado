@@ -15,4 +15,4 @@ the <code>-n</code> parameter specifies normalized graphs for the design objecti
 python3 generate_graphs.py -d dovado_approximated_output -r dovado_exact_output [-n]
 </code>
   
- where <code>dovado_exact_output</code> was run on the same inputs, including design space and objectives, with the <code>--disable-approximate</code> flag.
+  where <code>dovado_approximated_output</code> contains a <code>movado_debug</code> folder. <code>dovado_exact_output</code> was run on the same inputs, including design space and objectives, with the <code>--disable-approximate</code> flag.
