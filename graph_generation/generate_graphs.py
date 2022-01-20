@@ -226,7 +226,7 @@ def dual_axis_fused_barchart_frequency_res(data_frame, data_frame_2, name, norma
     fmax = data_frame['frequency'].max()
     data_frame['frequency'] = data_frame['frequency'].map(lambda x: (x / fmax))
 
-    fig, ax = plt.subplots(2, 1, figsize=(12,4))
+    fig, ax = plt.subplots(2, 1, figsize=(6,5))
 
     ax2 = ax[0].twinx()
     res_df = data_frame.drop(columns='frequency')
@@ -234,15 +234,15 @@ def dual_axis_fused_barchart_frequency_res(data_frame, data_frame_2, name, norma
     #Normalize resource data
     res_df = res_df.apply(lambda x: x / maxres)
     
-    width = 0.1
+    width = 0.08
     x = np.arange(len(data_frame.index))
     offs = np.arange((-len(labels)/2)*width, (len(labels)/2)*width, width)
     i = 0
     for l in labels:
         if l == 'frequency':
-            ax[0].bar(x+offs[i], data_frame[l], width=width, color=colors[i])
+            ax[0].bar(x+offs[i], data_frame[l], width=width, color=colors[i],edgecolor='black',linewidth=0.5)
         else:
-            ax[0].bar(x+offs[i], res_df[l], width=width, color=colors[i])
+            ax[0].bar(x+offs[i], res_df[l], width=width, color=colors[i],edgecolor='black',linewidth=0.5)
         i = i + 1
     ax[0].set_xticks(x)
     ax2.set_yticks(np.linspace(0,1,num=10))
@@ -260,16 +260,17 @@ def dual_axis_fused_barchart_frequency_res(data_frame, data_frame_2, name, norma
     ax[0].grid(visible=True, which='major', linestyle='dotted',axis='y')
     ax2.set_ylabel('Frequency (MHz)')
 
-    ax[0].legend(shorten_labels(labels),loc='center left', bbox_to_anchor=(1.1, 0.5))
+    ax[0].legend(shorten_labels(labels), loc='upper left', bbox_to_anchor=(0.1, 1.4), ncol=len(data_frame.columns))
+    #, bbox_to_anchor=(1.1, 0.5))
 
     labels = data_frame_2.columns.values
     #ax2 = ax[1].twinx()
-    width = 0.1
+    width = 0.08
     x = np.arange(len(data_frame_2.index))
     offs = np.arange((-len(labels)/2)*width, (len(labels)/2)*width, width)
     i = 0
     for l in labels:
-        ax[1].bar(x+offs[i], data_frame_2[l], width=width, color=colors[i])
+        ax[1].bar(x+offs[i], data_frame_2[l], width=width, color=colors[i],edgecolor='black',linewidth=0.5)
         i = i + 1
     ax[1].set_xticks(x)
     #ax.set_xticklabels(shorten_labels(labels))
@@ -282,7 +283,9 @@ def dual_axis_fused_barchart_frequency_res(data_frame, data_frame_2, name, norma
     ax[1].set_ylabel('Design Parameters')
     ax[1].grid(visible=True, which='major', linestyle='dotted',axis='y')
     ax[1].set_xlabel('Solution')
-    ax[1].legend(shorten_labels(labels),loc='center left', bbox_to_anchor=(1.1, 0.5))
+    #ax[1].legend(shorten_labels(labels),loc='center left', bbox_to_anchor=(1.1, 0.5))
+    ax[1].legend(shorten_labels(labels), loc='upper left', bbox_to_anchor=(0.0, 1.4), ncol=len(data_frame_2.columns))
+
     fig.tight_layout(rect=[0, 0.03, 1, 0.95])
     fig.savefig(name + '.svg', format='svg', bbox_inches = 'tight', dpi=1200)
 
