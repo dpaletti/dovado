@@ -16,7 +16,9 @@ import traceback
 import compute_hypervolume as chyv
 from common_charts import *
 
-
+ndovadomo_fnt=26
+ndovadomo_leg_fonts=20
+ndovadomo_tick_lbls=18
 
 def single_barchart_multiplot(data_frame, name):
     prop_cycle = plt.rcParams['axes.prop_cycle']
@@ -496,7 +498,7 @@ def dual_axis_fused_barchart_frequency_res_hypervolume(data_frame, data_frame_2,
     hv, nadir = chyv.compute_hv_nadir_as_list(new_df, mins, maxs)
     contribs = hv.contributions(nadir)
     contribs_df=pd.DataFrame(contribs, columns=['hypervolume'])
-    # print(contribs_df)
+    #print(contribs_df.sort_values(by=['hypervolume'], ascending=False).head(5))
     # print(data_frame)
     #join
     labels_2 = data_frame_2.columns.values   
@@ -506,7 +508,7 @@ def dual_axis_fused_barchart_frequency_res_hypervolume(data_frame, data_frame_2,
     data_frame_joined = data_frame.join(data_frame_2)
     #idx_names= data_frame_joined[data_frame_joined['CLB LUTs*'] > 100].index
     #data_frame_joined.drop(idx_names, inplace=True)
-    data_frame_joined = data_frame_joined.sort_values(by=['hypervolume']).head(5)
+    data_frame_joined = data_frame_joined.sort_values(by=['hypervolume'], ascending=False).head(5)
     data_frame_joined = data_frame_joined.sort_values(by=['frequency'])
     data_frame_joined = data_frame_joined.drop(columns='hypervolume')
     #TODO apply the filtering
@@ -525,9 +527,13 @@ def dual_axis_fused_barchart_frequency_res_hypervolume(data_frame, data_frame_2,
     fmax = data_frame['frequency'].max()
     data_frame['frequency'] = data_frame['frequency'].map(lambda x: (x / fmax))
 
-    fig, ax = plt.subplots(2, 1, figsize=(9,5))
+    fig, ax = plt.subplots(2, 1, figsize=(16,10))
+    ax[0].tick_params(axis='both', which='both', labelsize=ndovadomo_tick_lbls)
+    ax[1].tick_params(axis='both', which='both', labelsize=ndovadomo_tick_lbls)
 
     ax2 = ax[0].twinx()
+    ax2.tick_params(axis='both', which='both', labelsize=ndovadomo_tick_lbls)
+
     first_df=data_frame #.drop(columns=['instr_mem_size','avg_perf_metric'])
     labels = first_df.columns.values
     res_df = data_frame.drop(columns='frequency')
@@ -535,7 +541,7 @@ def dual_axis_fused_barchart_frequency_res_hypervolume(data_frame, data_frame_2,
     maxres = max(res_df.max())
     res_df_only = res_df.apply(lambda x: x / maxres)
 
-    width = 0.25
+    width = 0.2
     x = np.arange(len(data_frame.index))
 
     offs = np.arange((-len(labels)/2)*width, (len(labels)/2)*width, width)
@@ -556,27 +562,29 @@ def dual_axis_fused_barchart_frequency_res_hypervolume(data_frame, data_frame_2,
     ax[0].margins(x=0.01)
     ax2.margins(x=0.01)
 
-    ax2.set_yticks(np.linspace(0,1,num=10))
-    ax2.set_yticklabels(map(math.floor, np.linspace(0,fmax,num=10)))
-    ax[0].set_yticks(np.linspace(0,1,num=10))
-    ylabel_vals = np.linspace(0,maxres, num=10)
+    tick_num=8
+    ax2.set_yticks(np.linspace(0,1,num=tick_num))
+    ax2.set_yticklabels(map(math.floor, np.linspace(0,fmax,num=tick_num)))
+    ax[0].set_yticks(np.linspace(0,1,num=tick_num))
+    ylabel_vals = np.linspace(0,maxres, num=tick_num)
     ylabel_vals = [round(x,2) for x in ylabel_vals]
     ax[0].set_yticklabels(ylabel_vals)
     if normalize_res:
-        ax[0].set_ylabel('Scaled Metrics')
+        ax[0].set_ylabel('Scaled Metrics', fontsize=ndovadomo_fnt)
         # ax[0].set_ylabel('Resource Utilization (%)\nThroughput [Gb/s]\n2^x $I lines')
     else:
         ax[0].set_ylabel('Resources')
         ax[0].plot([0., len(x)], [100/maxres, 100/maxres], "k--")
         labels = np.append('100% Utilization',labels)
     ax[0].grid(visible=True, which='major', linestyle='dotted',axis='y',zorder=0)
-    ax2.set_ylabel('Frequency (MHz)')
+    ax2.set_ylabel('Frequency (MHz)', fontsize=ndovadomo_fnt)
 
-    ax[0].legend(shorten_labels(labels), loc='upper left', bbox_to_anchor=(0.0, 1.28), ncol=len(labels))
+    ax[0].legend(shorten_labels(labels), loc='upper left', bbox_to_anchor=(0.0, 1.25), ncol=len(labels),fontsize=ndovadomo_leg_fonts)
+    # ax[0].legend(shorten_labels(labels), loc='upper left', bbox_to_anchor=(0.0, 1.28), ncol=int(math.ceil(len(labels)/2)))
 
 
     labels = data_frame_2.columns.values
-    width = 0.25
+    width = 0.2
     x = np.arange(len(data_frame_2.index))
     offs = np.arange((-len(labels)/2)*width, (len(labels)/2)*width, width)
     i = 0
@@ -587,10 +595,11 @@ def dual_axis_fused_barchart_frequency_res_hypervolume(data_frame, data_frame_2,
         
     ax[1].margins(x=0.01)
     ax[1].set_yticks(np.arange(0,data_frame_2.max().max(),5))
-    ax[1].set_ylabel('Design Parameters')
+    ax[1].set_ylabel('Design Parameters', fontsize=ndovadomo_fnt)
     ax[1].grid(visible=True, which='major', linestyle='dotted',axis='y')
-    ax[1].set_xlabel('Solution')
-    ax[1].legend(shorten_labels(labels), loc='upper left', bbox_to_anchor=(0.0, 1.28), ncol=len(data_frame_2.columns))
+    ax[1].set_xlabel('Solution', fontsize=ndovadomo_fnt)
+    ax[1].legend(shorten_labels(labels), loc='upper left', bbox_to_anchor=(0.0, 1.25), ncol=len(data_frame_2.columns),fontsize=ndovadomo_leg_fonts)
+    # ax[1].legend(shorten_labels(labels), loc='upper left', bbox_to_anchor=(0.0, 1.28), ncol=int(math.ceil(len(data_frame_2.columns)/2)))
 
     fig.tight_layout(rect=[0, 0.03, 1, 0.95])
     #fig.tight_layout(pad=0.5)

@@ -16,6 +16,7 @@ import re
 import argparse
 import traceback
 import ndovadomo_charts as ndovado
+import movado_charts as mvd
 from common_charts import *
 
 
@@ -183,100 +184,7 @@ def multi_boxplot(data_frame, name):
         fig.savefig(image_name, format=image_format, bbox_inches = 'tight', dpi=1200)
         plt.close(fig)
 
-movl_fnt = 16
-movl_lwdth = 4
 
-def plot_controller_calls(controller, base_space, name):
-
-    exact_calls = []
-    estimated_calls = []
-    for el in controller[' Exact_Estimated_Calls']:
-        elements = el[2:-1].split(' ')
-        elements =  [int(x) for x in elements]
-        exact_calls.append(elements[0])
-        estimated_calls.append(elements[1])
-    num_steps = len(controller.index)
-    steps = np.arange(0, num_steps)
-    fig, ax = plt.subplots()
-    ax.plot(steps, exact_calls, label="Exact calls", color=colors[1], linewidth=movl_lwdth)
-    ax.plot(steps, estimated_calls, label="Estimated calls", color=colors[2], linewidth=movl_lwdth)
-    exact = np.arange(0,len(base_space.index))
-    ax.plot(exact, exact, label="No approximator run", color=colors[3], linewidth=movl_lwdth)
-    #ax.plot([0,num_steps],[len(base_space.index),len(base_space.index)], color='k', linestyle='dashed', linewidth=0.5)
-    ax.set_xlabel("Optimization Steps", fontsize=movl_fnt)
-    ax.set_ylabel("Calls to Fitness Function", fontsize=movl_fnt)
-    ax.legend(fontsize=movl_fnt-2)
-    ax.grid(visible=True, which='major', linestyle='dotted')
-    image_format = 'svg' # e.g .png, .svg, etc.
-    image_name = name + '.svg'
-    fig.savefig(image_name, format=image_format, bbox_inches = 'tight', dpi=1200)
-    image_format = 'pdf' # e.g .png, .svg, etc.
-    image_name = name + '.pdf'
-    fig.savefig(image_name, format=image_format, bbox_inches = 'tight', dpi=1200)
-    plt.close(fig)
-
-def plot_error(controller, name):
-
-    fig, ax = plt.subplots()
-    num_calls = len(controller.index)
-    x = np.arange(0, num_calls, 1)
-    y = controller[' Error']
-    ax.plot(x[1:], y[1:], label='Error', color=colors[3], linewidth=movl_lwdth)
-    ax.set_xlabel('Optimization Steps', fontsize=movl_fnt)
-    ax.set_ylabel('RMSE', fontsize=movl_fnt)
-    #ax.legend()
-    ax.grid(visible=True, which='major', linestyle='dotted')
-    image_format = 'svg' # e.g .png, .svg, etc.
-    image_name = name + '.svg'
-    fig.savefig(image_name, format=image_format, bbox_inches = 'tight', dpi=1200)
-    image_format = 'pdf' # e.g .png, .svg, etc.
-    image_name = name + '.pdf'
-    fig.savefig(image_name, format=image_format, bbox_inches = 'tight', dpi=1200)
-    plt.close(fig)
-
-def plot_mean_cost(mabdf, name):
-
-    #Take absolute values of data   
-    mabdf[' Mean Cost'] = mabdf[' Mean Cost'].map(lambda x: abs(x))
-
-    fig, ax = plt.subplots()
-    num_calls = len(mabdf.index)
-    x = np.arange(0, num_calls, 1)
-    y = mabdf[' Mean Cost']
-    ax.plot(x, y, label='Mean Cost', color=colors[2])
-    ax.set_xlabel('Optimization Steps', fontsize=movl_fnt)
-    ax.set_ylabel('Mean Cost', fontsize=movl_fnt)
-    #ax.legend()
-    ax.grid(visible=True, which='major', linestyle='dotted')
-    image_format = 'svg' # e.g .png, .svg, etc.
-    image_name = name + '.svg'
-    fig.savefig(image_name, format=image_format, bbox_inches = 'tight', dpi=1200)
-    image_format = 'pdf' # e.g .png, .svg, etc.
-    image_name = name + '.pdf'
-    fig.savefig(image_name, format=image_format, bbox_inches = 'tight', dpi=1200)
-    plt.close(fig)
-
-def plot_action_weight(mabwdf, name):
-
-    fig, ax = plt.subplots()
-    num_calls = len(mabwdf.index)
-    x = np.arange(0, num_calls, 1)
-    y = mabwdf[' Action']
-    coef = np.polyfit(x,y,6)
-    poly1d_fn = np.poly1d(coef)
-    ax.plot(x, y, color=colors[1], label="Weight value")
-    ax.plot(x, poly1d_fn(x), color=colors[3], label="Trend", linewidth=movl_lwdth)
-    ax.set_xlabel('Optimization Steps', fontsize=movl_fnt)
-    ax.set_ylabel('Time weight', fontsize=movl_fnt)
-    ax.legend()
-    ax.grid(visible=True, which='major', linestyle='dotted')
-    image_format = 'svg' # e.g .png, .svg, etc.
-    image_name = name + '.svg'
-    fig.savefig(image_name, format=image_format, bbox_inches = 'tight', dpi=1200)
-    image_format = 'pdf' # e.g .png, .svg, etc.
-    image_name = name + '.pdf'
-    fig.savefig(image_name, format=image_format, bbox_inches = 'tight', dpi=1200)
-    plt.close(fig)
 # Plot Dovado graphs as svg images
 #
 
@@ -335,12 +243,12 @@ output_dir = input_dir_base + "/graphs"
 desfr = pd.read_csv(input_dir + '/design_space.csv')
 try:
     plot_polar_multidim_space(desfr, output_dir + "/design_space", "Pareto optimal solution parameters", True)
-except (ValueError,RuntimeError, TypeError, NameError):
+except (ValueError,RuntimeError, TypeError, NameError, KeyError):
     print("Errorrrs plot_polar_multidim_space")
     traceback.print_exc()
 try:
     ndovado.single_barchart_multiplot(desfr, output_dir + "/design_bars")
-except (ValueError,RuntimeError, TypeError, NameError):
+except (ValueError,RuntimeError, TypeError, NameError, KeyError):
     print("Errorrrs single_barchart_multiplot")
     traceback.print_exc()
 objfr = pd.read_csv(input_dir + '/objective_space.csv')
@@ -351,32 +259,32 @@ try:
         ndovado.dual_axis_fused_barchart_frequency_res_cicero(objfr, desfr, output_dir + '/objective_bars_single_cicero', normalize_resources,args.tirex_norm)
         ndovado.dual_axis_fused_barchart_frequency_res_third(objfr, desfr, output_dir + '/objective_bars_single_third', normalize_resources,args.tirex_norm)
         ndovado.dual_axis_fused_barchart_frequency_res_separated(objfr, desfr, output_dir + '/objective_bars_objective', output_dir +'/objective_bars_params', normalize_resources,args.tirex_norm)
-except (ValueError,RuntimeError, TypeError, NameError):
+except (ValueError,RuntimeError, TypeError, NameError, KeyError):
     print("Errorrrs dual_axis_fused_barchart_frequency_res")
     traceback.print_exc()
 
-objfr = pd.read_csv(input_dir + '/objective_space.csv')
 if mins != None and maxs != None:
+    objfr = pd.read_csv(input_dir + '/objective_space.csv')
     try:
         ndovado.dual_axis_fused_barchart_frequency_res_hypervolume(objfr, desfr, output_dir + '/objective_bars_hyperv', normalize_resources,mins, maxs)
-    except (ValueError,RuntimeError, TypeError, NameError):
+        objfr = pd.read_csv(input_dir + '/objective_space.csv')
+    except (ValueError,RuntimeError, TypeError, NameError, KeyError):
         print("Errorrrs dual_axis_fused_barchart_frequency_res_hypervolume")
         traceback.print_exc()
-objfr = pd.read_csv(input_dir + '/objective_space.csv')
 try:
     plot_polar_multidim_space(objfr, output_dir + "/objective_space", "Pareto optimal solution objectives")
-except (ValueError,RuntimeError, TypeError, NameError):
+except (ValueError,RuntimeError, TypeError, NameError, KeyError):
     print("Errorrrs plot_polar_multidim_space")
     traceback.print_exc()
 explfr = pd.read_csv(input_dir + '/space_exploration.csv')
 try:
     multi_axis_scatter(explfr, output_dir + "/space_exploration", "Normalized exploration iterations")
-except (ValueError,RuntimeError, TypeError, NameError):
+except (ValueError,RuntimeError, TypeError, NameError, KeyError):
     print("Errorrrs multi_axis_scatter")
     traceback.print_exc()
 try: 
     multi_boxplot(explfr, output_dir + "/space_exploration_box_")
-except (ValueError,RuntimeError, TypeError, NameError):
+except (ValueError,RuntimeError, TypeError, NameError, KeyError):
     print("Errorrrs multi_boxplot")
     traceback.print_exc()
 
@@ -423,26 +331,26 @@ if os.path.exists(movado_dir):
     ctrl = pd.read_csv(movado_dir + '/controller_fixed.csv')
     baseline_expl = pd.read_csv(reference_dir + '/space_exploration.csv') 
     try: 
-        plot_controller_calls(ctrl, baseline_expl, output_dir + "/fitness_calls")
-    except (ValueError,RuntimeError, TypeError, NameError):
+        mvd.plot_controller_calls(ctrl, baseline_expl, output_dir + "/fitness_calls")
+    except (ValueError,RuntimeError, TypeError, NameError, KeyError):
         print("Errorrrs plot_controller_calls")
         traceback.print_exc()
     try: 
-        plot_error(ctrl, output_dir + '/controlller_error')
-    except (ValueError,RuntimeError, TypeError, NameError):
+        mvd.plot_error(ctrl, output_dir + '/controlller_error')
+    except (ValueError,RuntimeError, TypeError, NameError, KeyError):
         traceback.print_exc()
         print("Errorrrs plot_error")
     mab = pd.read_csv(movado_dir + '/mab_fixed.csv', sep=';')
     try: 
-        plot_mean_cost(mab, output_dir + "/mab_cost")
-    except (ValueError,RuntimeError, TypeError, NameError):
+        mvd.plot_mean_cost(mab, output_dir + "/mab_cost")
+    except (ValueError,RuntimeError, TypeError, NameError, KeyError):
         traceback.print_exc()
         print("Errorrrs plot_mean_cost")
     
     mab_weight = pd.read_csv(movado_dir + '/mab_weight_fixed.csv', sep=';')
     try: 
-        plot_action_weight(mab_weight, output_dir + "/mab_weight")
-    except (ValueError,RuntimeError, TypeError, NameError):
+        mvd.plot_action_weight(mab_weight, output_dir + "/mab_weight")
+    except (ValueError,RuntimeError, TypeError, NameError, KeyError):
         traceback.print_exc()
         print("Errorrrs plot_action_weight")
     
