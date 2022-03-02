@@ -349,7 +349,7 @@ Using **approximation** parameters:
 ### CICERO (VERILOG/SYSTEM-VERILOG)
 
 [**CICERO**](https://dl.acm.org/doi/abs/10.1145/3476982) is a Domain-Specific Architecture (DSA) for Regular Expression matching.
-We take off-the-shelf DSA and apply a DSE to maximize Frequency and custom metrics, and minimize LUTs usage according to soUsing **approximation** parameters:me metrics.
+We take off-the-shelf DSA and apply a DSE to maximize Frequency and custom metrics, and minimize LUTs usage according to some metrics.
 The custom metrics employed are performance of the multi-engine architecture and $I cache size by changing Core#, Internal Parallelism, $I lines.
 
     git clone https://github.com/necst/cicero -b feature/dse
