@@ -1,5 +1,11 @@
 ## Graph generation for Movado/Dovado
 
+### Paper results reproduction
+
+Please refer to  `generate.sh` to reference paper results reproduction
+
+
+### Script description
 Script to generate data visualization for Dovado/Movado output.
 To generate graphs for an exact run of Dovado, or the Dovado output for a Movado run, let <code><dovado_output_folder></code> contain a <code>dovado_work</code> folder:
 

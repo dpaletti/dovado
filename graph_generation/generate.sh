@@ -1,11 +1,12 @@
-python3 generate_graphs.py -d results/tirex_nags31/exact_many_restricted_alone/ -n -cic -tir --hypervolume tirex
-python3 generate_graphs.py -d results/tirex_nags31/approximate_many_restricted_alone/ -r results/tirex_nags31/exact_many_restricted_alone/ -n -cic -tir --hypervolume tirex
-# python3 generate_graphs.py -d results/tirex_parallel/tirex_exact_nodatacache/ -n -cic -tir --hypervolume tirex
-# python3 generate_graphs.py -d results/tirex_parallel/tirex_approximate_nodatacache/ -r results/tirex_parallel/tirex_exact_nodatacache/ -n -cic -tir --hypervolume tirex
-python3 generate_graphs.py -d results/cicero_cf_nags21/exact_cf_rawperf/ -n -cic --hypervolume cicero
-python3 generate_graphs.py -d results/cicero_cf_nags25/approx_cf_rawperf/ -r results/cicero_cf_nags21/exact_cf_rawperf/ -n -cic --hypervolume cicero
+TIREX_FOLDER=./results/tirex
+CICERO_FOLDER=./results/cicero
 
-# python3 generate_graphs.py -d results/corundum_exact_2 -n
-# python3 generate_graphs.py -d results/corundum_approx_2 -r results/corundum_exact_2 -n 
-# python3 generate_graphs.py -d results/neorv32_exact_2
-# python3 generate_graphs.py -d results/neorv32_approx_2 -r results/neorv32_exact_2 
+python3 generate_graphs.py -d $TIREX_FOLDER/exact_many/ -n -cic -tir --hypervolume tirex
+python3 generate_graphs.py -d $TIREX_FOLDER/approximate_many/ -r $TIREX_FOLDER/exact_many/ -n -cic -tir --hypervolume tirex
+python3 generate_graphs.py -d $CICERO_FOLDER/exact/ -n -cic --hypervolume cicero
+python3 generate_graphs.py -d $CICERO_FOLDER/approx/ -r $CICERO_FOLDER/exact/ -n -cic --hypervolume cicero
+
+python3 generate_graphs.py -d results/corundum_exact -n
+python3 generate_graphs.py -d results/corundum_approx -r results/corundum_exact -n 
+python3 generate_graphs.py -d results/neorv32_exact
+python3 generate_graphs.py -d results/neorv32_approx -r results/neorv32_exact 

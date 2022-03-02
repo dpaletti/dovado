@@ -6,9 +6,12 @@
     1.  [Defining Custom Metrics](#org023397d)
     2.  [Examples](#orge369aa6)
         1.  [neorv32 (VHDL)](#orgcb021dc)
+        1.  [neorv32 with boolean (VHDL)](#neorv32boolean)
         2.  [corundum (VERILOG)](#org9b66d30)
-        3.  [cv32e40p (SYSTEM-VERILOG)](#orgbda061b)
-3. [Associated Publication](#paper_ref)
+        3.  [CICERO (VERILOG/SYSTEM-VERILOG)](#cicero)
+        4.  [cv32e40p (SYSTEM-VERILOG)](#orgbda061b)
+3.  [Advanced Experiments](#raw22experiments)
+4. [Associated Publication](#paper_ref)
 DoVado is a RTL design automation and exploration CLI tool.
 
 
@@ -16,7 +19,7 @@ DoVado is a RTL design automation and exploration CLI tool.
 
 # Installation
 
-DoVado needs python 3.6 or higher. Install it through pip, on many Linux systems use pip3 to force python 3 installation.
+DoVado needs python 3.6 or higher. Install it through pip, on many Linux systems use pip3 to force python 3 installation. Dovado has been tested on Vivado 2018.3.
 
     pip3 install --user --no-cache dovado-rtl
 
@@ -294,6 +297,7 @@ General advice:
 <a id="orgcb021dc"></a>
 
 ### neorv32 (VHDL)
+[**neorv32**](https://github.com/stnolting/neorv32) is an embedded RISC-V core.
 
     git clone https://github.com/stnolting/neorv32
     cd neorv32/rtl
@@ -316,6 +320,9 @@ Above we are optimizing two memory parameters (MEM<sub>INT</sub><sub>IMEM</sub><
 
 Ranges are specified after space and we also specify that we want to search only among power of 2&rsquo;s solutions.
 
+<a id="neorv32boolean"></a>
+###  neorv32 boolean (VHDL)
+
 Here an example of **exploring boolean parameters**, the trick here is to explore them as normal parameters but use as range [0, 1] obviously they can be mixed up with non-boolean parameters during exploration:
 
     dovado --file-path <path to "neorv32/rtl/neorv32/neorv32_top.vhd"> --board xc7k70tfbv676-1 --parameters BOOTLOADER_EN --parameters CPU_EXTENSION_RISCV_A --parameters CPU_EXTENSION_RISCV_B --parameters CPU_EXTENSION_RISCV_C --clock-port clk_i --metrics 0 --metrics 1 --metrics 4 --metrics 9 space 0 1 0 1 0 1 0 1 --disable-approximate
@@ -324,6 +331,7 @@ Here an example of **exploring boolean parameters**, the trick here is to explor
 <a id="org9b66d30"></a>
 
 ### corundum (VERILOG)
+[**corundum**](https://ieeexplore.ieee.org/abstract/document/9114811) is an open-source 100Gbps-NIC.
 
     git clone https://github.com/corundum/corundum
     cd corundum/
@@ -336,10 +344,35 @@ Using **approximation** parameters:
 
     dovado --file-path <path to "corundum/fpga/common/rtl/cpl_queue_manager.v"> --board xc7k70tfbv676-1 --target-clock 100000 --parameters OP_TABLE_SIZE --parameters QUEUE_INDEX_WIDTH --parameters PIPELINE --clock-port clk --metrics 0 --metrics 1 --metrics 4 --metrics 9 space 8 64 4 11 2 32
 
+<a id="cicero"></a>
+
+### CICERO (VERILOG/SYSTEM-VERILOG)
+
+CICERO is a Domain-Specific Architecture for Regular Expression matching.
+We take off-the-shelf DSA and apply a DSE to maximize Frequency and custom metrics, and minimize LUTs usage according to soUsing **approximation** parameters:me metrics.
+The custom metrics employed are performance of the multi-engine architecture and $I cache size by changing Core#, Internal Parallelism, $I lines.
+
+    git clone https://github.com/necst/cicero -b feature/dse
+    mkdir custom_metrics
+    cp cicero/hdl_src/cicero_core/custom_metrics/avg_perf.py  custom_metrics/
+    cp cicero/hdl_src/cicero_core/custom_metrics/isize.py   custom_metrics/
+
+
+For the **exact** version run:
+
+    dovado --file-path cicero/hdl_src/cicero_core/cicero_core.v --board xcku060-ffva1156-2-i --parameters BB_N --parameters CC_ID_BITS --parameters PC_WIDTH --clock-port s00_axi_aclk --metrics 0 --metrics 1 --metrics 37 --metrics 38 space 2 72 1 3 9 10 --many-objective --disable-approximate
+
+For the **approximated** version run:
+
+    dovado --file-path cicero/hdl_src/cicero_core/cicero_core.v --board xcku060-ffva1156-2-i --parameters BB_N --parameters CC_ID_BITS --parameters PC_WIDTH --clock-port s00_axi_aclk --metrics 0 --metrics 1 --metrics 37 --metrics 38 space 2 72 1 3 9 10 --many-objective 
+
 
 <a id="orgbda061b"></a>
 
 ### cv32e40p (SYSTEM-VERILOG)
+
+Vivado does not support for 2018.3 release a complex SystemVerilog top-module with a hierarchy. 
+Therefore, we use a simpler module for showcasing purposes.
 
     git clone https://github.com/openhwgroup/cv32e40p
     cd rtl
@@ -349,6 +382,23 @@ Using **approximation** parameters:
 In this project an include directory is used but dovado does not currently support it thus we create a subfolder, name may be whatever, where to isolate the module we are interested in studying. This workaround is only possible if the module one wants to study works standalone without include directives.
 
     dovado --file-path <path to "cv32e40p/rtl/testing/cv32e40p_fifo.sv"> --board xc7k70tfbv676-1 --target-clock 100000 --parameters DEPTH --parameters DATA_WIDTH --clock-port clk_i --metrics 0 --metrics 1 --metrics 4 --metrics 9 space 2 4096 2 64 --power-of-2 y --power-of-2 y --disable-approximate
+
+<a id="raw22experiments"></a>
+
+# Advanced Experiments
+
+We combined Dovado with [Movado](https://github.com/DPaletti/movado) capabilities and run DSEs for different purposes and showcasing Movado approximation capabilities.
+We explore [**corundum**](https://ieeexplore.ieee.org/abstract/document/9114811) with the [corresponding section commands](#org9b66d30) .
+
+Then we explore the RISCV extensions of [**neorv32**](https://github.com/stnolting/neorv32), modelling the combination of such extensions with the following **custom metric**:
+
+    the code for custom metric @Francesco Peverelli    
+
+and run with 
+
+    the code for exact/approximate calls @Francesco Peverelli    
+
+We then explore two DSA for Regular Expressions. We scale up [**TiReX**](https://ieeexplore.ieee.org/abstract/document/8425395) single core with its internal parallelism, but the project is not open-sourced, hence not replicable here. We then scale out [**CICERO**](https://dl.acm.org/doi/abs/10.1145/3476982) engines number according to the [corresponding examples section](#cicero) procedures.
 
 <a id="paper_ref"></a>
 # Associated Publication
