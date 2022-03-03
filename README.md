@@ -392,11 +392,18 @@ We explore [**corundum**](https://ieeexplore.ieee.org/abstract/document/9114811)
 
 Then we explore the RISCV extensions of [**neorv32**](https://github.com/stnolting/neorv32), modelling the combination of such extensions with the following **custom metric**:
 
-    the code for custom metric @Francesco Peverelli    
+def extension_score(**kwargs) -> float:
+	print("kwargs:")
+	print(kwargs)
+	return float(__helper_function([int(kwargs["CPU_EXTENSION_RISCV_A"]), int(kwargs["CPU_EXTENSION_RISCV_C"]), int(kwargs["CPU_EXTENSION_RISCV_E"]), int(kwargs["CPU_EXTENSION_RISCV_M"]), int(kwargs["CPU_EXTENSION_RISCV_U"]), int(kwargs["CPU_EXTENSION_RISCV_Zfinx"]), int(kwargs["CPU_EXTENSION_RISCV_Zicsr"]), int(kwargs["CPU_EXTENSION_RISCV_Zifencei"])]))
+
+def __helper_function(variants):
+	print(variants)
+	return sum(variants) * -1000.00
 
 and run with 
 
-    the code for exact/approximate calls @Francesco Peverelli    
+    dovado --file-path neorv32/rtl/neorv32/neorv32_ProcessorTop_Minimal.vhd --board xa7a12tcpg238-2I --parameters CPU_EXTENSION_RISCV_A --parameters CPU_EXTENSION_RISCV_C --parameters CPU_EXTENSION_RISCV_E --parameters CPU_EXTENSION_RISCV_M --parameters CPU_EXTENSION_RISCV_U --parameters CPU_EXTENSION_RISCV_Zfinx --parameters CPU_EXTENSION_RISCV_Zicsr --parameters CPU_EXTENSION_RISCV_Zifencei --clock-port clk_i space 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1  [--disable-approximate]
 
 We then explore two DSA for Regular Expressions. We scale up [**TiReX**](https://ieeexplore.ieee.org/abstract/document/8425395) single core with its internal parallelism, but the project is not open-sourced, hence not replicable here. We then scale out [**CICERO**](https://dl.acm.org/doi/abs/10.1145/3476982) engines number according to the [corresponding examples section](#cicero) procedures.
 
