@@ -10,7 +10,7 @@
         2.  [corundum (VERILOG)](#org9b66d30)
         3.  [CICERO (VERILOG/SYSTEM-VERILOG)](#cicero)
         4.  [cv32e40p (SYSTEM-VERILOG)](#orgbda061b)
-3.  [Advanced Experiments](#raw22experiments)
+3.  [RAW'22 Experiments](#raw22experiments)
 4. [Associated Publication](#paper_ref)
 DoVado is a RTL design automation and exploration CLI tool.
 
@@ -385,7 +385,7 @@ In this project an include directory is used but dovado does not currently suppo
 
 <a id="raw22experiments"></a>
 
-# Advanced Experiments
+# RAW'22 Experiments
 
 We combined Dovado with [Movado](https://github.com/DPaletti/movado) capabilities and run DSEs for different purposes and showcasing Movado approximation capabilities.
 We explore [**corundum**](https://ieeexplore.ieee.org/abstract/document/9114811) with the [corresponding section commands](#org9b66d30) .
@@ -417,6 +417,18 @@ We then explore two DSA for Regular Expressions. We scale up [**TiReX**](https:/
 
 If you find this repository useful, please use the following citation:
 
+Dovado with custom metrics and Movado:
+```
+@inproceedings{paletti2021online,
+  title={Online Learning RTL Synthesis for Automated Design Space Exploration},
+  author={Paletti, Daniele and Peverelli, Francesco and Conficconi, Davide and Santambrogio, Marco D},
+  booktitle={2022 IEEE International Parallel and Distributed Processing Symposium Workshops (IPDPSW)},
+  year={2022},
+  organization={IEEE}
+}
+```
+
+Original Dovado Publication:
 ```
 @inproceedings{paletti2021dovado,
   title={Dovado: An Open-Source Design Space Exploration Framework},
