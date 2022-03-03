@@ -20,7 +20,7 @@ DoVado is a RTL design automation and exploration CLI tool.
   :CUSTOM_ID: installation
   :END:
 DoVado needs python 3.6 or higher. Install it through pip, on many Linux
-systems use pip3 to force python 3 installation.
+systems use pip3 to force python 3 installation. Dovado has been tested on Vivado 2018.3.
 
 #+begin_example
   pip3 install --user --no-cache dovado-rtl
