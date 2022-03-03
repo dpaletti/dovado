@@ -392,6 +392,7 @@ We explore [**corundum**](https://ieeexplore.ieee.org/abstract/document/9114811)
 
 Then we explore the RISCV extensions of [**neorv32**](https://github.com/stnolting/neorv32), modelling the combination of such extensions with the following **custom metric**:
 
+```
 def extension_score(**kwargs) -> float:
 	print("kwargs:")
 	print(kwargs)
@@ -400,10 +401,13 @@ def extension_score(**kwargs) -> float:
 def __helper_function(variants):
 	print(variants)
 	return sum(variants) * -1000.00
+```
 
 and run with 
 
     dovado --file-path neorv32/rtl/neorv32/neorv32_ProcessorTop_Minimal.vhd --board xa7a12tcpg238-2I --parameters CPU_EXTENSION_RISCV_A --parameters CPU_EXTENSION_RISCV_C --parameters CPU_EXTENSION_RISCV_E --parameters CPU_EXTENSION_RISCV_M --parameters CPU_EXTENSION_RISCV_U --parameters CPU_EXTENSION_RISCV_Zfinx --parameters CPU_EXTENSION_RISCV_Zicsr --parameters CPU_EXTENSION_RISCV_Zifencei --clock-port clk_i space 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1  [--disable-approximate]
+
+You will be prompted to choose the objective metrics to optimize, where you will be able to select the custom metric.
 
 We then explore two DSA for Regular Expressions. We scale up [**TiReX**](https://ieeexplore.ieee.org/abstract/document/8425395) single core with its internal parallelism, but the project is not open-sourced, hence not replicable here. We then scale out [**CICERO**](https://dl.acm.org/doi/abs/10.1145/3476982) engines number according to the [corresponding examples section](#cicero) procedures.
 
