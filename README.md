@@ -390,7 +390,7 @@ In this project an include directory is used but dovado does not currently suppo
 We combined Dovado with [Movado](https://github.com/DPaletti/movado) capabilities and run DSEs for different purposes and showcasing Movado approximation capabilities.
 We explore [**corundum**](https://ieeexplore.ieee.org/abstract/document/9114811) with the [corresponding section commands](#org9b66d30) .
 
-Then we explore the RISCV extensions of [**neorv32**](https://github.com/stnolting/neorv32), modelling the combination of such extensions with the following **custom metric**:
+Then we explore the RISCV extensions of [**neorv32**](https://github.com/stnolting/neorv32), modelling the combination of such extensions with the following **custom metric** (already written in `custom_metrics/extension_score.py`):
 
 ```
 def extension_score(**kwargs) -> float:
@@ -405,9 +405,10 @@ def __helper_function(variants):
 
 and run with 
 
-    dovado --file-path neorv32/rtl/neorv32/neorv32_ProcessorTop_Minimal.vhd --board xa7a12tcpg238-2I --parameters CPU_EXTENSION_RISCV_A --parameters CPU_EXTENSION_RISCV_C --parameters CPU_EXTENSION_RISCV_E --parameters CPU_EXTENSION_RISCV_M --parameters CPU_EXTENSION_RISCV_U --parameters CPU_EXTENSION_RISCV_Zfinx --parameters CPU_EXTENSION_RISCV_Zicsr --parameters CPU_EXTENSION_RISCV_Zifencei --clock-port clk_i space 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1  [--disable-approximate]
+    dovado --file-path neorv32/rtl/neorv32/neorv32_ProcessorTop_Minimal.vhd --board xa7a12tcpg238-2I --parameters CPU_EXTENSION_RISCV_A --parameters CPU_EXTENSION_RISCV_C --parameters CPU_EXTENSION_RISCV_E --parameters CPU_EXTENSION_RISCV_M --parameters CPU_EXTENSION_RISCV_U --parameters CPU_EXTENSION_RISCV_Zfinx --parameters CPU_EXTENSION_RISCV_Zicsr --parameters CPU_EXTENSION_RISCV_Zifencei --clock-port clk_i space 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1  --disable-approximate
 
-You will be prompted to choose the objective metrics to optimize, where you will be able to select the custom metric.
+You will be prompted to choose the objective metrics to optimize, where you will be able to select the custom metric. Please remove the final `--disable-approximate` to run the exact version.
+
 
 We then explore two DSA for Regular Expressions. We scale up [**TiReX**](https://ieeexplore.ieee.org/abstract/document/8425395) single core with its internal parallelism, but the project is not open-sourced, hence not replicable here. We then scale out [**CICERO**](https://dl.acm.org/doi/abs/10.1145/3476982) engines number according to the [corresponding examples section](#cicero) procedures.
 
