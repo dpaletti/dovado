@@ -30,6 +30,20 @@ from dovado_rtl.antlr.hdl_representation import (
 from dovado_rtl.abstract_classes import AbstractSourceParser
 from dovado_rtl.enums import RTL
 from dovado_rtl.fill_handler import FillHandler
+from dovado_rtl.antlr.generated.Scala.ScalaParser import ScalaParser
+from dovado_rtl.antlr.generated.Scala.ScalaLexer import ScalaLexer
+from dovado_rtl.antlr.scala_decl_visitor import ScalaDeclVisitor
+
+# TODO: remove this after Scala Visitor implementation
+def test():
+    input_stream = FileStream("example.scala")
+    lexer = ScalaLexer(input_stream)
+    token_stream = CommonTokenStream(lexer)
+    parser = ScalaParser(token_stream)
+    visitor = ScalaDeclVisitor("example.scala", token_stream)
+    tree = parser.compilationUnit()
+    visitor.visit(tree)
+    print(visitor.scala_file)
 
 
 class SourceParser(AbstractSourceParser):
@@ -158,7 +172,9 @@ class SourceParser(AbstractSourceParser):
         self.get_parameter(parameter).set_value(value)
 
     def write_parameter_values(
-        self, hdl_handler: FillHandler, values: Dict[str, int],
+        self,
+        hdl_handler: FillHandler,
+        values: Dict[str, int],
     ):
         # FrameHandler is too broad, should use HdlBoxHandler but in python 3.6 is not
         # possible to solve the circular dependency

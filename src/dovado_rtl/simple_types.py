@@ -6,7 +6,7 @@ from dataclasses import dataclass
 class Metric:
     utilisation: Optional[Tuple[str, str]]
     is_frequency: bool
-    custom_metric: Optional[Tuple[str, Any]] = None
+    custom_metric: Optional[Tuple[str, Any, Any]] = None
 
 
 @dataclass
