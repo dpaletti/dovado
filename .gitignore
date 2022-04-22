@@ -13,9 +13,9 @@ dap_templates.el
 *.egg
 *.out
 *.pkl
+*.old
 
 .hypothesis/
-poetry.lock
 htmlcov/
 .Xil/
 .pytest_cache/
@@ -24,7 +24,12 @@ dovado_work/
 typings/
 run_results/
 dist/
-.Xil/
 .vscode/
 .ipynb_checkpoints/
 venv/
+.direnv/
+movado_debug/
+tests/
+.python-version
+dovado.pdf
+.coverage

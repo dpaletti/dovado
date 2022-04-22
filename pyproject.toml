@@ -25,7 +25,7 @@ packages = [
     { include = "tcl" },
 ]
 [tool.poetry.dependencies]
-python = "^3.6.1"
+python = ">=3.7,<4.0.0"
 pathvalidate = "^2.3.0"
 BeautifulSoup4 = "^4.9.1"
 lxml = "^4.5.2"
@@ -38,6 +38,7 @@ typer = "^0.3.2"
 #movado = { path = "../movado/dist/Movado-0.6.3-py3-none-any.whl" }
 importlib-resources = "^5.1.4"
 movado = "^0.6.0"
+pytest = "^7.1.1"
 
 
 [tool.poetry.scripts]
