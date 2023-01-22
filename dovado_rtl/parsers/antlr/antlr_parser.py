@@ -2,7 +2,7 @@ from pathlib import Path
 
 import antlr4
 from antlr4.tree.Tree import ParseTree
-from dovado_rtl.parsers.antlr_parsed import AntlrParsed
+from dovado_rtl.parsers.antlr.antlr_parsed import AntlrParsed
 from abc import ABC, abstractmethod
 
 

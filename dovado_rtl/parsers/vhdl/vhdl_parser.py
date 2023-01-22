@@ -2,16 +2,16 @@ from pathlib import Path
 from antlr4 import CommonTokenStream
 
 from antlr4.tree.Tree import ParseTree
-from dovado_rtl.parsers.antlr.generated.vhdl.vhdlParser import (
+from dovado_rtl.parsers.vhdl.generated.vhdlParser import (
     vhdlParser as AntlrGeneratedParser,
 )
-from dovado_rtl.parsers.antlr.generated.vhdl.vhdlLexer import (
+from dovado_rtl.parsers.vhdl.generated.vhdlLexer import (
     vhdlLexer as AntlrGeneratedLexer,
 )
-from dovado_rtl.parsers.antlr.vhdl_entity_visitor import VhdlEntityVisitor
-from dovado_rtl.parsers.hdl_antlr_parser import HdlAntlrParser
+from dovado_rtl.parsers.vhdl.vhdl_entity_visitor import VhdlEntityVisitor
+from dovado_rtl.parsers.antlr.hdl.hdl_antlr_parser import HdlAntlrParser
 
-from dovado_rtl.parsers.vhdl_parsed import VhdlParsed
+from dovado_rtl.parsers.vhdl.vhdl_parsed import VhdlParsed
 
 
 class VhdlParser(HdlAntlrParser):

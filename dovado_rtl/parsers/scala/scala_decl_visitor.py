@@ -1,10 +1,10 @@
 from antlr4.CommonTokenStream import CommonTokenStream
 from antlr4.tree.Tree import TerminalNode
 from antlr4.Token import Token
-from dovado_rtl.antlr.generated.Scala.ScalaVisitor import ScalaVisitor
-from dovado_rtl.antlr.generated.Scala.ScalaParser import ScalaParser
+from dovado_rtl.parsers.scala.generated.ScalaVisitor import ScalaVisitor
+from dovado_rtl.parsers.scala.generated.ScalaParser import ScalaParser
 from typing import List, Tuple, Optional, Union
-from dovado_rtl.antlr.scala_representation import (
+from dovado_rtl.parsers.scala.scala_representation import (
     ClassSpecification,
     Position,
     ScalaFile,
@@ -14,18 +14,12 @@ from dovado_rtl.antlr.scala_representation import (
 
 
 class ScalaDeclVisitor(ScalaVisitor):
-    def __init__(
-        self, file_path: str, token_stream: CommonTokenStream
-    ) -> None:
+    def __init__(self, file_path: str, token_stream: CommonTokenStream) -> None:
         self.scala_file: ScalaFile = ScalaFile(file_path)
         self.token_stream: CommonTokenStream = token_stream
 
-    def visitCompilationUnit(
-        self, ctx: ScalaParser.CompilationUnitContext
-    ) -> None:
-        top_stat_seq: Optional[
-            ScalaParser.TopStatSeqContext
-        ] = ctx.topStatSeq()
+    def visitCompilationUnit(self, ctx: ScalaParser.CompilationUnitContext) -> None:
+        top_stat_seq: Optional[ScalaParser.TopStatSeqContext] = ctx.topStatSeq()
         if top_stat_seq is None:
             raise Exception(
                 "A compilation unit must have exacly on sequence of top statements"
@@ -36,18 +30,14 @@ class ScalaDeclVisitor(ScalaVisitor):
         top_stat: Optional[List[ScalaParser.TopStatContext]] = ctx.topStat()
 
         if not top_stat:
-            raise Exception(
-                "A top statement sequence must hold at least one statement"
-            )
+            raise Exception("A top statement sequence must hold at least one statement")
         for statement in top_stat:
             self.visitTopStat(statement)
 
     def visitTopStat(self, ctx: ScalaParser.TopStatContext):
         tmpl_def: Optional[ScalaParser.TmplDefContext] = ctx.tmplDef()
         packaging: Optional[ScalaParser.PackagingContext] = ctx.packaging()
-        package_object: Optional[
-            ScalaParser.PackageObjectContext
-        ] = ctx.packageObject()
+        package_object: Optional[ScalaParser.PackageObjectContext] = ctx.packageObject()
         import_: Optional[ScalaParser.Import_Context] = ctx.import_()
         if tmpl_def is not None:
             self.visitTmplDef(tmpl_def)
@@ -74,9 +64,7 @@ class ScalaDeclVisitor(ScalaVisitor):
         self.visitObjectDef(object_def)
 
     def visitPackaging(self, ctx: ScalaParser.PackagingContext):
-        top_stat_seq: Optional[
-            ScalaParser.TopStatSeqContext
-        ] = ctx.topStatSeq()
+        top_stat_seq: Optional[ScalaParser.TopStatSeqContext] = ctx.topStatSeq()
 
         if top_stat_seq is None:
             raise Exception(
@@ -117,9 +105,7 @@ class ScalaDeclVisitor(ScalaVisitor):
         if def_ is not None:
             self.visitDef_(def_, class_name)
 
-    def visitDef_(
-        self, ctx: ScalaParser.Def_Context, class_name: Optional[str] = None
-    ):
+    def visitDef_(self, ctx: ScalaParser.Def_Context, class_name: Optional[str] = None):
         # considering only parameter declarations var/val/def
         fun_def: Optional[ScalaParser.FunDefContext] = ctx.funDef()
         pat_var_def: Optional[ScalaParser.PatVarDefContext] = ctx.patVarDef()
@@ -194,9 +180,7 @@ class ScalaDeclVisitor(ScalaVisitor):
         )
         self.scala_file.addObject(scala_object)
         if trait_template_opt is None:
-            raise Exception(
-                "Did not find a trait template token in: " + class_name
-            )
+            raise Exception("Did not find a trait template token in: " + class_name)
         self.visitTraitTemplateOpt(trait_template_opt, class_name)
 
     def visitTraitTemplateOpt(
@@ -204,16 +188,10 @@ class ScalaDeclVisitor(ScalaVisitor):
         ctx: ScalaParser.TraitTemplateOptContext,
         class_name: Optional[str] = None,
     ):
-        trait_template: Optional[
-            ScalaParser.TraitTemplateContext
-        ] = ctx.traitTemplate()
-        template_body: Optional[
-            ScalaParser.TemplateBodyContext
-        ] = ctx.templateBody()
+        trait_template: Optional[ScalaParser.TraitTemplateContext] = ctx.traitTemplate()
+        template_body: Optional[ScalaParser.TemplateBodyContext] = ctx.templateBody()
         if class_name is None:
-            raise Exception(
-                "Please pass a class name to visitTraitTemplateOpt"
-            )
+            raise Exception("Please pass a class name to visitTraitTemplateOpt")
 
         if trait_template is not None:
             self.visitTraitTemplate(trait_template, class_name)
@@ -225,13 +203,9 @@ class ScalaDeclVisitor(ScalaVisitor):
         ctx: ScalaParser.TraitTemplateContext,
         class_name: Optional[str] = None,
     ):
-        trait_parents: Optional[
-            ScalaParser.TraitParentsContext
-        ] = ctx.traitParents()
+        trait_parents: Optional[ScalaParser.TraitParentsContext] = ctx.traitParents()
         early_defs: Optional[ScalaParser.EarlyDefsContext] = ctx.earlyDefs()
-        template_body: Optional[
-            ScalaParser.TemplateBodyContext
-        ] = ctx.templateBody()
+        template_body: Optional[ScalaParser.TemplateBodyContext] = ctx.templateBody()
         if class_name is None:
             raise Exception("Please pass a class name to visitTraitTemplate")
 
@@ -253,9 +227,7 @@ class ScalaDeclVisitor(ScalaVisitor):
         ctx: ScalaParser.TraitParentsContext,
         class_name: Optional[str] = None,
     ):
-        annot_type: Optional[
-            List[ScalaParser.AnnotTypeContext]
-        ] = ctx.annotType()
+        annot_type: Optional[List[ScalaParser.AnnotTypeContext]] = ctx.annotType()
 
         if not annot_type:
             raise Exception("None annot_type found in visitTraitParents")
@@ -268,17 +240,11 @@ class ScalaDeclVisitor(ScalaVisitor):
         ctx: ScalaParser.ClassTemplateOptContext,
         class_name: Optional[str] = None,
     ):
-        class_template: Optional[
-            ScalaParser.ClassTemplateContext
-        ] = ctx.classTemplate()
-        template_body: Optional[
-            ScalaParser.TemplateBodyContext
-        ] = ctx.templateBody()
+        class_template: Optional[ScalaParser.ClassTemplateContext] = ctx.classTemplate()
+        template_body: Optional[ScalaParser.TemplateBodyContext] = ctx.templateBody()
 
         if class_name is None:
-            raise Exception(
-                "Please pass a class name to visitClassTemplateOpt"
-            )
+            raise Exception("Please pass a class name to visitClassTemplateOpt")
 
         if class_template is not None:
             self.visitClassTemplate(class_template, class_name)
@@ -291,9 +257,7 @@ class ScalaDeclVisitor(ScalaVisitor):
         class_name: Optional[str] = None,
     ):
         early_defs: Optional[ScalaParser.EarlyDefsContext] = ctx.earlyDefs()
-        template_body: Optional[
-            ScalaParser.TemplateBodyContext
-        ] = ctx.templateBody()
+        template_body: Optional[ScalaParser.TemplateBodyContext] = ctx.templateBody()
 
         if class_name is None:
             raise Exception("Please pass a class name to visitClassTemplate")
@@ -318,9 +282,7 @@ class ScalaDeclVisitor(ScalaVisitor):
     ):
 
         # Ignoring constr because it does not hold significant information
-        annot_type: Optional[
-            List[ScalaParser.AnnotTypeContext]
-        ] = ctx.annotType()
+        annot_type: Optional[List[ScalaParser.AnnotTypeContext]] = ctx.annotType()
 
         if class_name is None:
             raise Exception("Found none class name in visitClassParents")
@@ -428,9 +390,7 @@ class ScalaDeclVisitor(ScalaVisitor):
         ctx: ScalaParser.RefinementContext,
         class_name: Optional[str] = None,
     ):
-        refine_stats: Optional[
-            List[ScalaParser.RefineStatContext]
-        ] = ctx.refineStat()
+        refine_stats: Optional[List[ScalaParser.RefineStatContext]] = ctx.refineStat()
 
         if class_name is None:
             raise Exception("None class_name found in visitRefinement")
@@ -452,9 +412,7 @@ class ScalaDeclVisitor(ScalaVisitor):
         if dcl is not None:
             self.visitDcl(dcl, class_name)
 
-    def visitDcl(
-        self, ctx: ScalaParser.DclContext, class_name: Optional[str] = None
-    ):
+    def visitDcl(self, ctx: ScalaParser.DclContext, class_name: Optional[str] = None):
         # ignoring type declarations
         # CARE: this path is useless
 
@@ -489,9 +447,7 @@ class ScalaDeclVisitor(ScalaVisitor):
             raise Exception("Please pass a class name to visitEarlyDef")
 
         if pat_var_def is None:
-            raise Exception(
-                "Empty early defs are not allowed in " + class_name
-            )
+            raise Exception("Empty early defs are not allowed in " + class_name)
 
         self.visitPatVarDef(pat_var_def, class_name)
 
@@ -531,9 +487,7 @@ class ScalaDeclVisitor(ScalaVisitor):
     def visitPatDef(
         self, ctx: ScalaParser.PatDefContext, class_name: Optional[str] = None
     ):
-        pattern2: Optional[
-            List[Optional[ScalaParser.Pattern2Context]]
-        ] = ctx.pattern2()
+        pattern2: Optional[List[Optional[ScalaParser.Pattern2Context]]] = ctx.pattern2()
         expr: Optional[ScalaParser.ExprContext] = ctx.expr()
 
         if class_name is None:
@@ -651,9 +605,7 @@ class ScalaDeclVisitor(ScalaVisitor):
         )
         self.scala_file.addObject(scala_object)
         if class_template_opt is None:
-            raise Exception(
-                "Did not found class template token in " + class_name
-            )
+            raise Exception("Did not found class template token in " + class_name)
         self.visitClassTemplateOpt(class_template_opt, class_name)
 
     def visitClassDef(self, ctx: ScalaParser.ClassDefContext):
@@ -695,9 +647,7 @@ class ScalaDeclVisitor(ScalaVisitor):
         self.visitClassParamClauses(class_param_clauses, class_name)
 
         if class_template_opt is None:
-            raise Exception(
-                "Class template token must not be empty in " + class_name
-            )
+            raise Exception("Class template token must not be empty in " + class_name)
         self.visitClassTemplateOpt(class_template_opt, class_name)
 
     def visitClassParamClauses(
@@ -708,9 +658,7 @@ class ScalaDeclVisitor(ScalaVisitor):
         # Implicit params are ignored because cannot have default values
 
         if class_name is None:
-            raise Exception(
-                "Please pass a class name to visitClassParamClauses"
-            )
+            raise Exception("Please pass a class name to visitClassParamClauses")
 
         class_param_clause: Optional[
             List[ScalaParser.ClassParamClauseContext]
@@ -724,9 +672,7 @@ class ScalaDeclVisitor(ScalaVisitor):
         ctx: ScalaParser.ClassParamClauseContext,
         class_name: Optional[str] = None,
     ):
-        class_params: Optional[
-            ScalaParser.ClassParamsContext
-        ] = ctx.classParams()
+        class_params: Optional[ScalaParser.ClassParamsContext] = ctx.classParams()
         if class_params is not None:
             self.visitClassParams(class_params, class_name)
 
@@ -735,9 +681,7 @@ class ScalaDeclVisitor(ScalaVisitor):
         ctx: ScalaParser.ClassParamsContext,
         class_name: Optional[str] = None,
     ):
-        class_param: Optional[
-            List[ScalaParser.ClassParamContext]
-        ] = ctx.classParam()
+        class_param: Optional[List[ScalaParser.ClassParamContext]] = ctx.classParam()
         if not class_param:
             raise Exception("Malformed classParams list")
         for param in class_param:
@@ -753,9 +697,7 @@ class ScalaDeclVisitor(ScalaVisitor):
 
         param = ScalaParameter(
             name=param_name,
-            expr_start=Position(
-                line=expr.start.line, column=expr.start.column
-            ),
+            expr_start=Position(line=expr.start.line, column=expr.start.column),
             expr_end=Position(line=expr.stop.line, column=expr.stop.column),
             value=" ".join(
                 [
@@ -784,6 +726,4 @@ class ScalaDeclVisitor(ScalaVisitor):
 
         if class_name is None:
             raise Exception("Class name is None in visitClassParam")
-        self.add_parameter(
-            class_name, param_name, expr, is_between_parenthesis=True
-        )
+        self.add_parameter(class_name, param_name, expr, is_between_parenthesis=True)

@@ -1,7 +1,7 @@
 from antlr4 import TokenStream
-from dovado_rtl.parsers.antlr.hdl_representation import Entity
-from dovado_rtl.parsers.antlr_parameter import AntlrParameter
-from dovado_rtl.parsers.antlr_parsed import AntlrParsed
+from dovado_rtl.parsers.antlr.hdl.hdl_representation import Entity
+from dovado_rtl.parsers.antlr.antlr_parameter import AntlrParameter
+from dovado_rtl.parsers.antlr.antlr_parsed import AntlrParsed
 
 
 class VhdlParsed(AntlrParsed):

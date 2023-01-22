@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum, auto
 from typing import Optional
-from dovado_rtl.parsers.antlr_parameter import AntlrParameter
+from dovado_rtl.parsers.antlr.antlr_parameter import AntlrParameter
 
 
 class ParameterTypeEnum(Enum):

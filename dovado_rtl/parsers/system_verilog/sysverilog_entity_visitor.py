@@ -1,4 +1,4 @@
-from dovado_rtl.antlr.hdl_representation import (
+from dovado_rtl.parsers.antlr.hdl.hdl_representation import (
     Entity,
     ParameterType,
     ParameterTypeEnum,
@@ -11,13 +11,13 @@ from dovado_rtl.antlr.hdl_representation import (
 )
 from itertools import chain
 from typing import List, Tuple, Iterator, Union
-from dovado_rtl.antlr.generated.SystemVerilog.SystemVerilogParserVisitor import (
+from dovado_rtl.parsers.system_verilog.generated.SystemVerilogParserVisitor import (
     SystemVerilogParserVisitor,
 )
-from dovado_rtl.antlr.generated.SystemVerilog.SystemVerilogParser import (
+from dovado_rtl.parsers.system_verilog.generated.SystemVerilogParser import (
     SystemVerilogParser,
 )
-from dovado_rtl.parsers.antlr.hdl_representation import HDLVisitor
+from dovado_rtl.parsers.antlr.hdl.hdl_representation import HDLVisitor
 
 
 class SysVerilogHDLEntityVisitor(SystemVerilogParserVisitor, HDLVisitor):

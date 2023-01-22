@@ -1,5 +1,5 @@
 from antlr4 import ParserRuleContext, Token
-from dovado_rtl.parsers.antlr.hdl_representation import (
+from dovado_rtl.parsers.antlr.hdl.hdl_representation import (
     Entity,
     PortDirectionEnum,
     PortTypeEnum,
@@ -7,17 +7,17 @@ from dovado_rtl.parsers.antlr.hdl_representation import (
     PortDirection,
     PortType,
 )
-from dovado_rtl.parsers.hdl_antlr_parameter import (
+from dovado_rtl.parsers.antlr.hdl.hdl_antlr_parameter import (
     ParameterTypeEnum,
     ParameterType,
     HdlAntlrParameter,
 )
-from dovado_rtl.parsers.antlr.generated.vhdl.vhdlVisitor import vhdlVisitor
-from dovado_rtl.parsers.antlr.generated.vhdl.vhdlParser import vhdlParser
+from dovado_rtl.parsers.vhdl.generated.vhdlVisitor import vhdlVisitor
+from dovado_rtl.parsers.vhdl.generated.vhdlParser import vhdlParser
 from typing import List, Iterator, Optional, Union, Tuple
 from itertools import repeat
 
-from dovado_rtl.parsers.antlr.hdl_representation import HDLVisitor
+from dovado_rtl.parsers.antlr.hdl.hdl_representation import HDLVisitor
 
 
 class VhdlEntityVisitor(vhdlVisitor, HDLVisitor):

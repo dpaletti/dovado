@@ -1,8 +1,8 @@
 from abc import ABC
 
 from antlr4.tree.Tree import ParseTree
-from dovado_rtl.parsers.antlr.hdl_representation import Entity, HDLVisitor, TopLevel
-from dovado_rtl.parsers.antlr_parser import AntlrParser
+from dovado_rtl.parsers.antlr.hdl.hdl_representation import Entity, HDLVisitor, TopLevel
+from dovado_rtl.parsers.antlr.antlr_parser import AntlrParser
 
 
 class HdlAntlrParser(AntlrParser, ABC):

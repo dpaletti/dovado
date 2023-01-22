@@ -1,4 +1,4 @@
-from dovado_rtl.antlr.hdl_representation import (
+from dovado_rtl.parsers.antlr.hdl.hdl_representation import (
     ParameterType,
     ParameterTypeEnum,
     PortDirection,
@@ -9,13 +9,13 @@ from dovado_rtl.antlr.hdl_representation import (
     PortType,
     PortTypeEnum,
 )
-from dovado_rtl.antlr.generated.Verilog2001.VerilogParserVisitor import (
+from dovado_rtl.parsers.verilog2001.generated.VerilogParserVisitor import (
     VerilogParserVisitor,
 )
-from dovado_rtl.antlr.generated.Verilog2001.VerilogParser import VerilogParser
+from dovado_rtl.parsers.verilog2001.generated.VerilogParser import VerilogParser
 from typing import List, Optional
 
-from dovado_rtl.parsers.antlr.hdl_representation import HDLVisitor
+from dovado_rtl.parsers.antlr.hdl.hdl_representation import HDLVisitor
 
 
 class Verilog2001EntityVisitor(VerilogParserVisitor, HDLVisitor):

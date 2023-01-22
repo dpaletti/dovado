@@ -2,7 +2,7 @@ from abc import ABC
 from typing import List, Optional
 from enum import Enum, auto
 from dataclasses import dataclass
-from dovado_rtl.parsers.hdl_antlr_parameter import HdlAntlrParameter
+from dovado_rtl.parsers.antlr.hdl.hdl_antlr_parameter import HdlAntlrParameter
 
 from antlr4 import ParseTreeVisitor
 

@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from antlr4 import TokenStream
 from antlr4.TokenStreamRewriter import TokenStreamRewriter
 
-from dovado_rtl.parsers.antlr_parameter import AntlrParameter
+from dovado_rtl.parsers.antlr.antlr_parameter import AntlrParameter
 
 
 class AntlrParsed(ABC):
@@ -34,4 +34,4 @@ class AntlrParsed(ABC):
     def replace(self, parameter_to_value: dict[str, str]):
         for parameter_name, value in parameter_to_value.items():
             self._lazy_replace(self._get_parameter(parameter_name), value)
-        return self.rewriter.getDefaultText()
+        return self.__rewriter.getDefaultText()
