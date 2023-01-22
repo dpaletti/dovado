@@ -11,16 +11,33 @@ class AntlrParser(ABC):
     def parse(self, to_parse: Path) -> AntlrParsed:
         ...
 
-    @staticmethod
+    @property
+    @abstractmethod
+    def _lexer_type(self) -> type[antlr4.Lexer]:
+        ...
+
+    @property
+    @abstractmethod
+    def _parser_type(self) -> type[antlr4.Parser]:
+        ...
+
+    @property
+    @abstractmethod
+    def _visitor_type(self) -> type[antlr4.ParseTreeVisitor]:
+        ...
+
+    @property
+    @abstractmethod
+    def _grammar_top_rule(self) -> str:
+        ...
+
     def _antlr_parse(
+        self,
         to_parse: Path,
-        lexer_type: type[antlr4.Lexer],
-        parser_type: type[antlr4.Parser],
-        grammar_top_rule: str,
     ) -> tuple[ParseTree, antlr4.CommonTokenStream]:
         file_stream = antlr4.FileStream(str(to_parse))
-        lexer = lexer_type(file_stream)
+        lexer = self._lexer_type(file_stream)
         token_stream = antlr4.CommonTokenStream(lexer)
-        parser = parser_type(token_stream)
-        parse_tree: ParseTree = getattr(parser, grammar_top_rule)()
+        parser = self._parser_type(token_stream)
+        parse_tree: ParseTree = getattr(parser, self._grammar_top_rule)()
         return parse_tree, token_stream

@@ -138,10 +138,12 @@ class TopLevel:
     def add_used(self, used: str):
         self.__use_clauses.append(used)
 
-    def get_libraries(self):
+    @property
+    def libraries(self):
         return self.__libraries
 
-    def get_use_clauses(self):
+    @property
+    def use_clauses(self):
         return self.__use_clauses
 
 

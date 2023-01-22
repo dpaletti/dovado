@@ -1,13 +1,16 @@
+from antlr4 import ParserRuleContext, RuleContext
 from dovado_rtl.parsers.antlr.hdl.hdl_representation import (
-    ParameterType,
-    ParameterTypeEnum,
     PortDirection,
     Entity,
     Port,
-    Parameter,
     PortDirectionEnum,
     PortType,
     PortTypeEnum,
+)
+from dovado_rtl.parsers.antlr.hdl.hdl_antlr_parameter import (
+    HdlAntlrParameter,
+    ParameterType,
+    ParameterTypeEnum,
 )
 from dovado_rtl.parsers.verilog2001.generated.VerilogParserVisitor import (
     VerilogParserVisitor,
@@ -76,16 +79,22 @@ class Verilog2001EntityVisitor(VerilogParserVisitor, HDLVisitor):
     def visitSpecparam_declaration(
         self, ctx: VerilogParser.Specparam_declarationContext
     ) -> None:
-        for p in self.visitList_of_specparam_assignments(
+        for parameter_name, rule in self.visitList_of_specparam_assignments(
             ctx.list_of_specparam_assignments()
         ):
             self.entities[-1].add_parameter(
-                Parameter(p, ParameterType(ParameterTypeEnum.INTEGER, "specparam"))
+                HdlAntlrParameter(
+                    name=parameter_name,
+                    type=ParameterType(ParameterTypeEnum.INTEGER, "specparam"),
+                    value=rule.getText(),
+                    rule=rule,
+                    has_default=True,
+                )
             )
 
     def visitList_of_specparam_assignments(
         self, ctx: VerilogParser.List_of_specparam_assignmentsContext
-    ) -> List[str]:
+    ) -> List[tuple[str, ParserRuleContext]]:
         specparams = []
         for s in ctx.specparam_assignment():
             specparams.append(self.visitSpecparam_assignment(s))
@@ -93,9 +102,11 @@ class Verilog2001EntityVisitor(VerilogParserVisitor, HDLVisitor):
 
     def visitSpecparam_assignment(
         self, ctx: VerilogParser.Specparam_assignmentContext
-    ) -> Optional[str]:
+    ) -> Optional[tuple[str, ParserRuleContext]]:
         if ctx.specparam_identifier():
-            return self.visitSpecparam_identifier(ctx.specparam_identifier())
+            return self.visitSpecparam_identifier(
+                ctx.specparam_identifier(), ctx.constant_mintypmax_expression()
+            )
         else:
             pass
 
@@ -112,27 +123,37 @@ class Verilog2001EntityVisitor(VerilogParserVisitor, HDLVisitor):
         else:
             pass
 
-    def visitParameter_override(
-        self, ctx: VerilogParser.Parameter_overrideContext
-    ) -> None:
-        for p in self.visitList_of_parameter_assignments(
-            ctx.list_of_param_assignments()
-        ):
-            self.entities[-1].add_parameter(Parameter(p, None))
-
     def visitLocal_parameter_declaration(
         self, ctx: VerilogParser.Local_parameter_declarationContext
     ):
         if ctx.range_():
-            for p in self.visitList_of_param_assignments(
-                ctx.list_of_param_assignments()
-            ):
-                self.entities[-1].add_parameter(Parameter(p, None))
+            for (
+                parameter_name,
+                expression_context,
+            ) in self.visitList_of_param_assignments(ctx.list_of_param_assignments()):
+                self.entities[-1].add_parameter(
+                    HdlAntlrParameter(
+                        name=parameter_name,
+                        type=ParameterType(type=ParameterTypeEnum.UNKNOWN),
+                        value=expression_context.getText(),
+                        has_default=True,
+                        rule=expression_context,
+                    )
+                )
         else:
-            for p in self.visitList_of_param_assignments(
-                ctx.list_of_param_assignments()
-            ):
-                self.entities[-1].add_parameter(Parameter(p, ctx.getText().split()[1]))
+            for (
+                parameter_name,
+                expression_context,
+            ) in self.visitList_of_param_assignments(ctx.list_of_param_assignments()):
+                self.entities[-1].add_parameter(
+                    HdlAntlrParameter(
+                        name=parameter_name,
+                        type=ParameterType(type=ParameterTypeEnum.UNKNOWN),
+                        value=expression_context.getText(),
+                        has_default=True,
+                        rule=expression_context,
+                    )
+                )
 
     def visitList_of_port_declarations(
         self, ctx: VerilogParser.List_of_port_declarationsContext
@@ -288,41 +309,47 @@ class Verilog2001EntityVisitor(VerilogParserVisitor, HDLVisitor):
         self.visitList_of_param_assignments(ctx.list_of_param_assignments())
 
     def visitParameter_declaration_(self, ctx) -> None:
-        for pa in self.visitList_of_param_assignments(ctx.list_of_param_assignments()):
-            if "integer" in ctx.getText()[9 : 9 + len("integer")]:
-                self.entities[-1].add_parameter(
-                    Parameter(
-                        pa,
-                        ParameterType(ParameterTypeEnum.INTEGER, "integer"),
-                    )
-                )
+        for parameter_name, expression_rule in self.visitList_of_param_assignments(
+            ctx.list_of_param_assignments()
+        ):
             if "time" in ctx.getText()[9 : 9 + len("time")]:
                 self.entities[-1].add_parameter(
-                    Parameter(
-                        pa,
-                        ParameterType(ParameterTypeEnum.INTEGER, "time"),
+                    HdlAntlrParameter(
+                        name=parameter_name,
+                        type=ParameterType(ParameterTypeEnum.INTEGER, "time"),
+                        value=expression_rule.getText(),
+                        has_default=True,
+                        rule=expression_rule,
                     )
                 )
             else:
                 self.entities[-1].add_parameter(
-                    Parameter(
-                        pa,
-                        ParameterType(ParameterTypeEnum.INTEGER, "integer"),
+                    HdlAntlrParameter(
+                        name=parameter_name,
+                        type=ParameterType(ParameterTypeEnum.INTEGER, "integer"),
+                        value=expression_rule.getText(),
+                        has_default=True,
+                        rule=expression_rule,
                     )
                 )
 
-                pass
-
     def visitList_of_param_assignments(
         self, ctx: VerilogParser.List_of_param_assignmentsContext
-    ) -> List[str]:
+    ) -> List[tuple[str, ParserRuleContext]]:
         params = []
         for p in ctx.param_assignment():
             params.append(self.visitParam_assignment(p))
         return params
 
-    def visitParam_assignment(self, ctx: VerilogParser.Param_assignmentContext) -> str:
-        return self.visitParameter_identifier(ctx.parameter_identifier())
+    def visitParam_assignment(
+        self, ctx: VerilogParser.Param_assignmentContext
+    ) -> tuple[str, RuleContext]:
+        return (
+            self.visitParameter_identifier(
+                ctx.parameter_identifier(),
+            ),
+            ctx.constant_mintypmax_expression(),
+        )
 
     def visitParameter_identifier(
         self, ctx: VerilogParser.Parameter_identifierContext

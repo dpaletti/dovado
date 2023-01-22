@@ -1,3 +1,6 @@
 [submodule "tests/resources/test_metrics/neorv32"]
 	path = tests/resources/test_metrics/neorv32
 	url = https://github.com/stnolting/neorv32
+[submodule "tests/resources/corundum"]
+	path = tests/resources/corundum
+	url = https://github.com/corundum/corundum
