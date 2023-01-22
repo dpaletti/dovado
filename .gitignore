@@ -29,7 +29,6 @@ dist/
 venv/
 .direnv/
 movado_debug/
-tests/
 .python-version
 dovado.pdf
 .coverage

@@ -10,3 +10,6 @@
 [submodule "examples/Vitis_Accel_Examples"]
 	path = examples/Vitis_Accel_Examples
 	url = https://github.com/Xilinx/Vitis_Accel_Examples.git
+[submodule "tests/resources/test_metrics/neorv32"]
+	path = tests/resources/test_metrics/neorv32
+	url = https://github.com/stnolting/neorv32
