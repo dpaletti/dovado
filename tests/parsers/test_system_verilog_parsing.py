@@ -12,9 +12,11 @@ def test_cv32e40p_core_parsing():
     assert len(parsed.modules) == 1
     module = parsed.modules[0]
     assert module.name == "cv32e40p_core"
+
     assert len(module.parameters) == 5
     assert module.parameters[0].name == "PULP_XPULP"
     assert module.parameters[-1].name == "NUM_MHPMCOUNTERS"
+
     assert len(module.ports) == 39
     assert module.ports[0].name == "clk_i"
     assert module.ports[0].dimension == "scalar"
@@ -25,3 +27,8 @@ def test_cv32e40p_core_parsing():
     assert module.ports[-1].name == "core_sleep_o"
     assert module.ports[-1].dimension == "scalar"
     assert module.ports[-1].direction == "output"
+
+    assert (
+        parsed.replace({"PULP_XPULP": "1"})
+        == Path(path_prexif + "/replaced_cv32e40p_core.sv").read_text()
+    )
