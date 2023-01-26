@@ -4,3 +4,6 @@
 [submodule "tests/resources/corundum"]
 	path = tests/resources/corundum
 	url = https://github.com/corundum/corundum
+[submodule "tests/cv32e40p"]
+	path = tests/resources/cv32e40p
+	url = https://github.com/openhwgroup/cv32e40p

@@ -35,12 +35,30 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#library_incdir.
+    def enterLibrary_incdir(self, ctx:SystemVerilogParser.Library_incdirContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#library_incdir.
+    def exitLibrary_incdir(self, ctx:SystemVerilogParser.Library_incdirContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#include_statement.
     def enterInclude_statement(self, ctx:SystemVerilogParser.Include_statementContext):
         pass
 
     # Exit a parse tree produced by SystemVerilogParser#include_statement.
     def exitInclude_statement(self, ctx:SystemVerilogParser.Include_statementContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#file_path_spec.
+    def enterFile_path_spec(self, ctx:SystemVerilogParser.File_path_specContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#file_path_spec.
+    def exitFile_path_spec(self, ctx:SystemVerilogParser.File_path_specContext):
         pass
 
 
@@ -62,21 +80,12 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#module_nonansi_header.
-    def enterModule_nonansi_header(self, ctx:SystemVerilogParser.Module_nonansi_headerContext):
+    # Enter a parse tree produced by SystemVerilogParser#module_header.
+    def enterModule_header(self, ctx:SystemVerilogParser.Module_headerContext):
         pass
 
-    # Exit a parse tree produced by SystemVerilogParser#module_nonansi_header.
-    def exitModule_nonansi_header(self, ctx:SystemVerilogParser.Module_nonansi_headerContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#module_ansi_header.
-    def enterModule_ansi_header(self, ctx:SystemVerilogParser.Module_ansi_headerContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#module_ansi_header.
-    def exitModule_ansi_header(self, ctx:SystemVerilogParser.Module_ansi_headerContext):
+    # Exit a parse tree produced by SystemVerilogParser#module_header.
+    def exitModule_header(self, ctx:SystemVerilogParser.Module_headerContext):
         pass
 
 
@@ -86,6 +95,15 @@ class SystemVerilogParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by SystemVerilogParser#module_declaration.
     def exitModule_declaration(self, ctx:SystemVerilogParser.Module_declarationContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#module_name.
+    def enterModule_name(self, ctx:SystemVerilogParser.Module_nameContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#module_name.
+    def exitModule_name(self, ctx:SystemVerilogParser.Module_nameContext):
         pass
 
 
@@ -107,21 +125,21 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#interface_nonansi_header.
-    def enterInterface_nonansi_header(self, ctx:SystemVerilogParser.Interface_nonansi_headerContext):
+    # Enter a parse tree produced by SystemVerilogParser#interface_name.
+    def enterInterface_name(self, ctx:SystemVerilogParser.Interface_nameContext):
         pass
 
-    # Exit a parse tree produced by SystemVerilogParser#interface_nonansi_header.
-    def exitInterface_nonansi_header(self, ctx:SystemVerilogParser.Interface_nonansi_headerContext):
+    # Exit a parse tree produced by SystemVerilogParser#interface_name.
+    def exitInterface_name(self, ctx:SystemVerilogParser.Interface_nameContext):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#interface_ansi_header.
-    def enterInterface_ansi_header(self, ctx:SystemVerilogParser.Interface_ansi_headerContext):
+    # Enter a parse tree produced by SystemVerilogParser#interface_header.
+    def enterInterface_header(self, ctx:SystemVerilogParser.Interface_headerContext):
         pass
 
-    # Exit a parse tree produced by SystemVerilogParser#interface_ansi_header.
-    def exitInterface_ansi_header(self, ctx:SystemVerilogParser.Interface_ansi_headerContext):
+    # Exit a parse tree produced by SystemVerilogParser#interface_header.
+    def exitInterface_header(self, ctx:SystemVerilogParser.Interface_headerContext):
         pass
 
 
@@ -134,21 +152,21 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#program_nonansi_header.
-    def enterProgram_nonansi_header(self, ctx:SystemVerilogParser.Program_nonansi_headerContext):
+    # Enter a parse tree produced by SystemVerilogParser#program_name.
+    def enterProgram_name(self, ctx:SystemVerilogParser.Program_nameContext):
         pass
 
-    # Exit a parse tree produced by SystemVerilogParser#program_nonansi_header.
-    def exitProgram_nonansi_header(self, ctx:SystemVerilogParser.Program_nonansi_headerContext):
+    # Exit a parse tree produced by SystemVerilogParser#program_name.
+    def exitProgram_name(self, ctx:SystemVerilogParser.Program_nameContext):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#program_ansi_header.
-    def enterProgram_ansi_header(self, ctx:SystemVerilogParser.Program_ansi_headerContext):
+    # Enter a parse tree produced by SystemVerilogParser#program_header.
+    def enterProgram_header(self, ctx:SystemVerilogParser.Program_headerContext):
         pass
 
-    # Exit a parse tree produced by SystemVerilogParser#program_ansi_header.
-    def exitProgram_ansi_header(self, ctx:SystemVerilogParser.Program_ansi_headerContext):
+    # Exit a parse tree produced by SystemVerilogParser#program_header.
+    def exitProgram_header(self, ctx:SystemVerilogParser.Program_headerContext):
         pass
 
 
@@ -161,12 +179,66 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#checker_name.
+    def enterChecker_name(self, ctx:SystemVerilogParser.Checker_nameContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#checker_name.
+    def exitChecker_name(self, ctx:SystemVerilogParser.Checker_nameContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#checker_ports.
+    def enterChecker_ports(self, ctx:SystemVerilogParser.Checker_portsContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#checker_ports.
+    def exitChecker_ports(self, ctx:SystemVerilogParser.Checker_portsContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#checker_decl_item.
+    def enterChecker_decl_item(self, ctx:SystemVerilogParser.Checker_decl_itemContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#checker_decl_item.
+    def exitChecker_decl_item(self, ctx:SystemVerilogParser.Checker_decl_itemContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#class_declaration.
     def enterClass_declaration(self, ctx:SystemVerilogParser.Class_declarationContext):
         pass
 
     # Exit a parse tree produced by SystemVerilogParser#class_declaration.
     def exitClass_declaration(self, ctx:SystemVerilogParser.Class_declarationContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#class_name.
+    def enterClass_name(self, ctx:SystemVerilogParser.Class_nameContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#class_name.
+    def exitClass_name(self, ctx:SystemVerilogParser.Class_nameContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#class_extension.
+    def enterClass_extension(self, ctx:SystemVerilogParser.Class_extensionContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#class_extension.
+    def exitClass_extension(self, ctx:SystemVerilogParser.Class_extensionContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#class_implementation.
+    def enterClass_implementation(self, ctx:SystemVerilogParser.Class_implementationContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#class_implementation.
+    def exitClass_implementation(self, ctx:SystemVerilogParser.Class_implementationContext):
         pass
 
 
@@ -185,6 +257,15 @@ class SystemVerilogParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by SystemVerilogParser#interface_class_declaration.
     def exitInterface_class_declaration(self, ctx:SystemVerilogParser.Interface_class_declarationContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#interface_class_extension.
+    def enterInterface_class_extension(self, ctx:SystemVerilogParser.Interface_class_extensionContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#interface_class_extension.
+    def exitInterface_class_extension(self, ctx:SystemVerilogParser.Interface_class_extensionContext):
         pass
 
 
@@ -215,6 +296,24 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#package_name.
+    def enterPackage_name(self, ctx:SystemVerilogParser.Package_nameContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#package_name.
+    def exitPackage_name(self, ctx:SystemVerilogParser.Package_nameContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#pkg_decl_item.
+    def enterPkg_decl_item(self, ctx:SystemVerilogParser.Pkg_decl_itemContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#pkg_decl_item.
+    def exitPkg_decl_item(self, ctx:SystemVerilogParser.Pkg_decl_itemContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#timeunits_declaration.
     def enterTimeunits_declaration(self, ctx:SystemVerilogParser.Timeunits_declarationContext):
         pass
@@ -242,21 +341,21 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#list_of_ports.
-    def enterList_of_ports(self, ctx:SystemVerilogParser.List_of_portsContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#list_of_ports.
-    def exitList_of_ports(self, ctx:SystemVerilogParser.List_of_portsContext):
-        pass
-
-
     # Enter a parse tree produced by SystemVerilogParser#list_of_port_declarations.
     def enterList_of_port_declarations(self, ctx:SystemVerilogParser.List_of_port_declarationsContext):
         pass
 
     # Exit a parse tree produced by SystemVerilogParser#list_of_port_declarations.
     def exitList_of_port_declarations(self, ctx:SystemVerilogParser.List_of_port_declarationsContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#port_decl.
+    def enterPort_decl(self, ctx:SystemVerilogParser.Port_declContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#port_decl.
+    def exitPort_decl(self, ctx:SystemVerilogParser.Port_declContext):
         pass
 
 
@@ -275,6 +374,15 @@ class SystemVerilogParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by SystemVerilogParser#port.
     def exitPort(self, ctx:SystemVerilogParser.PortContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#port_implicit.
+    def enterPort_implicit(self, ctx:SystemVerilogParser.Port_implicitContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#port_implicit.
+    def exitPort_implicit(self, ctx:SystemVerilogParser.Port_implicitContext):
         pass
 
 
@@ -305,33 +413,6 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#net_port_header.
-    def enterNet_port_header(self, ctx:SystemVerilogParser.Net_port_headerContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#net_port_header.
-    def exitNet_port_header(self, ctx:SystemVerilogParser.Net_port_headerContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#variable_port_header.
-    def enterVariable_port_header(self, ctx:SystemVerilogParser.Variable_port_headerContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#variable_port_header.
-    def exitVariable_port_header(self, ctx:SystemVerilogParser.Variable_port_headerContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#interface_port_header.
-    def enterInterface_port_header(self, ctx:SystemVerilogParser.Interface_port_headerContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#interface_port_header.
-    def exitInterface_port_header(self, ctx:SystemVerilogParser.Interface_port_headerContext):
-        pass
-
-
     # Enter a parse tree produced by SystemVerilogParser#ansi_port_declaration.
     def enterAnsi_port_declaration(self, ctx:SystemVerilogParser.Ansi_port_declarationContext):
         pass
@@ -347,6 +428,24 @@ class SystemVerilogParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by SystemVerilogParser#elaboration_system_task.
     def exitElaboration_system_task(self, ctx:SystemVerilogParser.Elaboration_system_taskContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#fatal_arg_list.
+    def enterFatal_arg_list(self, ctx:SystemVerilogParser.Fatal_arg_listContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#fatal_arg_list.
+    def exitFatal_arg_list(self, ctx:SystemVerilogParser.Fatal_arg_listContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#finish_number.
+    def enterFinish_number(self, ctx:SystemVerilogParser.Finish_numberContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#finish_number.
+    def exitFinish_number(self, ctx:SystemVerilogParser.Finish_numberContext):
         pass
 
 
@@ -368,30 +467,12 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#module_or_generate_item.
-    def enterModule_or_generate_item(self, ctx:SystemVerilogParser.Module_or_generate_itemContext):
+    # Enter a parse tree produced by SystemVerilogParser#module_item_declaration.
+    def enterModule_item_declaration(self, ctx:SystemVerilogParser.Module_item_declarationContext):
         pass
 
-    # Exit a parse tree produced by SystemVerilogParser#module_or_generate_item.
-    def exitModule_or_generate_item(self, ctx:SystemVerilogParser.Module_or_generate_itemContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#module_or_generate_item_declaration.
-    def enterModule_or_generate_item_declaration(self, ctx:SystemVerilogParser.Module_or_generate_item_declarationContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#module_or_generate_item_declaration.
-    def exitModule_or_generate_item_declaration(self, ctx:SystemVerilogParser.Module_or_generate_item_declarationContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#non_port_module_item.
-    def enterNon_port_module_item(self, ctx:SystemVerilogParser.Non_port_module_itemContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#non_port_module_item.
-    def exitNon_port_module_item(self, ctx:SystemVerilogParser.Non_port_module_itemContext):
+    # Exit a parse tree produced by SystemVerilogParser#module_item_declaration.
+    def exitModule_item_declaration(self, ctx:SystemVerilogParser.Module_item_declarationContext):
         pass
 
 
@@ -458,12 +539,30 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#config_name.
+    def enterConfig_name(self, ctx:SystemVerilogParser.Config_nameContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#config_name.
+    def exitConfig_name(self, ctx:SystemVerilogParser.Config_nameContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#design_statement.
     def enterDesign_statement(self, ctx:SystemVerilogParser.Design_statementContext):
         pass
 
     # Exit a parse tree produced by SystemVerilogParser#design_statement.
     def exitDesign_statement(self, ctx:SystemVerilogParser.Design_statementContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#design_statement_item.
+    def enterDesign_statement_item(self, ctx:SystemVerilogParser.Design_statement_itemContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#design_statement_item.
+    def exitDesign_statement_item(self, ctx:SystemVerilogParser.Design_statement_itemContext):
         pass
 
 
@@ -530,15 +629,6 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#interface_or_generate_item.
-    def enterInterface_or_generate_item(self, ctx:SystemVerilogParser.Interface_or_generate_itemContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#interface_or_generate_item.
-    def exitInterface_or_generate_item(self, ctx:SystemVerilogParser.Interface_or_generate_itemContext):
-        pass
-
-
     # Enter a parse tree produced by SystemVerilogParser#extern_tf_declaration.
     def enterExtern_tf_declaration(self, ctx:SystemVerilogParser.Extern_tf_declarationContext):
         pass
@@ -557,39 +647,12 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#non_port_interface_item.
-    def enterNon_port_interface_item(self, ctx:SystemVerilogParser.Non_port_interface_itemContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#non_port_interface_item.
-    def exitNon_port_interface_item(self, ctx:SystemVerilogParser.Non_port_interface_itemContext):
-        pass
-
-
     # Enter a parse tree produced by SystemVerilogParser#program_item.
     def enterProgram_item(self, ctx:SystemVerilogParser.Program_itemContext):
         pass
 
     # Exit a parse tree produced by SystemVerilogParser#program_item.
     def exitProgram_item(self, ctx:SystemVerilogParser.Program_itemContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#non_port_program_item.
-    def enterNon_port_program_item(self, ctx:SystemVerilogParser.Non_port_program_itemContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#non_port_program_item.
-    def exitNon_port_program_item(self, ctx:SystemVerilogParser.Non_port_program_itemContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#program_generate_item.
-    def enterProgram_generate_item(self, ctx:SystemVerilogParser.Program_generate_itemContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#program_generate_item.
-    def exitProgram_generate_item(self, ctx:SystemVerilogParser.Program_generate_itemContext):
         pass
 
 
@@ -620,30 +683,21 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#checker_or_generate_item.
-    def enterChecker_or_generate_item(self, ctx:SystemVerilogParser.Checker_or_generate_itemContext):
+    # Enter a parse tree produced by SystemVerilogParser#checker_item.
+    def enterChecker_item(self, ctx:SystemVerilogParser.Checker_itemContext):
         pass
 
-    # Exit a parse tree produced by SystemVerilogParser#checker_or_generate_item.
-    def exitChecker_or_generate_item(self, ctx:SystemVerilogParser.Checker_or_generate_itemContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#checker_or_generate_item_declaration.
-    def enterChecker_or_generate_item_declaration(self, ctx:SystemVerilogParser.Checker_or_generate_item_declarationContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#checker_or_generate_item_declaration.
-    def exitChecker_or_generate_item_declaration(self, ctx:SystemVerilogParser.Checker_or_generate_item_declarationContext):
+    # Exit a parse tree produced by SystemVerilogParser#checker_item.
+    def exitChecker_item(self, ctx:SystemVerilogParser.Checker_itemContext):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#checker_generate_item.
-    def enterChecker_generate_item(self, ctx:SystemVerilogParser.Checker_generate_itemContext):
+    # Enter a parse tree produced by SystemVerilogParser#checker_item_declaration.
+    def enterChecker_item_declaration(self, ctx:SystemVerilogParser.Checker_item_declarationContext):
         pass
 
-    # Exit a parse tree produced by SystemVerilogParser#checker_generate_item.
-    def exitChecker_generate_item(self, ctx:SystemVerilogParser.Checker_generate_itemContext):
+    # Exit a parse tree produced by SystemVerilogParser#checker_item_declaration.
+    def exitChecker_item_declaration(self, ctx:SystemVerilogParser.Checker_item_declarationContext):
         pass
 
 
@@ -680,6 +734,15 @@ class SystemVerilogParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by SystemVerilogParser#class_constructor_prototype.
     def exitClass_constructor_prototype(self, ctx:SystemVerilogParser.Class_constructor_prototypeContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#port_list.
+    def enterPort_list(self, ctx:SystemVerilogParser.Port_listContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#port_list.
+    def exitPort_list(self, ctx:SystemVerilogParser.Port_listContext):
         pass
 
 
@@ -743,6 +806,15 @@ class SystemVerilogParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by SystemVerilogParser#class_constructor_declaration.
     def exitClass_constructor_declaration(self, ctx:SystemVerilogParser.Class_constructor_declarationContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#super_class_constructor_call.
+    def enterSuper_class_constructor_call(self, ctx:SystemVerilogParser.Super_class_constructor_callContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#super_class_constructor_call.
+    def exitSuper_class_constructor_call(self, ctx:SystemVerilogParser.Super_class_constructor_callContext):
         pass
 
 
@@ -890,12 +962,12 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#package_or_generate_item_declaration.
-    def enterPackage_or_generate_item_declaration(self, ctx:SystemVerilogParser.Package_or_generate_item_declarationContext):
+    # Enter a parse tree produced by SystemVerilogParser#package_item_declaration.
+    def enterPackage_item_declaration(self, ctx:SystemVerilogParser.Package_item_declarationContext):
         pass
 
-    # Exit a parse tree produced by SystemVerilogParser#package_or_generate_item_declaration.
-    def exitPackage_or_generate_item_declaration(self, ctx:SystemVerilogParser.Package_or_generate_item_declarationContext):
+    # Exit a parse tree produced by SystemVerilogParser#package_item_declaration.
+    def exitPackage_item_declaration(self, ctx:SystemVerilogParser.Package_item_declarationContext):
         pass
 
 
@@ -1043,6 +1115,15 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#net_id.
+    def enterNet_id(self, ctx:SystemVerilogParser.Net_idContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#net_id.
+    def exitNet_id(self, ctx:SystemVerilogParser.Net_idContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#type_declaration.
     def enterType_declaration(self, ctx:SystemVerilogParser.Type_declarationContext):
         pass
@@ -1061,21 +1142,21 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#net_type_decl_with.
+    def enterNet_type_decl_with(self, ctx:SystemVerilogParser.Net_type_decl_withContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#net_type_decl_with.
+    def exitNet_type_decl_with(self, ctx:SystemVerilogParser.Net_type_decl_withContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#lifetime.
     def enterLifetime(self, ctx:SystemVerilogParser.LifetimeContext):
         pass
 
     # Exit a parse tree produced by SystemVerilogParser#lifetime.
     def exitLifetime(self, ctx:SystemVerilogParser.LifetimeContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#casting_type.
-    def enterCasting_type(self, ctx:SystemVerilogParser.Casting_typeContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#casting_type.
-    def exitCasting_type(self, ctx:SystemVerilogParser.Casting_typeContext):
         pass
 
 
@@ -1124,6 +1205,15 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#enum_name_suffix_range.
+    def enterEnum_name_suffix_range(self, ctx:SystemVerilogParser.Enum_name_suffix_rangeContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#enum_name_suffix_range.
+    def exitEnum_name_suffix_range(self, ctx:SystemVerilogParser.Enum_name_suffix_rangeContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#class_scope.
     def enterClass_scope(self, ctx:SystemVerilogParser.Class_scopeContext):
         pass
@@ -1139,6 +1229,24 @@ class SystemVerilogParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by SystemVerilogParser#class_type.
     def exitClass_type(self, ctx:SystemVerilogParser.Class_typeContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#class_ref.
+    def enterClass_ref(self, ctx:SystemVerilogParser.Class_refContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#class_ref.
+    def exitClass_ref(self, ctx:SystemVerilogParser.Class_refContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#package_or_class_scope.
+    def enterPackage_or_class_scope(self, ctx:SystemVerilogParser.Package_or_class_scopeContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#package_or_class_scope.
+    def exitPackage_or_class_scope(self, ctx:SystemVerilogParser.Package_or_class_scopeContext):
         pass
 
 
@@ -1358,6 +1466,15 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#interface_id.
+    def enterInterface_id(self, ctx:SystemVerilogParser.Interface_idContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#interface_id.
+    def exitInterface_id(self, ctx:SystemVerilogParser.Interface_idContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#list_of_net_decl_assignments.
     def enterList_of_net_decl_assignments(self, ctx:SystemVerilogParser.List_of_net_decl_assignmentsContext):
         pass
@@ -1382,6 +1499,15 @@ class SystemVerilogParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by SystemVerilogParser#list_of_port_identifiers.
     def exitList_of_port_identifiers(self, ctx:SystemVerilogParser.List_of_port_identifiersContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#port_id.
+    def enterPort_id(self, ctx:SystemVerilogParser.Port_idContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#port_id.
+    def exitPort_id(self, ctx:SystemVerilogParser.Port_idContext):
         pass
 
 
@@ -1412,6 +1538,15 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#tf_var_id.
+    def enterTf_var_id(self, ctx:SystemVerilogParser.Tf_var_idContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#tf_var_id.
+    def exitTf_var_id(self, ctx:SystemVerilogParser.Tf_var_idContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#list_of_type_assignments.
     def enterList_of_type_assignments(self, ctx:SystemVerilogParser.List_of_type_assignmentsContext):
         pass
@@ -1439,12 +1574,30 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#var_id.
+    def enterVar_id(self, ctx:SystemVerilogParser.Var_idContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#var_id.
+    def exitVar_id(self, ctx:SystemVerilogParser.Var_idContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#list_of_variable_port_identifiers.
     def enterList_of_variable_port_identifiers(self, ctx:SystemVerilogParser.List_of_variable_port_identifiersContext):
         pass
 
     # Exit a parse tree produced by SystemVerilogParser#list_of_variable_port_identifiers.
     def exitList_of_variable_port_identifiers(self, ctx:SystemVerilogParser.List_of_variable_port_identifiersContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#var_port_id.
+    def enterVar_port_id(self, ctx:SystemVerilogParser.Var_port_idContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#var_port_id.
+    def exitVar_port_id(self, ctx:SystemVerilogParser.Var_port_idContext):
         pass
 
 
@@ -1637,6 +1790,15 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#function_name.
+    def enterFunction_name(self, ctx:SystemVerilogParser.Function_nameContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#function_name.
+    def exitFunction_name(self, ctx:SystemVerilogParser.Function_nameContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#function_prototype.
     def enterFunction_prototype(self, ctx:SystemVerilogParser.Function_prototypeContext):
         pass
@@ -1718,6 +1880,15 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#task_name.
+    def enterTask_name(self, ctx:SystemVerilogParser.Task_nameContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#task_name.
+    def exitTask_name(self, ctx:SystemVerilogParser.Task_nameContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#tf_item_declaration.
     def enterTf_item_declaration(self, ctx:SystemVerilogParser.Tf_item_declarationContext):
         pass
@@ -1742,6 +1913,15 @@ class SystemVerilogParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by SystemVerilogParser#tf_port_item.
     def exitTf_port_item(self, ctx:SystemVerilogParser.Tf_port_itemContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#tf_port_id.
+    def enterTf_port_id(self, ctx:SystemVerilogParser.Tf_port_idContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#tf_port_id.
+    def exitTf_port_id(self, ctx:SystemVerilogParser.Tf_port_idContext):
         pass
 
 
@@ -1871,6 +2051,15 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#block_label.
+    def enterBlock_label(self, ctx:SystemVerilogParser.Block_labelContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#block_label.
+    def exitBlock_label(self, ctx:SystemVerilogParser.Block_labelContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#concurrent_assertion_statement.
     def enterConcurrent_assertion_statement(self, ctx:SystemVerilogParser.Concurrent_assertion_statementContext):
         pass
@@ -1943,12 +2132,39 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#prop_arg_list.
+    def enterProp_arg_list(self, ctx:SystemVerilogParser.Prop_arg_listContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#prop_arg_list.
+    def exitProp_arg_list(self, ctx:SystemVerilogParser.Prop_arg_listContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#property_list_of_arguments.
     def enterProperty_list_of_arguments(self, ctx:SystemVerilogParser.Property_list_of_argumentsContext):
         pass
 
     # Exit a parse tree produced by SystemVerilogParser#property_list_of_arguments.
     def exitProperty_list_of_arguments(self, ctx:SystemVerilogParser.Property_list_of_argumentsContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#prop_ordered_arg.
+    def enterProp_ordered_arg(self, ctx:SystemVerilogParser.Prop_ordered_argContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#prop_ordered_arg.
+    def exitProp_ordered_arg(self, ctx:SystemVerilogParser.Prop_ordered_argContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#prop_named_arg.
+    def enterProp_named_arg(self, ctx:SystemVerilogParser.Prop_named_argContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#prop_named_arg.
+    def exitProp_named_arg(self, ctx:SystemVerilogParser.Prop_named_argContext):
         pass
 
 
@@ -1979,6 +2195,24 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#property_name.
+    def enterProperty_name(self, ctx:SystemVerilogParser.Property_nameContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#property_name.
+    def exitProperty_name(self, ctx:SystemVerilogParser.Property_nameContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#prop_port_list.
+    def enterProp_port_list(self, ctx:SystemVerilogParser.Prop_port_listContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#prop_port_list.
+    def exitProp_port_list(self, ctx:SystemVerilogParser.Prop_port_listContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#property_port_list.
     def enterProperty_port_list(self, ctx:SystemVerilogParser.Property_port_listContext):
         pass
@@ -1994,6 +2228,15 @@ class SystemVerilogParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by SystemVerilogParser#property_port_item.
     def exitProperty_port_item(self, ctx:SystemVerilogParser.Property_port_itemContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#prop_port_item_local.
+    def enterProp_port_item_local(self, ctx:SystemVerilogParser.Prop_port_item_localContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#prop_port_item_local.
+    def exitProp_port_item_local(self, ctx:SystemVerilogParser.Prop_port_item_localContext):
         pass
 
 
@@ -2051,6 +2294,24 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#sequence_name.
+    def enterSequence_name(self, ctx:SystemVerilogParser.Sequence_nameContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#sequence_name.
+    def exitSequence_name(self, ctx:SystemVerilogParser.Sequence_nameContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#seq_port_list.
+    def enterSeq_port_list(self, ctx:SystemVerilogParser.Seq_port_listContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#seq_port_list.
+    def exitSeq_port_list(self, ctx:SystemVerilogParser.Seq_port_listContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#sequence_port_list.
     def enterSequence_port_list(self, ctx:SystemVerilogParser.Sequence_port_listContext):
         pass
@@ -2066,6 +2327,15 @@ class SystemVerilogParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by SystemVerilogParser#sequence_port_item.
     def exitSequence_port_item(self, ctx:SystemVerilogParser.Sequence_port_itemContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#seq_port_item_local.
+    def enterSeq_port_item_local(self, ctx:SystemVerilogParser.Seq_port_item_localContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#seq_port_item_local.
+    def exitSeq_port_item_local(self, ctx:SystemVerilogParser.Seq_port_item_localContext):
         pass
 
 
@@ -2132,12 +2402,39 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#seq_arg_list.
+    def enterSeq_arg_list(self, ctx:SystemVerilogParser.Seq_arg_listContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#seq_arg_list.
+    def exitSeq_arg_list(self, ctx:SystemVerilogParser.Seq_arg_listContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#sequence_list_of_arguments.
     def enterSequence_list_of_arguments(self, ctx:SystemVerilogParser.Sequence_list_of_argumentsContext):
         pass
 
     # Exit a parse tree produced by SystemVerilogParser#sequence_list_of_arguments.
     def exitSequence_list_of_arguments(self, ctx:SystemVerilogParser.Sequence_list_of_argumentsContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#seq_ordered_arg.
+    def enterSeq_ordered_arg(self, ctx:SystemVerilogParser.Seq_ordered_argContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#seq_ordered_arg.
+    def exitSeq_ordered_arg(self, ctx:SystemVerilogParser.Seq_ordered_argContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#seq_named_arg.
+    def enterSeq_named_arg(self, ctx:SystemVerilogParser.Seq_named_argContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#seq_named_arg.
+    def exitSeq_named_arg(self, ctx:SystemVerilogParser.Seq_named_argContext):
         pass
 
 
@@ -2240,6 +2537,15 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#covergroup_name.
+    def enterCovergroup_name(self, ctx:SystemVerilogParser.Covergroup_nameContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#covergroup_name.
+    def exitCovergroup_name(self, ctx:SystemVerilogParser.Covergroup_nameContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#coverage_spec_or_option.
     def enterCoverage_spec_or_option(self, ctx:SystemVerilogParser.Coverage_spec_or_optionContext):
         pass
@@ -2303,6 +2609,15 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#cover_point_label.
+    def enterCover_point_label(self, ctx:SystemVerilogParser.Cover_point_labelContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#cover_point_label.
+    def exitCover_point_label(self, ctx:SystemVerilogParser.Cover_point_labelContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#bins_or_empty.
     def enterBins_or_empty(self, ctx:SystemVerilogParser.Bins_or_emptyContext):
         pass
@@ -2318,6 +2633,15 @@ class SystemVerilogParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by SystemVerilogParser#bins_or_options.
     def exitBins_or_options(self, ctx:SystemVerilogParser.Bins_or_optionsContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#bin_array_size.
+    def enterBin_array_size(self, ctx:SystemVerilogParser.Bin_array_sizeContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#bin_array_size.
+    def exitBin_array_size(self, ctx:SystemVerilogParser.Bin_array_sizeContext):
         pass
 
 
@@ -2381,6 +2705,15 @@ class SystemVerilogParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by SystemVerilogParser#cover_cross.
     def exitCover_cross(self, ctx:SystemVerilogParser.Cover_crossContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#cross_label.
+    def enterCross_label(self, ctx:SystemVerilogParser.Cross_labelContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#cross_label.
+    def exitCross_label(self, ctx:SystemVerilogParser.Cross_labelContext):
         pass
 
 
@@ -2537,6 +2870,15 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#let_ports.
+    def enterLet_ports(self, ctx:SystemVerilogParser.Let_portsContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#let_ports.
+    def exitLet_ports(self, ctx:SystemVerilogParser.Let_portsContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#let_identifier.
     def enterLet_identifier(self, ctx:SystemVerilogParser.Let_identifierContext):
         pass
@@ -2570,33 +2912,6 @@ class SystemVerilogParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by SystemVerilogParser#let_formal_type.
     def exitLet_formal_type(self, ctx:SystemVerilogParser.Let_formal_typeContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#let_expression.
-    def enterLet_expression(self, ctx:SystemVerilogParser.Let_expressionContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#let_expression.
-    def exitLet_expression(self, ctx:SystemVerilogParser.Let_expressionContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#let_list_of_arguments.
-    def enterLet_list_of_arguments(self, ctx:SystemVerilogParser.Let_list_of_argumentsContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#let_list_of_arguments.
-    def exitLet_list_of_arguments(self, ctx:SystemVerilogParser.Let_list_of_argumentsContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#let_actual_arg.
-    def enterLet_actual_arg(self, ctx:SystemVerilogParser.Let_actual_argContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#let_actual_arg.
-    def exitLet_actual_arg(self, ctx:SystemVerilogParser.Let_actual_argContext):
         pass
 
 
@@ -2816,12 +3131,12 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#module_instantiation.
-    def enterModule_instantiation(self, ctx:SystemVerilogParser.Module_instantiationContext):
+    # Enter a parse tree produced by SystemVerilogParser#module_program_interface_instantiation.
+    def enterModule_program_interface_instantiation(self, ctx:SystemVerilogParser.Module_program_interface_instantiationContext):
         pass
 
-    # Exit a parse tree produced by SystemVerilogParser#module_instantiation.
-    def exitModule_instantiation(self, ctx:SystemVerilogParser.Module_instantiationContext):
+    # Exit a parse tree produced by SystemVerilogParser#module_program_interface_instantiation.
+    def exitModule_program_interface_instantiation(self, ctx:SystemVerilogParser.Module_program_interface_instantiationContext):
         pass
 
 
@@ -2906,21 +3221,12 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#interface_instantiation.
-    def enterInterface_instantiation(self, ctx:SystemVerilogParser.Interface_instantiationContext):
+    # Enter a parse tree produced by SystemVerilogParser#port_assign.
+    def enterPort_assign(self, ctx:SystemVerilogParser.Port_assignContext):
         pass
 
-    # Exit a parse tree produced by SystemVerilogParser#interface_instantiation.
-    def exitInterface_instantiation(self, ctx:SystemVerilogParser.Interface_instantiationContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#program_instantiation.
-    def enterProgram_instantiation(self, ctx:SystemVerilogParser.Program_instantiationContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#program_instantiation.
-    def exitProgram_instantiation(self, ctx:SystemVerilogParser.Program_instantiationContext):
+    # Exit a parse tree produced by SystemVerilogParser#port_assign.
+    def exitPort_assign(self, ctx:SystemVerilogParser.Port_assignContext):
         pass
 
 
@@ -2957,6 +3263,15 @@ class SystemVerilogParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by SystemVerilogParser#named_checker_port_connection.
     def exitNamed_checker_port_connection(self, ctx:SystemVerilogParser.Named_checker_port_connectionContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#checker_port_assign.
+    def enterChecker_port_assign(self, ctx:SystemVerilogParser.Checker_port_assignContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#checker_port_assign.
+    def exitChecker_port_assign(self, ctx:SystemVerilogParser.Checker_port_assignContext):
         pass
 
 
@@ -3041,12 +3356,282 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#generate_block_label.
+    def enterGenerate_block_label(self, ctx:SystemVerilogParser.Generate_block_labelContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#generate_block_label.
+    def exitGenerate_block_label(self, ctx:SystemVerilogParser.Generate_block_labelContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#generate_block_name.
+    def enterGenerate_block_name(self, ctx:SystemVerilogParser.Generate_block_nameContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#generate_block_name.
+    def exitGenerate_block_name(self, ctx:SystemVerilogParser.Generate_block_nameContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#generate_item.
     def enterGenerate_item(self, ctx:SystemVerilogParser.Generate_itemContext):
         pass
 
     # Exit a parse tree produced by SystemVerilogParser#generate_item.
     def exitGenerate_item(self, ctx:SystemVerilogParser.Generate_itemContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#udp_nonansi_declaration.
+    def enterUdp_nonansi_declaration(self, ctx:SystemVerilogParser.Udp_nonansi_declarationContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#udp_nonansi_declaration.
+    def exitUdp_nonansi_declaration(self, ctx:SystemVerilogParser.Udp_nonansi_declarationContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#udp_ansi_declaration.
+    def enterUdp_ansi_declaration(self, ctx:SystemVerilogParser.Udp_ansi_declarationContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#udp_ansi_declaration.
+    def exitUdp_ansi_declaration(self, ctx:SystemVerilogParser.Udp_ansi_declarationContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#udp_declaration.
+    def enterUdp_declaration(self, ctx:SystemVerilogParser.Udp_declarationContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#udp_declaration.
+    def exitUdp_declaration(self, ctx:SystemVerilogParser.Udp_declarationContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#udp_name.
+    def enterUdp_name(self, ctx:SystemVerilogParser.Udp_nameContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#udp_name.
+    def exitUdp_name(self, ctx:SystemVerilogParser.Udp_nameContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#udp_port_list.
+    def enterUdp_port_list(self, ctx:SystemVerilogParser.Udp_port_listContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#udp_port_list.
+    def exitUdp_port_list(self, ctx:SystemVerilogParser.Udp_port_listContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#udp_declaration_port_list.
+    def enterUdp_declaration_port_list(self, ctx:SystemVerilogParser.Udp_declaration_port_listContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#udp_declaration_port_list.
+    def exitUdp_declaration_port_list(self, ctx:SystemVerilogParser.Udp_declaration_port_listContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#udp_port_declaration.
+    def enterUdp_port_declaration(self, ctx:SystemVerilogParser.Udp_port_declarationContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#udp_port_declaration.
+    def exitUdp_port_declaration(self, ctx:SystemVerilogParser.Udp_port_declarationContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#udp_output_declaration.
+    def enterUdp_output_declaration(self, ctx:SystemVerilogParser.Udp_output_declarationContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#udp_output_declaration.
+    def exitUdp_output_declaration(self, ctx:SystemVerilogParser.Udp_output_declarationContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#udp_input_declaration.
+    def enterUdp_input_declaration(self, ctx:SystemVerilogParser.Udp_input_declarationContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#udp_input_declaration.
+    def exitUdp_input_declaration(self, ctx:SystemVerilogParser.Udp_input_declarationContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#udp_reg_declaration.
+    def enterUdp_reg_declaration(self, ctx:SystemVerilogParser.Udp_reg_declarationContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#udp_reg_declaration.
+    def exitUdp_reg_declaration(self, ctx:SystemVerilogParser.Udp_reg_declarationContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#udp_body.
+    def enterUdp_body(self, ctx:SystemVerilogParser.Udp_bodyContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#udp_body.
+    def exitUdp_body(self, ctx:SystemVerilogParser.Udp_bodyContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#combinational_body.
+    def enterCombinational_body(self, ctx:SystemVerilogParser.Combinational_bodyContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#combinational_body.
+    def exitCombinational_body(self, ctx:SystemVerilogParser.Combinational_bodyContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#combinational_entry.
+    def enterCombinational_entry(self, ctx:SystemVerilogParser.Combinational_entryContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#combinational_entry.
+    def exitCombinational_entry(self, ctx:SystemVerilogParser.Combinational_entryContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#sequential_body.
+    def enterSequential_body(self, ctx:SystemVerilogParser.Sequential_bodyContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#sequential_body.
+    def exitSequential_body(self, ctx:SystemVerilogParser.Sequential_bodyContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#udp_initial_statement.
+    def enterUdp_initial_statement(self, ctx:SystemVerilogParser.Udp_initial_statementContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#udp_initial_statement.
+    def exitUdp_initial_statement(self, ctx:SystemVerilogParser.Udp_initial_statementContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#init_val.
+    def enterInit_val(self, ctx:SystemVerilogParser.Init_valContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#init_val.
+    def exitInit_val(self, ctx:SystemVerilogParser.Init_valContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#sequential_entry.
+    def enterSequential_entry(self, ctx:SystemVerilogParser.Sequential_entryContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#sequential_entry.
+    def exitSequential_entry(self, ctx:SystemVerilogParser.Sequential_entryContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#seq_input_list.
+    def enterSeq_input_list(self, ctx:SystemVerilogParser.Seq_input_listContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#seq_input_list.
+    def exitSeq_input_list(self, ctx:SystemVerilogParser.Seq_input_listContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#level_input_list.
+    def enterLevel_input_list(self, ctx:SystemVerilogParser.Level_input_listContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#level_input_list.
+    def exitLevel_input_list(self, ctx:SystemVerilogParser.Level_input_listContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#edge_input_list.
+    def enterEdge_input_list(self, ctx:SystemVerilogParser.Edge_input_listContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#edge_input_list.
+    def exitEdge_input_list(self, ctx:SystemVerilogParser.Edge_input_listContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#edge_indicator.
+    def enterEdge_indicator(self, ctx:SystemVerilogParser.Edge_indicatorContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#edge_indicator.
+    def exitEdge_indicator(self, ctx:SystemVerilogParser.Edge_indicatorContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#current_state.
+    def enterCurrent_state(self, ctx:SystemVerilogParser.Current_stateContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#current_state.
+    def exitCurrent_state(self, ctx:SystemVerilogParser.Current_stateContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#next_state.
+    def enterNext_state(self, ctx:SystemVerilogParser.Next_stateContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#next_state.
+    def exitNext_state(self, ctx:SystemVerilogParser.Next_stateContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#output_symbol.
+    def enterOutput_symbol(self, ctx:SystemVerilogParser.Output_symbolContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#output_symbol.
+    def exitOutput_symbol(self, ctx:SystemVerilogParser.Output_symbolContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#level_symbol.
+    def enterLevel_symbol(self, ctx:SystemVerilogParser.Level_symbolContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#level_symbol.
+    def exitLevel_symbol(self, ctx:SystemVerilogParser.Level_symbolContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#edge_symbol.
+    def enterEdge_symbol(self, ctx:SystemVerilogParser.Edge_symbolContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#edge_symbol.
+    def exitEdge_symbol(self, ctx:SystemVerilogParser.Edge_symbolContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#udp_instantiation.
+    def enterUdp_instantiation(self, ctx:SystemVerilogParser.Udp_instantiationContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#udp_instantiation.
+    def exitUdp_instantiation(self, ctx:SystemVerilogParser.Udp_instantiationContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#udp_instance.
+    def enterUdp_instance(self, ctx:SystemVerilogParser.Udp_instanceContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#udp_instance.
+    def exitUdp_instance(self, ctx:SystemVerilogParser.Udp_instanceContext):
         pass
 
 
@@ -3200,6 +3785,15 @@ class SystemVerilogParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by SystemVerilogParser#seq_block.
     def exitSeq_block(self, ctx:SystemVerilogParser.Seq_blockContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#block_name.
+    def enterBlock_name(self, ctx:SystemVerilogParser.Block_nameContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#block_name.
+    def exitBlock_name(self, ctx:SystemVerilogParser.Block_nameContext):
         pass
 
 
@@ -3401,15 +3995,6 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#cond_pattern.
-    def enterCond_pattern(self, ctx:SystemVerilogParser.Cond_patternContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#cond_pattern.
-    def exitCond_pattern(self, ctx:SystemVerilogParser.Cond_patternContext):
-        pass
-
-
     # Enter a parse tree produced by SystemVerilogParser#case_statement.
     def enterCase_statement(self, ctx:SystemVerilogParser.Case_statementContext):
         pass
@@ -3518,6 +4103,15 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#member_pattern_pair.
+    def enterMember_pattern_pair(self, ctx:SystemVerilogParser.Member_pattern_pairContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#member_pattern_pair.
+    def exitMember_pattern_pair(self, ctx:SystemVerilogParser.Member_pattern_pairContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#assignment_pattern.
     def enterAssignment_pattern(self, ctx:SystemVerilogParser.Assignment_patternContext):
         pass
@@ -3527,12 +4121,12 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#structure_pattern_key.
-    def enterStructure_pattern_key(self, ctx:SystemVerilogParser.Structure_pattern_keyContext):
+    # Enter a parse tree produced by SystemVerilogParser#array_key_val_pair.
+    def enterArray_key_val_pair(self, ctx:SystemVerilogParser.Array_key_val_pairContext):
         pass
 
-    # Exit a parse tree produced by SystemVerilogParser#structure_pattern_key.
-    def exitStructure_pattern_key(self, ctx:SystemVerilogParser.Structure_pattern_keyContext):
+    # Exit a parse tree produced by SystemVerilogParser#array_key_val_pair.
+    def exitArray_key_val_pair(self, ctx:SystemVerilogParser.Array_key_val_pairContext):
         pass
 
 
@@ -3626,6 +4220,15 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#for_variable_assign.
+    def enterFor_variable_assign(self, ctx:SystemVerilogParser.For_variable_assignContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#for_variable_assign.
+    def exitFor_variable_assign(self, ctx:SystemVerilogParser.For_variable_assignContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#for_step.
     def enterFor_step(self, ctx:SystemVerilogParser.For_stepContext):
         pass
@@ -3650,6 +4253,15 @@ class SystemVerilogParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by SystemVerilogParser#loop_variables.
     def exitLoop_variables(self, ctx:SystemVerilogParser.Loop_variablesContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#loop_var.
+    def enterLoop_var(self, ctx:SystemVerilogParser.Loop_varContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#loop_var.
+    def exitLoop_var(self, ctx:SystemVerilogParser.Loop_varContext):
         pass
 
 
@@ -3779,6 +4391,15 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#clocking_name.
+    def enterClocking_name(self, ctx:SystemVerilogParser.Clocking_nameContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#clocking_name.
+    def exitClocking_name(self, ctx:SystemVerilogParser.Clocking_nameContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#clocking_event.
     def enterClocking_event(self, ctx:SystemVerilogParser.Clocking_eventContext):
         pass
@@ -3902,6 +4523,15 @@ class SystemVerilogParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by SystemVerilogParser#rs_rule.
     def exitRs_rule(self, ctx:SystemVerilogParser.Rs_ruleContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#weight_spec.
+    def enterWeight_spec(self, ctx:SystemVerilogParser.Weight_specContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#weight_spec.
+    def exitWeight_spec(self, ctx:SystemVerilogParser.Weight_specContext):
         pass
 
 
@@ -4346,6 +4976,411 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#system_timing_check.
+    def enterSystem_timing_check(self, ctx:SystemVerilogParser.System_timing_checkContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#system_timing_check.
+    def exitSystem_timing_check(self, ctx:SystemVerilogParser.System_timing_checkContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#setup_timing_check.
+    def enterSetup_timing_check(self, ctx:SystemVerilogParser.Setup_timing_checkContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#setup_timing_check.
+    def exitSetup_timing_check(self, ctx:SystemVerilogParser.Setup_timing_checkContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#notifier_opt.
+    def enterNotifier_opt(self, ctx:SystemVerilogParser.Notifier_optContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#notifier_opt.
+    def exitNotifier_opt(self, ctx:SystemVerilogParser.Notifier_optContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#hold_timing_check.
+    def enterHold_timing_check(self, ctx:SystemVerilogParser.Hold_timing_checkContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#hold_timing_check.
+    def exitHold_timing_check(self, ctx:SystemVerilogParser.Hold_timing_checkContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#setuphold_timing_check.
+    def enterSetuphold_timing_check(self, ctx:SystemVerilogParser.Setuphold_timing_checkContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#setuphold_timing_check.
+    def exitSetuphold_timing_check(self, ctx:SystemVerilogParser.Setuphold_timing_checkContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#timing_check_opt.
+    def enterTiming_check_opt(self, ctx:SystemVerilogParser.Timing_check_optContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#timing_check_opt.
+    def exitTiming_check_opt(self, ctx:SystemVerilogParser.Timing_check_optContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#timestamp_cond_opt.
+    def enterTimestamp_cond_opt(self, ctx:SystemVerilogParser.Timestamp_cond_optContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#timestamp_cond_opt.
+    def exitTimestamp_cond_opt(self, ctx:SystemVerilogParser.Timestamp_cond_optContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#timecheck_cond_opt.
+    def enterTimecheck_cond_opt(self, ctx:SystemVerilogParser.Timecheck_cond_optContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#timecheck_cond_opt.
+    def exitTimecheck_cond_opt(self, ctx:SystemVerilogParser.Timecheck_cond_optContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#delayed_ref_opt.
+    def enterDelayed_ref_opt(self, ctx:SystemVerilogParser.Delayed_ref_optContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#delayed_ref_opt.
+    def exitDelayed_ref_opt(self, ctx:SystemVerilogParser.Delayed_ref_optContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#delayed_data_opt.
+    def enterDelayed_data_opt(self, ctx:SystemVerilogParser.Delayed_data_optContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#delayed_data_opt.
+    def exitDelayed_data_opt(self, ctx:SystemVerilogParser.Delayed_data_optContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#recovery_timing_check.
+    def enterRecovery_timing_check(self, ctx:SystemVerilogParser.Recovery_timing_checkContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#recovery_timing_check.
+    def exitRecovery_timing_check(self, ctx:SystemVerilogParser.Recovery_timing_checkContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#removal_timing_check.
+    def enterRemoval_timing_check(self, ctx:SystemVerilogParser.Removal_timing_checkContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#removal_timing_check.
+    def exitRemoval_timing_check(self, ctx:SystemVerilogParser.Removal_timing_checkContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#recrem_timing_check.
+    def enterRecrem_timing_check(self, ctx:SystemVerilogParser.Recrem_timing_checkContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#recrem_timing_check.
+    def exitRecrem_timing_check(self, ctx:SystemVerilogParser.Recrem_timing_checkContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#skew_timing_check.
+    def enterSkew_timing_check(self, ctx:SystemVerilogParser.Skew_timing_checkContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#skew_timing_check.
+    def exitSkew_timing_check(self, ctx:SystemVerilogParser.Skew_timing_checkContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#timeskew_timing_check.
+    def enterTimeskew_timing_check(self, ctx:SystemVerilogParser.Timeskew_timing_checkContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#timeskew_timing_check.
+    def exitTimeskew_timing_check(self, ctx:SystemVerilogParser.Timeskew_timing_checkContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#skew_timing_check_opt.
+    def enterSkew_timing_check_opt(self, ctx:SystemVerilogParser.Skew_timing_check_optContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#skew_timing_check_opt.
+    def exitSkew_timing_check_opt(self, ctx:SystemVerilogParser.Skew_timing_check_optContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#event_based_flag_opt.
+    def enterEvent_based_flag_opt(self, ctx:SystemVerilogParser.Event_based_flag_optContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#event_based_flag_opt.
+    def exitEvent_based_flag_opt(self, ctx:SystemVerilogParser.Event_based_flag_optContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#remain_active_flag_opt.
+    def enterRemain_active_flag_opt(self, ctx:SystemVerilogParser.Remain_active_flag_optContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#remain_active_flag_opt.
+    def exitRemain_active_flag_opt(self, ctx:SystemVerilogParser.Remain_active_flag_optContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#fullskew_timing_check.
+    def enterFullskew_timing_check(self, ctx:SystemVerilogParser.Fullskew_timing_checkContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#fullskew_timing_check.
+    def exitFullskew_timing_check(self, ctx:SystemVerilogParser.Fullskew_timing_checkContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#period_timing_check.
+    def enterPeriod_timing_check(self, ctx:SystemVerilogParser.Period_timing_checkContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#period_timing_check.
+    def exitPeriod_timing_check(self, ctx:SystemVerilogParser.Period_timing_checkContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#width_timing_check.
+    def enterWidth_timing_check(self, ctx:SystemVerilogParser.Width_timing_checkContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#width_timing_check.
+    def exitWidth_timing_check(self, ctx:SystemVerilogParser.Width_timing_checkContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#nochange_timing_check.
+    def enterNochange_timing_check(self, ctx:SystemVerilogParser.Nochange_timing_checkContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#nochange_timing_check.
+    def exitNochange_timing_check(self, ctx:SystemVerilogParser.Nochange_timing_checkContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#timecheck_condition.
+    def enterTimecheck_condition(self, ctx:SystemVerilogParser.Timecheck_conditionContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#timecheck_condition.
+    def exitTimecheck_condition(self, ctx:SystemVerilogParser.Timecheck_conditionContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#controlled_reference_event.
+    def enterControlled_reference_event(self, ctx:SystemVerilogParser.Controlled_reference_eventContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#controlled_reference_event.
+    def exitControlled_reference_event(self, ctx:SystemVerilogParser.Controlled_reference_eventContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#data_event.
+    def enterData_event(self, ctx:SystemVerilogParser.Data_eventContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#data_event.
+    def exitData_event(self, ctx:SystemVerilogParser.Data_eventContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#delayed_data.
+    def enterDelayed_data(self, ctx:SystemVerilogParser.Delayed_dataContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#delayed_data.
+    def exitDelayed_data(self, ctx:SystemVerilogParser.Delayed_dataContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#delayed_reference.
+    def enterDelayed_reference(self, ctx:SystemVerilogParser.Delayed_referenceContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#delayed_reference.
+    def exitDelayed_reference(self, ctx:SystemVerilogParser.Delayed_referenceContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#end_edge_offset.
+    def enterEnd_edge_offset(self, ctx:SystemVerilogParser.End_edge_offsetContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#end_edge_offset.
+    def exitEnd_edge_offset(self, ctx:SystemVerilogParser.End_edge_offsetContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#event_based_flag.
+    def enterEvent_based_flag(self, ctx:SystemVerilogParser.Event_based_flagContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#event_based_flag.
+    def exitEvent_based_flag(self, ctx:SystemVerilogParser.Event_based_flagContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#notifier.
+    def enterNotifier(self, ctx:SystemVerilogParser.NotifierContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#notifier.
+    def exitNotifier(self, ctx:SystemVerilogParser.NotifierContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#reference_event.
+    def enterReference_event(self, ctx:SystemVerilogParser.Reference_eventContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#reference_event.
+    def exitReference_event(self, ctx:SystemVerilogParser.Reference_eventContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#remain_active_flag.
+    def enterRemain_active_flag(self, ctx:SystemVerilogParser.Remain_active_flagContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#remain_active_flag.
+    def exitRemain_active_flag(self, ctx:SystemVerilogParser.Remain_active_flagContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#timestamp_condition.
+    def enterTimestamp_condition(self, ctx:SystemVerilogParser.Timestamp_conditionContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#timestamp_condition.
+    def exitTimestamp_condition(self, ctx:SystemVerilogParser.Timestamp_conditionContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#start_edge_offset.
+    def enterStart_edge_offset(self, ctx:SystemVerilogParser.Start_edge_offsetContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#start_edge_offset.
+    def exitStart_edge_offset(self, ctx:SystemVerilogParser.Start_edge_offsetContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#threshold.
+    def enterThreshold(self, ctx:SystemVerilogParser.ThresholdContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#threshold.
+    def exitThreshold(self, ctx:SystemVerilogParser.ThresholdContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#timing_check_limit.
+    def enterTiming_check_limit(self, ctx:SystemVerilogParser.Timing_check_limitContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#timing_check_limit.
+    def exitTiming_check_limit(self, ctx:SystemVerilogParser.Timing_check_limitContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#timing_check_event.
+    def enterTiming_check_event(self, ctx:SystemVerilogParser.Timing_check_eventContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#timing_check_event.
+    def exitTiming_check_event(self, ctx:SystemVerilogParser.Timing_check_eventContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#controlled_timing_check_event.
+    def enterControlled_timing_check_event(self, ctx:SystemVerilogParser.Controlled_timing_check_eventContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#controlled_timing_check_event.
+    def exitControlled_timing_check_event(self, ctx:SystemVerilogParser.Controlled_timing_check_eventContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#timing_check_event_control.
+    def enterTiming_check_event_control(self, ctx:SystemVerilogParser.Timing_check_event_controlContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#timing_check_event_control.
+    def exitTiming_check_event_control(self, ctx:SystemVerilogParser.Timing_check_event_controlContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#specify_terminal_descriptor.
+    def enterSpecify_terminal_descriptor(self, ctx:SystemVerilogParser.Specify_terminal_descriptorContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#specify_terminal_descriptor.
+    def exitSpecify_terminal_descriptor(self, ctx:SystemVerilogParser.Specify_terminal_descriptorContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#edge_control_specifier.
+    def enterEdge_control_specifier(self, ctx:SystemVerilogParser.Edge_control_specifierContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#edge_control_specifier.
+    def exitEdge_control_specifier(self, ctx:SystemVerilogParser.Edge_control_specifierContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#edge_descriptor.
+    def enterEdge_descriptor(self, ctx:SystemVerilogParser.Edge_descriptorContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#edge_descriptor.
+    def exitEdge_descriptor(self, ctx:SystemVerilogParser.Edge_descriptorContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#timing_check_condition.
+    def enterTiming_check_condition(self, ctx:SystemVerilogParser.Timing_check_conditionContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#timing_check_condition.
+    def exitTiming_check_condition(self, ctx:SystemVerilogParser.Timing_check_conditionContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#scalar_timing_check_condition.
+    def enterScalar_timing_check_condition(self, ctx:SystemVerilogParser.Scalar_timing_check_conditionContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#scalar_timing_check_condition.
+    def exitScalar_timing_check_condition(self, ctx:SystemVerilogParser.Scalar_timing_check_conditionContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#scalar_constant.
+    def enterScalar_constant(self, ctx:SystemVerilogParser.Scalar_constantContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#scalar_constant.
+    def exitScalar_constant(self, ctx:SystemVerilogParser.Scalar_constantContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#concatenation.
     def enterConcatenation(self, ctx:SystemVerilogParser.ConcatenationContext):
         pass
@@ -4463,30 +5498,21 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#constant_function_call.
-    def enterConstant_function_call(self, ctx:SystemVerilogParser.Constant_function_callContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#constant_function_call.
-    def exitConstant_function_call(self, ctx:SystemVerilogParser.Constant_function_callContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#tf_call.
-    def enterTf_call(self, ctx:SystemVerilogParser.Tf_callContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#tf_call.
-    def exitTf_call(self, ctx:SystemVerilogParser.Tf_callContext):
-        pass
-
-
     # Enter a parse tree produced by SystemVerilogParser#system_tf_call.
     def enterSystem_tf_call(self, ctx:SystemVerilogParser.System_tf_callContext):
         pass
 
     # Exit a parse tree produced by SystemVerilogParser#system_tf_call.
     def exitSystem_tf_call(self, ctx:SystemVerilogParser.System_tf_callContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#arg_list.
+    def enterArg_list(self, ctx:SystemVerilogParser.Arg_listContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#arg_list.
+    def exitArg_list(self, ctx:SystemVerilogParser.Arg_listContext):
         pass
 
 
@@ -4499,15 +5525,6 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#function_subroutine_call.
-    def enterFunction_subroutine_call(self, ctx:SystemVerilogParser.Function_subroutine_callContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#function_subroutine_call.
-    def exitFunction_subroutine_call(self, ctx:SystemVerilogParser.Function_subroutine_callContext):
-        pass
-
-
     # Enter a parse tree produced by SystemVerilogParser#list_of_arguments.
     def enterList_of_arguments(self, ctx:SystemVerilogParser.List_of_argumentsContext):
         pass
@@ -4517,21 +5534,21 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#method_call_body.
-    def enterMethod_call_body(self, ctx:SystemVerilogParser.Method_call_bodyContext):
+    # Enter a parse tree produced by SystemVerilogParser#ordered_arg.
+    def enterOrdered_arg(self, ctx:SystemVerilogParser.Ordered_argContext):
         pass
 
-    # Exit a parse tree produced by SystemVerilogParser#method_call_body.
-    def exitMethod_call_body(self, ctx:SystemVerilogParser.Method_call_bodyContext):
+    # Exit a parse tree produced by SystemVerilogParser#ordered_arg.
+    def exitOrdered_arg(self, ctx:SystemVerilogParser.Ordered_argContext):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#built_in_method_call.
-    def enterBuilt_in_method_call(self, ctx:SystemVerilogParser.Built_in_method_callContext):
+    # Enter a parse tree produced by SystemVerilogParser#named_arg.
+    def enterNamed_arg(self, ctx:SystemVerilogParser.Named_argContext):
         pass
 
-    # Exit a parse tree produced by SystemVerilogParser#built_in_method_call.
-    def exitBuilt_in_method_call(self, ctx:SystemVerilogParser.Built_in_method_callContext):
+    # Exit a parse tree produced by SystemVerilogParser#named_arg.
+    def exitNamed_arg(self, ctx:SystemVerilogParser.Named_argContext):
         pass
 
 
@@ -4550,6 +5567,42 @@ class SystemVerilogParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by SystemVerilogParser#randomize_call.
     def exitRandomize_call(self, ctx:SystemVerilogParser.Randomize_callContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#rand_list.
+    def enterRand_list(self, ctx:SystemVerilogParser.Rand_listContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#rand_list.
+    def exitRand_list(self, ctx:SystemVerilogParser.Rand_listContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#rand_with.
+    def enterRand_with(self, ctx:SystemVerilogParser.Rand_withContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#rand_with.
+    def exitRand_with(self, ctx:SystemVerilogParser.Rand_withContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#id_list.
+    def enterId_list(self, ctx:SystemVerilogParser.Id_listContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#id_list.
+    def exitId_list(self, ctx:SystemVerilogParser.Id_listContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#method_call_root.
+    def enterMethod_call_root(self, ctx:SystemVerilogParser.Method_call_rootContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#method_call_root.
+    def exitMethod_call_root(self, ctx:SystemVerilogParser.Method_call_rootContext):
         pass
 
 
@@ -4652,6 +5705,15 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#tagged_union_expression.
+    def enterTagged_union_expression(self, ctx:SystemVerilogParser.Tagged_union_expressionContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#tagged_union_expression.
+    def exitTagged_union_expression(self, ctx:SystemVerilogParser.Tagged_union_expressionContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#value_range.
     def enterValue_range(self, ctx:SystemVerilogParser.Value_rangeContext):
         pass
@@ -4742,15 +5804,6 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#class_qualifier.
-    def enterClass_qualifier(self, ctx:SystemVerilogParser.Class_qualifierContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#class_qualifier.
-    def exitClass_qualifier(self, ctx:SystemVerilogParser.Class_qualifierContext):
-        pass
-
-
     # Enter a parse tree produced by SystemVerilogParser#range_expression.
     def enterRange_expression(self, ctx:SystemVerilogParser.Range_expressionContext):
         pass
@@ -4766,6 +5819,15 @@ class SystemVerilogParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by SystemVerilogParser#primary_literal.
     def exitPrimary_literal(self, ctx:SystemVerilogParser.Primary_literalContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#time_literal.
+    def enterTime_literal(self, ctx:SystemVerilogParser.Time_literalContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#time_literal.
+    def exitTime_literal(self, ctx:SystemVerilogParser.Time_literalContext):
         pass
 
 
@@ -4805,6 +5867,15 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#member_select.
+    def enterMember_select(self, ctx:SystemVerilogParser.Member_selectContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#member_select.
+    def exitMember_select(self, ctx:SystemVerilogParser.Member_selectContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#constant_bit_select.
     def enterConstant_bit_select(self, ctx:SystemVerilogParser.Constant_bit_selectContext):
         pass
@@ -4823,21 +5894,12 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#constant_let_expression.
-    def enterConstant_let_expression(self, ctx:SystemVerilogParser.Constant_let_expressionContext):
+    # Enter a parse tree produced by SystemVerilogParser#const_member_select.
+    def enterConst_member_select(self, ctx:SystemVerilogParser.Const_member_selectContext):
         pass
 
-    # Exit a parse tree produced by SystemVerilogParser#constant_let_expression.
-    def exitConstant_let_expression(self, ctx:SystemVerilogParser.Constant_let_expressionContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#cast.
-    def enterCast(self, ctx:SystemVerilogParser.CastContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#cast.
-    def exitCast(self, ctx:SystemVerilogParser.CastContext):
+    # Exit a parse tree produced by SystemVerilogParser#const_member_select.
+    def exitConst_member_select(self, ctx:SystemVerilogParser.Const_member_selectContext):
         pass
 
 
@@ -4877,15 +5939,6 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#binary_operator.
-    def enterBinary_operator(self, ctx:SystemVerilogParser.Binary_operatorContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#binary_operator.
-    def exitBinary_operator(self, ctx:SystemVerilogParser.Binary_operatorContext):
-        pass
-
-
     # Enter a parse tree produced by SystemVerilogParser#inc_or_dec_operator.
     def enterInc_or_dec_operator(self, ctx:SystemVerilogParser.Inc_or_dec_operatorContext):
         pass
@@ -4904,21 +5957,192 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#binary_module_path_operator.
-    def enterBinary_module_path_operator(self, ctx:SystemVerilogParser.Binary_module_path_operatorContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#binary_module_path_operator.
-    def exitBinary_module_path_operator(self, ctx:SystemVerilogParser.Binary_module_path_operatorContext):
-        pass
-
-
     # Enter a parse tree produced by SystemVerilogParser#number.
     def enterNumber(self, ctx:SystemVerilogParser.NumberContext):
         pass
 
     # Exit a parse tree produced by SystemVerilogParser#number.
     def exitNumber(self, ctx:SystemVerilogParser.NumberContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#integral_number.
+    def enterIntegral_number(self, ctx:SystemVerilogParser.Integral_numberContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#integral_number.
+    def exitIntegral_number(self, ctx:SystemVerilogParser.Integral_numberContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#decimal_number.
+    def enterDecimal_number(self, ctx:SystemVerilogParser.Decimal_numberContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#decimal_number.
+    def exitDecimal_number(self, ctx:SystemVerilogParser.Decimal_numberContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#binary_number.
+    def enterBinary_number(self, ctx:SystemVerilogParser.Binary_numberContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#binary_number.
+    def exitBinary_number(self, ctx:SystemVerilogParser.Binary_numberContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#octal_number.
+    def enterOctal_number(self, ctx:SystemVerilogParser.Octal_numberContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#octal_number.
+    def exitOctal_number(self, ctx:SystemVerilogParser.Octal_numberContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#hex_number.
+    def enterHex_number(self, ctx:SystemVerilogParser.Hex_numberContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#hex_number.
+    def exitHex_number(self, ctx:SystemVerilogParser.Hex_numberContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#size.
+    def enterSize(self, ctx:SystemVerilogParser.SizeContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#size.
+    def exitSize(self, ctx:SystemVerilogParser.SizeContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#real_number.
+    def enterReal_number(self, ctx:SystemVerilogParser.Real_numberContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#real_number.
+    def exitReal_number(self, ctx:SystemVerilogParser.Real_numberContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#fixed_point_number.
+    def enterFixed_point_number(self, ctx:SystemVerilogParser.Fixed_point_numberContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#fixed_point_number.
+    def exitFixed_point_number(self, ctx:SystemVerilogParser.Fixed_point_numberContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#exponential_number.
+    def enterExponential_number(self, ctx:SystemVerilogParser.Exponential_numberContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#exponential_number.
+    def exitExponential_number(self, ctx:SystemVerilogParser.Exponential_numberContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#unsigned_number.
+    def enterUnsigned_number(self, ctx:SystemVerilogParser.Unsigned_numberContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#unsigned_number.
+    def exitUnsigned_number(self, ctx:SystemVerilogParser.Unsigned_numberContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#decimal_value.
+    def enterDecimal_value(self, ctx:SystemVerilogParser.Decimal_valueContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#decimal_value.
+    def exitDecimal_value(self, ctx:SystemVerilogParser.Decimal_valueContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#binary_value.
+    def enterBinary_value(self, ctx:SystemVerilogParser.Binary_valueContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#binary_value.
+    def exitBinary_value(self, ctx:SystemVerilogParser.Binary_valueContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#octal_value.
+    def enterOctal_value(self, ctx:SystemVerilogParser.Octal_valueContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#octal_value.
+    def exitOctal_value(self, ctx:SystemVerilogParser.Octal_valueContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#hex_value.
+    def enterHex_value(self, ctx:SystemVerilogParser.Hex_valueContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#hex_value.
+    def exitHex_value(self, ctx:SystemVerilogParser.Hex_valueContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#decimal_base.
+    def enterDecimal_base(self, ctx:SystemVerilogParser.Decimal_baseContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#decimal_base.
+    def exitDecimal_base(self, ctx:SystemVerilogParser.Decimal_baseContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#binary_base.
+    def enterBinary_base(self, ctx:SystemVerilogParser.Binary_baseContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#binary_base.
+    def exitBinary_base(self, ctx:SystemVerilogParser.Binary_baseContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#octal_base.
+    def enterOctal_base(self, ctx:SystemVerilogParser.Octal_baseContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#octal_base.
+    def exitOctal_base(self, ctx:SystemVerilogParser.Octal_baseContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#hex_base.
+    def enterHex_base(self, ctx:SystemVerilogParser.Hex_baseContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#hex_base.
+    def exitHex_base(self, ctx:SystemVerilogParser.Hex_baseContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#unbased_unsized_literal.
+    def enterUnbased_unsized_literal(self, ctx:SystemVerilogParser.Unbased_unsized_literalContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#unbased_unsized_literal.
+    def exitUnbased_unsized_literal(self, ctx:SystemVerilogParser.Unbased_unsized_literalContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#string_literal.
+    def enterString_literal(self, ctx:SystemVerilogParser.String_literalContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#string_literal.
+    def exitString_literal(self, ctx:SystemVerilogParser.String_literalContext):
         pass
 
 
@@ -4946,15 +6170,6 @@ class SystemVerilogParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by SystemVerilogParser#attr_name.
     def exitAttr_name(self, ctx:SystemVerilogParser.Attr_nameContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#array_identifier.
-    def enterArray_identifier(self, ctx:SystemVerilogParser.Array_identifierContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#array_identifier.
-    def exitArray_identifier(self, ctx:SystemVerilogParser.Array_identifierContext):
         pass
 
 
@@ -5066,15 +6281,6 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#covergroup_variable_identifier.
-    def enterCovergroup_variable_identifier(self, ctx:SystemVerilogParser.Covergroup_variable_identifierContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#covergroup_variable_identifier.
-    def exitCovergroup_variable_identifier(self, ctx:SystemVerilogParser.Covergroup_variable_identifierContext):
-        pass
-
-
     # Enter a parse tree produced by SystemVerilogParser#cover_point_identifier.
     def enterCover_point_identifier(self, ctx:SystemVerilogParser.Cover_point_identifierContext):
         pass
@@ -5108,6 +6314,15 @@ class SystemVerilogParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by SystemVerilogParser#enum_identifier.
     def exitEnum_identifier(self, ctx:SystemVerilogParser.Enum_identifierContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#escaped_identifier.
+    def enterEscaped_identifier(self, ctx:SystemVerilogParser.Escaped_identifierContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#escaped_identifier.
+    def exitEscaped_identifier(self, ctx:SystemVerilogParser.Escaped_identifierContext):
         pass
 
 
@@ -5147,33 +6362,6 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#hierarchical_array_identifier.
-    def enterHierarchical_array_identifier(self, ctx:SystemVerilogParser.Hierarchical_array_identifierContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#hierarchical_array_identifier.
-    def exitHierarchical_array_identifier(self, ctx:SystemVerilogParser.Hierarchical_array_identifierContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#hierarchical_block_identifier.
-    def enterHierarchical_block_identifier(self, ctx:SystemVerilogParser.Hierarchical_block_identifierContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#hierarchical_block_identifier.
-    def exitHierarchical_block_identifier(self, ctx:SystemVerilogParser.Hierarchical_block_identifierContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#hierarchical_event_identifier.
-    def enterHierarchical_event_identifier(self, ctx:SystemVerilogParser.Hierarchical_event_identifierContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#hierarchical_event_identifier.
-    def exitHierarchical_event_identifier(self, ctx:SystemVerilogParser.Hierarchical_event_identifierContext):
-        pass
-
-
     # Enter a parse tree produced by SystemVerilogParser#hierarchical_identifier.
     def enterHierarchical_identifier(self, ctx:SystemVerilogParser.Hierarchical_identifierContext):
         pass
@@ -5183,66 +6371,12 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#hierarchical_net_identifier.
-    def enterHierarchical_net_identifier(self, ctx:SystemVerilogParser.Hierarchical_net_identifierContext):
+    # Enter a parse tree produced by SystemVerilogParser#hier_ref.
+    def enterHier_ref(self, ctx:SystemVerilogParser.Hier_refContext):
         pass
 
-    # Exit a parse tree produced by SystemVerilogParser#hierarchical_net_identifier.
-    def exitHierarchical_net_identifier(self, ctx:SystemVerilogParser.Hierarchical_net_identifierContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#hierarchical_parameter_identifier.
-    def enterHierarchical_parameter_identifier(self, ctx:SystemVerilogParser.Hierarchical_parameter_identifierContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#hierarchical_parameter_identifier.
-    def exitHierarchical_parameter_identifier(self, ctx:SystemVerilogParser.Hierarchical_parameter_identifierContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#hierarchical_property_identifier.
-    def enterHierarchical_property_identifier(self, ctx:SystemVerilogParser.Hierarchical_property_identifierContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#hierarchical_property_identifier.
-    def exitHierarchical_property_identifier(self, ctx:SystemVerilogParser.Hierarchical_property_identifierContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#hierarchical_sequence_identifier.
-    def enterHierarchical_sequence_identifier(self, ctx:SystemVerilogParser.Hierarchical_sequence_identifierContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#hierarchical_sequence_identifier.
-    def exitHierarchical_sequence_identifier(self, ctx:SystemVerilogParser.Hierarchical_sequence_identifierContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#hierarchical_task_identifier.
-    def enterHierarchical_task_identifier(self, ctx:SystemVerilogParser.Hierarchical_task_identifierContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#hierarchical_task_identifier.
-    def exitHierarchical_task_identifier(self, ctx:SystemVerilogParser.Hierarchical_task_identifierContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#hierarchical_tf_identifier.
-    def enterHierarchical_tf_identifier(self, ctx:SystemVerilogParser.Hierarchical_tf_identifierContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#hierarchical_tf_identifier.
-    def exitHierarchical_tf_identifier(self, ctx:SystemVerilogParser.Hierarchical_tf_identifierContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#hierarchical_variable_identifier.
-    def enterHierarchical_variable_identifier(self, ctx:SystemVerilogParser.Hierarchical_variable_identifierContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#hierarchical_variable_identifier.
-    def exitHierarchical_variable_identifier(self, ctx:SystemVerilogParser.Hierarchical_variable_identifierContext):
+    # Exit a parse tree produced by SystemVerilogParser#hier_ref.
+    def exitHier_ref(self, ctx:SystemVerilogParser.Hier_refContext):
         pass
 
 
@@ -5279,15 +6413,6 @@ class SystemVerilogParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by SystemVerilogParser#interface_instance_identifier.
     def exitInterface_instance_identifier(self, ctx:SystemVerilogParser.Interface_instance_identifierContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#inout_port_identifier.
-    def enterInout_port_identifier(self, ctx:SystemVerilogParser.Inout_port_identifierContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#inout_port_identifier.
-    def exitInout_port_identifier(self, ctx:SystemVerilogParser.Inout_port_identifierContext):
         pass
 
 
@@ -5444,33 +6569,6 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#ps_class_identifier.
-    def enterPs_class_identifier(self, ctx:SystemVerilogParser.Ps_class_identifierContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#ps_class_identifier.
-    def exitPs_class_identifier(self, ctx:SystemVerilogParser.Ps_class_identifierContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#ps_covergroup_identifier.
-    def enterPs_covergroup_identifier(self, ctx:SystemVerilogParser.Ps_covergroup_identifierContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#ps_covergroup_identifier.
-    def exitPs_covergroup_identifier(self, ctx:SystemVerilogParser.Ps_covergroup_identifierContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#ps_checker_identifier.
-    def enterPs_checker_identifier(self, ctx:SystemVerilogParser.Ps_checker_identifierContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#ps_checker_identifier.
-    def exitPs_checker_identifier(self, ctx:SystemVerilogParser.Ps_checker_identifierContext):
-        pass
-
-
     # Enter a parse tree produced by SystemVerilogParser#ps_identifier.
     def enterPs_identifier(self, ctx:SystemVerilogParser.Ps_identifierContext):
         pass
@@ -5489,57 +6587,30 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#ps_or_hierarchical_net_identifier.
-    def enterPs_or_hierarchical_net_identifier(self, ctx:SystemVerilogParser.Ps_or_hierarchical_net_identifierContext):
+    # Enter a parse tree produced by SystemVerilogParser#ps_or_hierarchical_identifier.
+    def enterPs_or_hierarchical_identifier(self, ctx:SystemVerilogParser.Ps_or_hierarchical_identifierContext):
         pass
 
-    # Exit a parse tree produced by SystemVerilogParser#ps_or_hierarchical_net_identifier.
-    def exitPs_or_hierarchical_net_identifier(self, ctx:SystemVerilogParser.Ps_or_hierarchical_net_identifierContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#ps_or_hierarchical_property_identifier.
-    def enterPs_or_hierarchical_property_identifier(self, ctx:SystemVerilogParser.Ps_or_hierarchical_property_identifierContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#ps_or_hierarchical_property_identifier.
-    def exitPs_or_hierarchical_property_identifier(self, ctx:SystemVerilogParser.Ps_or_hierarchical_property_identifierContext):
+    # Exit a parse tree produced by SystemVerilogParser#ps_or_hierarchical_identifier.
+    def exitPs_or_hierarchical_identifier(self, ctx:SystemVerilogParser.Ps_or_hierarchical_identifierContext):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#ps_or_hierarchical_sequence_identifier.
-    def enterPs_or_hierarchical_sequence_identifier(self, ctx:SystemVerilogParser.Ps_or_hierarchical_sequence_identifierContext):
+    # Enter a parse tree produced by SystemVerilogParser#ps_type_or_parameter_identifier.
+    def enterPs_type_or_parameter_identifier(self, ctx:SystemVerilogParser.Ps_type_or_parameter_identifierContext):
         pass
 
-    # Exit a parse tree produced by SystemVerilogParser#ps_or_hierarchical_sequence_identifier.
-    def exitPs_or_hierarchical_sequence_identifier(self, ctx:SystemVerilogParser.Ps_or_hierarchical_sequence_identifierContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#ps_or_hierarchical_tf_identifier.
-    def enterPs_or_hierarchical_tf_identifier(self, ctx:SystemVerilogParser.Ps_or_hierarchical_tf_identifierContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#ps_or_hierarchical_tf_identifier.
-    def exitPs_or_hierarchical_tf_identifier(self, ctx:SystemVerilogParser.Ps_or_hierarchical_tf_identifierContext):
+    # Exit a parse tree produced by SystemVerilogParser#ps_type_or_parameter_identifier.
+    def exitPs_type_or_parameter_identifier(self, ctx:SystemVerilogParser.Ps_type_or_parameter_identifierContext):
         pass
 
 
-    # Enter a parse tree produced by SystemVerilogParser#ps_parameter_identifier.
-    def enterPs_parameter_identifier(self, ctx:SystemVerilogParser.Ps_parameter_identifierContext):
+    # Enter a parse tree produced by SystemVerilogParser#gen_ref.
+    def enterGen_ref(self, ctx:SystemVerilogParser.Gen_refContext):
         pass
 
-    # Exit a parse tree produced by SystemVerilogParser#ps_parameter_identifier.
-    def exitPs_parameter_identifier(self, ctx:SystemVerilogParser.Ps_parameter_identifierContext):
-        pass
-
-
-    # Enter a parse tree produced by SystemVerilogParser#ps_type_identifier.
-    def enterPs_type_identifier(self, ctx:SystemVerilogParser.Ps_type_identifierContext):
-        pass
-
-    # Exit a parse tree produced by SystemVerilogParser#ps_type_identifier.
-    def exitPs_type_identifier(self, ctx:SystemVerilogParser.Ps_type_identifierContext):
+    # Exit a parse tree produced by SystemVerilogParser#gen_ref.
+    def exitGen_ref(self, ctx:SystemVerilogParser.Gen_refContext):
         pass
 
 
@@ -5561,12 +6632,30 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#simple_identifier.
+    def enterSimple_identifier(self, ctx:SystemVerilogParser.Simple_identifierContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#simple_identifier.
+    def exitSimple_identifier(self, ctx:SystemVerilogParser.Simple_identifierContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#specparam_identifier.
     def enterSpecparam_identifier(self, ctx:SystemVerilogParser.Specparam_identifierContext):
         pass
 
     # Exit a parse tree produced by SystemVerilogParser#specparam_identifier.
     def exitSpecparam_identifier(self, ctx:SystemVerilogParser.Specparam_identifierContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#system_tf_identifier.
+    def enterSystem_tf_identifier(self, ctx:SystemVerilogParser.System_tf_identifierContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#system_tf_identifier.
+    def exitSystem_tf_identifier(self, ctx:SystemVerilogParser.System_tf_identifierContext):
         pass
 
 
@@ -5588,6 +6677,15 @@ class SystemVerilogParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SystemVerilogParser#terminal_identifier.
+    def enterTerminal_identifier(self, ctx:SystemVerilogParser.Terminal_identifierContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#terminal_identifier.
+    def exitTerminal_identifier(self, ctx:SystemVerilogParser.Terminal_identifierContext):
+        pass
+
+
     # Enter a parse tree produced by SystemVerilogParser#topmodule_identifier.
     def enterTopmodule_identifier(self, ctx:SystemVerilogParser.Topmodule_identifierContext):
         pass
@@ -5603,6 +6701,15 @@ class SystemVerilogParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by SystemVerilogParser#type_identifier.
     def exitType_identifier(self, ctx:SystemVerilogParser.Type_identifierContext):
+        pass
+
+
+    # Enter a parse tree produced by SystemVerilogParser#udp_identifier.
+    def enterUdp_identifier(self, ctx:SystemVerilogParser.Udp_identifierContext):
+        pass
+
+    # Exit a parse tree produced by SystemVerilogParser#udp_identifier.
+    def exitUdp_identifier(self, ctx:SystemVerilogParser.Udp_identifierContext):
         pass
 
 
