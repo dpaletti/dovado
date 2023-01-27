@@ -19,7 +19,7 @@ class SystemVerilogParser(HdlAntlrParser):
     __grammar_top_rule: str = "source_text"
 
     def parse(self, to_parse: Path) -> SystemVerilogParsed:
-        token_stream, modules = self._hdl_parse(to_parse)
+        token_stream, modules = self._parse(to_parse)
         return SystemVerilogParsed(token_stream, modules)
 
     @property

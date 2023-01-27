@@ -14,7 +14,7 @@ from dovado_rtl.parsing_utilities.antlr.hdl.hdl_antlr_module import HdlAntlrModu
 class VerilogVisitor(VerilogParserVisitor):
     def visitSource_text(
         self, ctx: VerilogParser.Source_textContext
-    ) -> list[HdlAntlrModule]:
+    ) -> tuple[HdlAntlrModule]:
         modules: list[HdlAntlrModule]
         parsed_description: Optional[HdlAntlrModule]
 
@@ -25,7 +25,7 @@ class VerilogVisitor(VerilogParserVisitor):
                 parsed_description = self.visitDescription(description)
                 if parsed_description:
                     modules.append(parsed_description)
-        return modules
+        return tuple(modules)
 
     def visitDescription(
         self, ctx: VerilogParser.DescriptionContext

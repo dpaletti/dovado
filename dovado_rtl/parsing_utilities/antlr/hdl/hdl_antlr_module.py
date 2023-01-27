@@ -1,9 +1,5 @@
 from dataclasses import dataclass
-from dovado_rtl.parsing_utilities.antlr.antlr_module import (
-    AntlrModule,
-    RecursiveModule,
-    SimpleModule,
-)
+from dovado_rtl.parsing_utilities.antlr.antlr_module import AntlrModule
 
 from dovado_rtl.parsing_utilities.port import Port
 
@@ -14,5 +10,5 @@ class ModuleWithPorts:
 
 
 @dataclass
-class HdlAntlrModule(RecursiveModule["HdlAntlrModule"], SimpleModule, ModuleWithPorts):
+class HdlAntlrModule(AntlrModule, ModuleWithPorts):
     ...

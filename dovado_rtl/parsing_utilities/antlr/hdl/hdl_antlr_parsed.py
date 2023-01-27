@@ -1,17 +1,18 @@
-from abc import ABC
+#!/usr/bin/env python3
+from typing import cast
 
 from antlr4 import TokenStream
-from dovado_rtl.parsing_utilities import HdlAntlrModule, AntlrParsed, AntlrParameter
+from dovado_rtl.parsing_utilities.antlr.antlr_parsed import AntlrParsed
+from dovado_rtl.parsing_utilities.antlr.hdl.hdl_antlr_module import HdlAntlrModule
 
 
-class HdlAntlrParsed(AntlrParsed, ABC):
-    def __init__(self, token_stream: TokenStream, modules: list[HdlAntlrModule]):
-        super().__init__(token_stream)
-        self.modules = modules
+class HdlAntlrParsed(AntlrParsed):
+    def __init__(
+        self, token_stream: TokenStream, modules: tuple[HdlAntlrModule]
+    ) -> None:
+        super().__init__(token_stream, modules)
+        self._modules = modules
 
-    def _get_parameter(self, name: str) -> AntlrParameter:
-        for module in self.modules:
-            for parameter in module.parameters:
-                if parameter.name == name:
-                    return parameter
-        raise ValueError("Parameter with name " + str(name) + " does not exists.")
+    @property
+    def modules(self) -> tuple[HdlAntlrModule]:
+        return self._modules

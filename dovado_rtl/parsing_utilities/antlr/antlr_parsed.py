@@ -1,22 +1,32 @@
 from abc import ABC, abstractmethod
+from typing import TypeVar
 from antlr4 import TokenStream
 from antlr4.TokenStreamRewriter import TokenStreamRewriter
+from dovado_rtl.parsing_utilities.antlr.antlr_module import AntlrModule
 
 from dovado_rtl.parsing_utilities.antlr.antlr_parameter import AntlrParameter
 
 
 class AntlrParsed(ABC):
-    def __init__(self, token_stream: TokenStream) -> None:
+    def __init__(self, token_stream: TokenStream, modules: tuple[AntlrModule]) -> None:
+        self._modules = modules
         self.__rewriter = TokenStreamRewriter(token_stream)
 
-    @abstractmethod
-    def _get_parameter(self, name: str) -> AntlrParameter:
-        ...
+    @property
+    def modules(self) -> tuple[AntlrModule]:
+        return self._modules
 
     @property
     @abstractmethod
     def _parameter_initialization_prefix(self) -> str:
         ...
+
+    def _get_parameter(self, name: str) -> AntlrParameter:
+        for module in self.modules:
+            for parameter in module.parameters:
+                if parameter.name == name:
+                    return parameter
+        raise ValueError("Parameter with name " + str(name) + " does not exists.")
 
     def _lazy_replace(self, parameter: AntlrParameter, value: str) -> None:
         parameter.value = value

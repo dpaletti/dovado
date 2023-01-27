@@ -31,6 +31,13 @@ def test_neorv_top_parsing():
     clk_port = entity.ports[0]
 
     assert clk_port.name == "clk_i"
+    assert clk_port.dimension == "scalar"
+    assert clk_port.direction == "input"
+
+    wb_tag_o = entity.ports[7]
+    assert wb_tag_o.name == "wb_tag_o"
+    assert wb_tag_o.dimension == "vectorial"
+    assert wb_tag_o.direction == "output"
 
     assert (
         parsed.replace({"CLOCK_FREQUENCY": "10", "HW_THREAD_ID": "11"})

@@ -1,11 +1,12 @@
-from dovado_rtl.parsing_utilities import HdlAntlrParsed
+from dovado_rtl.parsing_utilities.antlr.hdl.hdl_antlr_module import HdlAntlrModule
+from dovado_rtl.parsing_utilities.antlr.hdl.hdl_antlr_parsed import HdlAntlrParsed
 
 
 class VhdlParsed(HdlAntlrParsed):
     parameter_intialization_prefix: str = ":="
 
     @property
-    def entities(self):
+    def entities(self) -> tuple[HdlAntlrModule]:
         return self.modules
 
     @property

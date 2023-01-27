@@ -10,8 +10,7 @@ from dovado_rtl.parsing_utilities.port import PORT_DIMENSION, PORT_DIRECTION
 class VhdlVisitor(vhdlVisitor):
     def visitDesign_file(
         self, ctx: vhdlParser.Design_fileContext
-    ) -> list[HdlAntlrModule]:
-        parsed_module: Optional[HdlAntlrModule]
+    ) -> tuple[HdlAntlrModule]:
         modules: list[HdlAntlrModule]
 
         design_units = ctx.design_unit()
@@ -23,7 +22,7 @@ class VhdlVisitor(vhdlVisitor):
                 if module is not None:
                     modules.append(module)
 
-        return modules
+        return tuple(modules)
 
     def visitDesign_unit(
         self, ctx: vhdlParser.Design_unitContext
