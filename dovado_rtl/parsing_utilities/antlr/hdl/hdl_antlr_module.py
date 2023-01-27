@@ -1,13 +1,18 @@
 from dataclasses import dataclass
-from typing import Optional
-from dovado_rtl.parsing_utilities.antlr.antlr_parameter import AntlrParameter
+from dovado_rtl.parsing_utilities.antlr.antlr_module import (
+    AntlrModule,
+    RecursiveModule,
+    SimpleModule,
+)
 
 from dovado_rtl.parsing_utilities.port import Port
 
 
 @dataclass
-class HdlAntlrModule:
-    name: str
-    parameters: list[AntlrParameter]
+class ModuleWithPorts:
     ports: list[Port]
-    submodules: Optional[list["HdlAntlrModule"]] = None
+
+
+@dataclass
+class HdlAntlrModule(RecursiveModule["HdlAntlrModule"], SimpleModule, ModuleWithPorts):
+    ...

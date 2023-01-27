@@ -1,396 +1,243 @@
-from antlr4 import ParserRuleContext, Token
-from dovado_rtl.parsers.antlr.hdl.hdl_representation import (
-    Entity,
-    PortDirectionEnum,
-    PortTypeEnum,
-    Port,
-    PortDirection,
-    PortType,
-)
-from dovado_rtl.parsers.antlr.hdl.hdl_antlr_parameter import (
-    ParameterTypeEnum,
-    ParameterType,
-    HdlAntlrParameter,
-)
-from dovado_rtl.parsers.vhdl2019.generated.vhdlVisitor import vhdlVisitor
-from dovado_rtl.parsers.vhdl2019.generated.vhdlParser import vhdlParser
-from typing import List, Iterator, Optional, Union, Tuple
-from itertools import repeat
+from typing import Optional, Union
 
-from dovado_rtl.parsing_utilities.antlr.hdl.hdl_representation import HDLVisitor
+from antlr4 import IllegalStateException
+from dovado_rtl.parsing_utilities import AntlrParameter, Port, HdlAntlrModule
+from dovado_rtl.parsers.vhdl.generated.vhdlVisitor import vhdlVisitor
+from dovado_rtl.parsers.vhdl.generated.vhdlParser import vhdlParser
+from dovado_rtl.parsing_utilities.port import PORT_DIMENSION, PORT_DIRECTION
 
 
-class VhdlVisitor(vhdlVisitor, HDLVisitor):
-    def __init__(self):
-        HDLVisitor.__init__(self)
+class VhdlVisitor(vhdlVisitor):
+    def visitDesign_file(
+        self, ctx: vhdlParser.Design_fileContext
+    ) -> list[HdlAntlrModule]:
+        parsed_module: Optional[HdlAntlrModule]
+        modules: list[HdlAntlrModule]
 
-    def visitDesign_file(self, ctx: vhdlParser.Design_fileContext):
-        for d in ctx.design_unit():
-            self.visitDesign_unit(d)
+        design_units = ctx.design_unit()
 
-    def visitDesign_unit(self, ctx: vhdlParser.Design_unitContext):
-        self.visitContext_clause(ctx.context_clause())
-        self.visitLibrary_unit(ctx.library_unit())
+        modules = []
+        if design_units:
+            for design_unit in design_units:
+                module = self.visitDesign_unit(design_unit)
+                if module is not None:
+                    modules.append(module)
 
-    def visitContext_clause(self, ctx: vhdlParser.Context_clauseContext):
-        for i in ctx.context_item():
-            self.visitContext_item(i)
+        return modules
 
-    def visitContext_item(self, ctx: vhdlParser.Context_itemContext):
-        if ctx.library_clause():
-            self.visitLibrary_clause(ctx.library_clause())
-        if ctx.use_clause():
-            self.visitUse_clause(ctx.use_clause())
+    def visitDesign_unit(
+        self, ctx: vhdlParser.Design_unitContext
+    ) -> Optional[HdlAntlrModule]:
+        # context clause is ignored
+        library_unit = ctx.library_unit()
 
-    def visitLibrary_clause(self, ctx: vhdlParser.Library_clauseContext):
-        for ln in self.visitLogical_name_list(ctx.logical_name_list()):
-            self.top_level.add_library(ln)
+        if library_unit:
+            return self.visitLibrary_unit(library_unit)
+        return None
 
-    def visitUse_clause(self, ctx: vhdlParser.Use_clauseContext):
-        for n in ctx.selected_name():
-            self.top_level.add_used(self.visitSelected_name(n))
+    def visitLibrary_unit(
+        self, ctx: vhdlParser.Library_unitContext
+    ) -> Optional[HdlAntlrModule]:
+        primary_unit = ctx.primary_unit()
 
-    def visitLogical_name_list(
-        self, ctx: vhdlParser.Logical_name_listContext
-    ) -> Iterator[str]:
-        for i in ctx.logical_name():
-            yield self.visitLogical_name(i)
+        if primary_unit:
+            return self.visitPrimary_unit(primary_unit)
+        return None
 
-    def visitLogical_name(self, ctx: vhdlParser.Logical_nameContext) -> str:
-        return self.visitIdentifier(ctx.identifier())
+    def visitPrimary_unit(
+        self, ctx: vhdlParser.Primary_unitContext
+    ) -> Optional[HdlAntlrModule]:
+        # packages and configurations are ignored
+        entity_declaration = ctx.entity_declaration()
 
-    def visitIdentifier_list(
-        self, ctx: vhdlParser.Identifier_listContext
-    ) -> Iterator[str]:
-        for i in ctx.identifier():
-            yield self.visitIdentifier(i)
-
-    def visitSelected_name(self, ctx: vhdlParser.Selected_nameContext) -> str:
-        out = self.visitIdentifier(ctx.identifier())
-        for s in ctx.suffix():
-            suff = self.visitSuffix(s)
-            if suff:
-                out += "." + suff
-        return out
-
-    def visitSuffix(self, ctx: vhdlParser.SuffixContext) -> Optional[str]:
-        if ctx.identifier():
-            return self.visitIdentifier(ctx.identifier())
-        if ctx.CHARACTER_LITERAL():
-            return ctx.CHARACTER_LITERAL().getText()
-        if ctx.STRING_LITERAL():
-            return ctx.STRING_LITERAL().getText()
-        if ctx.ALL():
-            return ctx.ALL().getText()
-
-    def visitIdentifier(self, ctx: vhdlParser.IdentifierContext):
-        return (
-            ctx.BASIC_IDENTIFIER().getText()
-            if ctx.BASIC_IDENTIFIER()
-            else ctx.EXTENDED_IDENTIFIER()
-        )
-
-    def visitLibrary_unit(self, ctx: vhdlParser.Library_unitContext):
-        if ctx.primary_unit():
-            self.visitPrimary_unit(ctx.primary_unit())
-        if ctx.secondary_unit():
-            # architecture body and package body ignored
-            pass
-
-    def visitPrimary_unit(self, ctx: vhdlParser.Primary_unitContext):
-        if ctx.entity_declaration():
-            self.visitEntity_declaration(ctx.entity_declaration())
-        else:
-            pass
+        if entity_declaration:
+            return self.visitEntity_declaration(entity_declaration)
+        return None
 
     def visitEntity_declaration(self, ctx: vhdlParser.Entity_declarationContext):
-        self.entities.append(Entity(self.visitIdentifier(ctx.identifier()[0])))
-        if ctx.entity_header():
-            self.visitEntity_header(ctx.entity_header())
+        parsed_identifier: str
+        parameters: list[AntlrParameter]
+        ports: list[Port]
 
-    def visitEntity_header(self, ctx: vhdlParser.Entity_headerContext):
-        if ctx.generic_clause():
-            self.visitGeneric_clause(ctx.generic_clause())
-        if ctx.port_clause():
-            self.visitPort_clause(ctx.port_clause())
+        identifiers = ctx.identifier()
+        entity_header = ctx.entity_header()
 
-    def visitGeneric_clause(self, ctx: vhdlParser.Generic_clauseContext):
-        self.visitGeneric_list(ctx.generic_list())
-
-    def visitPort_clause(self, ctx: vhdlParser.Port_clauseContext):
-        self.visitPort_list(ctx.port_list())
-
-    def visitGeneric_list(self, ctx: vhdlParser.Generic_listContext):
-        for interface_declaration in ctx.interface_constant_declaration():
-            for (
-                name,
-                p_type,
-                token,
-                has_default,
-            ) in self.visitInterface_constant_declaration(interface_declaration):
-                if isinstance(p_type, ParameterType):
-                    self.entities[-1].add_parameter(
-                        HdlAntlrParameter(
-                            name=name,
-                            value=token.getText() if has_default else "",
-                            rule=token,
-                            type=p_type,
-                            has_default=has_default,
-                        )
-                    )
-
-    def visitPort_list(self, ctx: vhdlParser.Port_listContext):
-        for i in self.visitInterface_port_list(ctx.interface_port_list()):
-            p_dir = i[1]
-            p_type = i[2]
-            if (
-                len(i) == 3
-                and isinstance(p_dir, PortDirection)
-                and isinstance(p_type, PortType)
-            ):
-                self.entities[-1].add_port(Port(i[0], p_dir, p_type))
+        if identifiers:
+            # skipping the second name declaration
+            parsed_identifier = identifiers[0].getText()
+            if entity_header:
+                parameters, ports = self.visitEntity_header(entity_header)
+                return HdlAntlrModule(
+                    name=parsed_identifier, parameters=parameters, ports=ports
+                )
             else:
-                pass
+                raise IllegalStateException("Entity must have a header section")
 
-    # Only natural and boolean parameters are considered
+        else:
+            raise IllegalStateException("Identifier is mandatory for an entity")
 
-    def visitInterface_port_list(self, ctx: vhdlParser.Interface_port_listContext):
-        for i in ctx.interface_port_declaration():
-            yield self.visitInterface_port_declaration(i)
+    def visitEntity_header(
+        self, ctx: vhdlParser.Entity_headerContext
+    ) -> tuple[list[AntlrParameter], list[Port]]:
+        ports: list[Port]
+        parameters: list[AntlrParameter]
+
+        generic_clause = ctx.generic_clause()
+        port_clause = ctx.port_clause()
+
+        ports = []
+        parameters = []
+        if generic_clause:
+            parameters = self.visitGeneric_clause(generic_clause)
+        if port_clause:
+            ports = self.visitPort_clause(port_clause)
+        return parameters, ports
+
+    def visitGeneric_clause(
+        self, ctx: vhdlParser.Generic_clauseContext
+    ) -> list[AntlrParameter]:
+        generic_list = ctx.generic_list()
+
+        if generic_list:
+            return self.visitGeneric_list(generic_list)
+        return []
+
+    def visitPort_clause(self, ctx: vhdlParser.Port_clauseContext) -> list[Port]:
+        port_list = ctx.port_list()
+        if port_list:
+            return self.visitPort_list(port_list)
+        return []
+
+    def visitPort_list(self, ctx: vhdlParser.Port_listContext) -> list[Port]:
+        interface_port_list = ctx.interface_port_list()
+
+        if interface_port_list:
+            return self.visitInterface_port_list(interface_port_list)
+        return []
+
+    def visitInterface_port_list(
+        self, ctx: vhdlParser.Interface_port_listContext
+    ) -> list[Port]:
+        ports: list[Port]
+
+        interface_port_declarations = ctx.interface_port_declaration()
+
+        ports = []
+        if interface_port_declarations:
+            for interface_port_declaration in interface_port_declarations:
+                ports += self.visitInterface_port_declaration(
+                    interface_port_declaration
+                )
+        return ports
 
     def visitInterface_port_declaration(
         self, ctx: vhdlParser.Interface_port_declarationContext
-    ):
-        out = []
-        if not ctx.signal_mode():
-            raise Exception(
-                "Please specify signal mode (input, output, ...) for "
-                + str(self.visitIdentifier_list)
-                + " skipping..."
-            )
-        for i, s, t in zip(
-            self.visitIdentifier_list(ctx.identifier_list()),
-            repeat(self.visitSignal_mode(ctx.signal_mode())),
-            repeat(self.visitSubtype_indication(ctx.subtype_indication())),
-        ):
-            return i, s, t
+    ) -> list[Port]:
+        identifiers: list[str]
+        port_direction: PORT_DIRECTION
+        port_dimension: PORT_DIMENSION
 
-    def visitInterface_list(
-        self, ctx: vhdlParser.Interface_listContext
-    ) -> Union[
-        List[Tuple[str, ParameterType, Token, bool]],
-        List[Tuple[str, PortDirection, PortType]],
-    ]:
-        out = []
-        for i in ctx.interface_element():
-            for e in self.visitInterface_element(i):
-                out.append(e)
-        return out
+        identifier_list = ctx.identifier_list()
+        signal_mode = ctx.signal_mode()
+        subtype_indication = ctx.subtype_indication()
 
-    def visitInterface_element(
-        self, ctx: vhdlParser.Interface_elementContext
-    ) -> Union[
-        Union[
-            Iterator[Tuple[str, ParameterType]],
-            Union[
-                List[Tuple[str, ParameterType, Token, bool]],
-                List[Tuple[str, PortDirection, PortType]],
-            ],
-        ],
-        None,
-    ]:
-        return self.visitInterface_declaration(ctx.interface_declaration())
-
-    def visitInterface_declaration(
-        self, ctx: vhdlParser.Interface_declarationContext
-    ) -> Union[
-        Union[
-            Iterator[Tuple[str, ParameterType]],
-            Union[
-                List[Tuple[str, ParameterType, Token, bool]],
-                List[Tuple[str, PortDirection, PortType]],
-            ],
-        ],
-        None,
-    ]:
-        if ctx.interface_object_declaration():
-            return self.visitInterface_object_declaration(
-                ctx.interface_object_declaration()
-            )
-        else:
-            return []
-
-    def visitInterface_object_declaration(
-        self, ctx: vhdlParser.Interface_declarationContext
-    ) -> Union[
-        Union[
-            Iterator[Tuple[str, ParameterType]],
-            Union[
-                List[Tuple[str, ParameterType, Token, bool]],
-                List[Tuple[str, PortDirection, PortType]],
-            ],
-        ],
-        None,
-    ]:
-        if ctx.interface_constant_declaration():
-            return self.visitInterface_constant_declaration(
-                ctx.interface_constant_declaration()
-            )
-        if ctx.interface_signal_declaration():
-            return self.visitInterface_signal_declaration(
-                ctx.interface_signal_declaration()
-            )
-
-    def visitInterface_constant_declaration(
-        self, ctx: vhdlParser.Interface_constant_declarationContext
-    ) -> Iterator[Tuple[str, ParameterType, ParserRuleContext, bool]]:
-        for i, t in zip(
-            self.visitIdentifier_list(ctx.identifier_list()),
-            repeat(self.visitSubtype_indication(ctx.subtype_indication())),
-        ):
-            expression_token: ParserRuleContext = ctx.expression()
-            token = expression_token if expression_token else ctx.subtype_indication()
-            if isinstance(t, ParameterType):
-                yield i, t, token, True if expression_token else False
+        if identifier_list:
+            identifiers = self.visitIdentifier_list(identifier_list)
+            if signal_mode:
+                port_direction = self.visitSignal_mode(signal_mode)
             else:
-                pass
+                # if no direction is specified
+                # the standard assumes input
+                port_direction = "input"
 
-    def visitInterface_signal_declaration(
-        self, ctx: vhdlParser.Interface_signal_declarationContext
-    ) -> Union[
-        List[Tuple[str, ParameterType]],
-        List[Tuple[str, PortDirection, PortType]],
-    ]:
-        out = []
-        if not ctx.signal_mode():
-            for i, t in zip(
-                self.visitIdentifier_list(ctx.identifier_list()),
-                repeat(self.visitSubtype_indication(ctx.subtype_indication())),
-            ):
-                if isinstance(t, ParameterType):
-                    out.append((i, t))
-                else:
-                    pass
-            return out
-        else:
-            for i, s, t in zip(
-                self.visitIdentifier_list(ctx.identifier_list()),
-                repeat(self.visitSignal_mode(ctx.signal_mode())),
-                repeat(self.visitSubtype_indication(ctx.subtype_indication())),
-            ):
-                if isinstance(t, PortType):
-                    out.append((i, s, t))
-                else:
-                    pass
-            return out
+            if subtype_indication:
+                port_dimension = self.visitSubtype_indication(subtype_indication)
+            else:
+                raise IllegalStateException("Type is mandatory in port declaration")
 
-    def visitSignal_mode(self, ctx: vhdlParser.Signal_modeContext) -> PortDirection:
-        return (
-            PortDirection(PortDirectionEnum.INPUT, "input")
-            if ctx.IN()
-            else PortDirection(PortDirectionEnum.OUTPUT, "output")
-            if ctx.OUT()
-            else PortDirection(PortDirectionEnum.OTHER, "buffer")
-            if ctx.BUFFER()
-            else PortDirection(PortDirectionEnum.OTHER, "inout")
-            if ctx.INOUT()
-            else PortDirection(PortDirectionEnum.OTHER, "linkage")
-        )
+            return [
+                Port(
+                    name=identifier,
+                    direction=port_direction,
+                    dimension=port_dimension,
+                )
+                for identifier in identifiers
+            ]
+        return []
 
     def visitSubtype_indication(
         self, ctx: vhdlParser.Subtype_indicationContext
-    ) -> Union[PortType, ParameterType, None]:
-        type = self.visitSelected_name(ctx.selected_name()[0])
-        if type == "std_logic":
-            return PortType(PortTypeEnum.SCALAR, "std_logic")
-        if type == "std_ulogic":
-            return PortType(PortTypeEnum.SCALAR, "std_ulogic")
-        if type == "std_ulogic_vector":
-            return PortType(PortTypeEnum.VECTOR, "std_ulogic_vector")
-        elif type == "std_logic_vector":
-            return PortType(PortTypeEnum.VECTOR, "std_logic_vector")
-        elif type == "integer":
-            return ParameterType(ParameterTypeEnum.INTEGER, "integer")
-        elif type == "natural":
-            return ParameterType(ParameterTypeEnum.INTEGER, "natural")
-        elif type == "positive":
-            return ParameterType(ParameterTypeEnum.INTEGER, "positive")
-        elif type == "signed":
-            return ParameterType(ParameterTypeEnum.INTEGER, "signed")
-        elif type == "unsigned":
-            return ParameterType(ParameterTypeEnum.INTEGER, "unsigned")
-        elif type == "boolean":
-            return ParameterType(ParameterTypeEnum.BOOL, "boolean")
+    ) -> PORT_DIMENSION:
+        if ctx.constraint():
+            return "vectorial"
         else:
-            pass
+            return "scalar"
 
-    def visitName(self, ctx: vhdlParser.NameContext) -> Optional[str]:
-        if ctx.name_literal():
-            return self.visitName_literal(ctx.name_literal())
-        if ctx.external_name():
-            return self.visitExternal_name(ctx.external_name())
-        else:
-            return self.visitName(ctx.name())
-            # skipping range in e.g. std_logic_vector
+    def visitSignal_mode(self, ctx: vhdlParser.Signal_modeContext) -> PORT_DIRECTION:
+        if ctx.IN():
+            return "input"
+        if ctx.OUT():
+            return "output"
+        if ctx.INOUT():
+            return "inout"
+        if ctx.BUFFER():
+            return "input"
+        if ctx.LINKAGE():
+            return "input"
+        raise IllegalStateException("Found illegal signal mode")
 
-    def visitName_literal(self, ctx) -> Optional[str]:
-        if ctx.identifier():
-            return self.visitIdentifier(ctx.identifier())
-        if ctx.operator_symbol():
-            return self.visitOperator_symbol(ctx.operator_symbol())
-        if ctx.CHARACTER_LITERAL():
-            return ctx.CHARACTER_LITERAL().getText()
+    def visitGeneric_list(self, ctx: vhdlParser.Generic_listContext):
+        parameters: list[AntlrParameter]
+        interface_constant_declarations = ctx.interface_constant_declaration()
 
-    def visitOperator_symbol(self, ctx: vhdlParser) -> str:
-        return ctx.STRING_LITERAL().getText()
+        parameters = []
+        if interface_constant_declarations:
+            for interface_constant_declaration in interface_constant_declarations:
+                parameters += self.visitInterface_constant_declaration(
+                    interface_constant_declaration
+                )
 
-    def visitExternal_name(self, ctx) -> str:
-        return (
-            ctx.SHIFT_LEFT().getText() + ctx.KW_VARIABLE().getText()
-            if ctx.KW_VARIABLE()
-            else ctx.KW_CONSTANT().getText()
-            if ctx.KW_CONSTANT
-            else ctx.KW_SIGNAL().getText()
-            + self.visitExternal_pathname(ctx.external_pathname())
-            + ctx.COLON().getText()
-            + self.visitSubtype_indication(ctx.subtype_indication())
-            + ctx.SHIFT_RIGHT().getText()
-        )
+        return parameters
 
-    def visitExternal_pathname(self, ctx) -> Optional[str]:
-        if ctx.package_pathname():
-            return self.visitPackage_pathname(ctx.package_pathname())
-        if ctx.absolute_pathname():
-            return self.visitAbsolute_pathname(ctx.absolute_pathname())
-        if ctx.relative_pathname():
-            return self.visitRelative_pathname(ctx.relative_pathname())
+    def visitInterface_constant_declaration(
+        self, ctx: vhdlParser.Interface_constant_declarationContext
+    ) -> list[AntlrParameter]:
+        identifiers: list[str]
+        value: str
+        rule: Union[vhdlParser.ExpressionContext, vhdlParser.Identifier_listContext]
 
-    def visitPackage_pathname(self, ctx) -> str:
-        out = ctx.AT().getText()
-        for i in ctx.identifier()[:-1]:
-            out += self.visitIdentifier(i) + "."
-        return out + self.visitIdentifier(ctx.identifier()[-1])
+        identifier_list = ctx.identifier_list()
+        expression = ctx.expression()
+        subtype_indication = ctx.subtype_indication()
 
-    def visitAbsolute_pathname(self, ctx) -> str:
-        return "." + self.visitPartial_pathname(ctx.partial_pathname())
+        if identifier_list:
+            identifiers = self.visitIdentifier_list(identifier_list)
 
-    def visitRelative_pathname(self, ctx) -> str:
-        return (
-            (ctx.UP().getText() + ".")
-            if ctx.UP()
-            else "" + self.visitPartial_pathname(ctx.partial_pathname())
-        )
+            value = ""
+            if expression:
+                value = expression.getText()
+                rule = expression
+            else:
+                if subtype_indication:
+                    rule = subtype_indication
+                else:
+                    raise IllegalStateException("Generics must be strictly typed")
 
-    def visitPartial_pathname(self, ctx) -> str:
-        out = ""
-        for p in ctx.pathname_element():
-            out += self.visitPathname_element(p) + "."
-        return out + self.visitIdentifier(ctx.identifier())
+            return [
+                AntlrParameter(
+                    name=identifier,
+                    value=value,
+                    rule=rule,
+                    has_default=True if value != "" else False,
+                )
+                for identifier in identifiers
+            ]
+        return []
 
-    def visitPathname_element(self, ctx) -> str:
-        if ctx.expression():
-            print("Expression in pathname are not supported, skipping")
-        return self.visitLabel(ctx.label())
+    def visitIdentifier_list(self, ctx: vhdlParser.Identifier_listContext) -> list[str]:
+        identifiers = ctx.identifier()
 
-    def visitLabel(self, ctx) -> str:
-        return self.visitIdentifier(ctx.identifier())
+        if identifiers:
+            return [identifier.getText() for identifier in identifiers]
+
+        return []
