@@ -7,3 +7,6 @@
 [submodule "tests/cv32e40p"]
 	path = tests/resources/cv32e40p
 	url = https://github.com/openhwgroup/cv32e40p
+[submodule "tests/resources/rocket-chip"]
+	path = tests/resources/rocket-chip
+	url = https://github.com/chipsalliance/rocket-chip
