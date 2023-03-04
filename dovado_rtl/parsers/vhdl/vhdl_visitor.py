@@ -1,7 +1,8 @@
-from typing import Optional, Union
+from typing import Optional, Sequence, Union
 
 from antlr4 import IllegalStateException
-from dovado_rtl.parsing_utilities import AntlrParameter, Port, HdlAntlrModule
+from dovado_rtl.parsers.vhdl.vhdl_parameter import VhdlParameter
+from dovado_rtl.parsing_utilities import Port, HdlAntlrModule
 from dovado_rtl.parsers.vhdl.generated.vhdlVisitor import vhdlVisitor
 from dovado_rtl.parsers.vhdl.generated.vhdlParser import vhdlParser
 from dovado_rtl.parsing_utilities.port import PORT_DIMENSION, PORT_DIRECTION
@@ -10,7 +11,7 @@ from dovado_rtl.parsing_utilities.port import PORT_DIMENSION, PORT_DIRECTION
 class VhdlVisitor(vhdlVisitor):
     def visitDesign_file(
         self, ctx: vhdlParser.Design_fileContext
-    ) -> tuple[HdlAntlrModule]:
+    ) -> Sequence[HdlAntlrModule]:
         modules: list[HdlAntlrModule]
 
         design_units = ctx.design_unit()
@@ -22,7 +23,7 @@ class VhdlVisitor(vhdlVisitor):
                 if module is not None:
                     modules.append(module)
 
-        return tuple(modules)
+        return modules
 
     def visitDesign_unit(
         self, ctx: vhdlParser.Design_unitContext
@@ -55,7 +56,7 @@ class VhdlVisitor(vhdlVisitor):
 
     def visitEntity_declaration(self, ctx: vhdlParser.Entity_declarationContext):
         parsed_identifier: str
-        parameters: list[AntlrParameter]
+        parameters: list[VhdlParameter]
         ports: list[Port]
 
         identifiers = ctx.identifier()
@@ -77,9 +78,9 @@ class VhdlVisitor(vhdlVisitor):
 
     def visitEntity_header(
         self, ctx: vhdlParser.Entity_headerContext
-    ) -> tuple[list[AntlrParameter], list[Port]]:
+    ) -> tuple[list[VhdlParameter], list[Port]]:
         ports: list[Port]
-        parameters: list[AntlrParameter]
+        parameters: list[VhdlParameter]
 
         generic_clause = ctx.generic_clause()
         port_clause = ctx.port_clause()
@@ -94,7 +95,7 @@ class VhdlVisitor(vhdlVisitor):
 
     def visitGeneric_clause(
         self, ctx: vhdlParser.Generic_clauseContext
-    ) -> list[AntlrParameter]:
+    ) -> list[VhdlParameter]:
         generic_list = ctx.generic_list()
 
         if generic_list:
@@ -150,7 +151,7 @@ class VhdlVisitor(vhdlVisitor):
                 port_direction = "input"
 
             if subtype_indication:
-                port_dimension = self.visitSubtype_indication(subtype_indication)
+                _, port_dimension = self.visitSubtype_indication(subtype_indication)
             else:
                 raise IllegalStateException("Type is mandatory in port declaration")
 
@@ -164,13 +165,49 @@ class VhdlVisitor(vhdlVisitor):
             ]
         return []
 
+    @staticmethod
+    def is_subtype_scalar_boolean(selected_names: list[str]) -> bool:
+        if len(selected_names) > 1:
+            return False
+        return selected_names[0] == "boolean"
+
     def visitSubtype_indication(
         self, ctx: vhdlParser.Subtype_indicationContext
-    ) -> PORT_DIMENSION:
-        if ctx.constraint():
-            return "vectorial"
+    ) -> tuple[bool, PORT_DIMENSION]:
+        parsed_selected_names: list[str]
+
+        selected_names = ctx.selected_name()
+        if selected_names:
+            parsed_selected_names = [
+                self.visitSelected_name(selected_name)
+                for selected_name in selected_names
+            ]
         else:
-            return "scalar"
+            raise IllegalStateException(
+                "A subtype indication must contain at least one type"
+            )
+
+        if ctx.constraint():
+            return False, "vectorial"
+        else:
+            return self.is_subtype_scalar_boolean(parsed_selected_names), "scalar"
+
+    def visitSelected_name(self, ctx: vhdlParser.Selected_nameContext) -> str:
+        identifier = ctx.identifier()
+        if identifier:
+            return self.visitIdentifier(identifier)
+        raise IllegalStateException("A selected name must contain an identifier")
+
+    def visitIdentifier(self, ctx: vhdlParser.IdentifierContext) -> str:
+        basic_identifier = ctx.BASIC_IDENTIFIER()
+        extended_identifier = ctx.EXTENDED_IDENTIFIER()
+        if basic_identifier:
+            return str(basic_identifier)
+        if extended_identifier:
+            return str(extended_identifier)
+        raise IllegalStateException(
+            "An identifier must contain either a base identifier or an extended identifier"
+        )
 
     def visitSignal_mode(self, ctx: vhdlParser.Signal_modeContext) -> PORT_DIRECTION:
         if ctx.IN():
@@ -186,7 +223,7 @@ class VhdlVisitor(vhdlVisitor):
         raise IllegalStateException("Found illegal signal mode")
 
     def visitGeneric_list(self, ctx: vhdlParser.Generic_listContext):
-        parameters: list[AntlrParameter]
+        parameters: list[VhdlParameter]
         interface_constant_declarations = ctx.interface_constant_declaration()
 
         parameters = []
@@ -200,7 +237,7 @@ class VhdlVisitor(vhdlVisitor):
 
     def visitInterface_constant_declaration(
         self, ctx: vhdlParser.Interface_constant_declarationContext
-    ) -> list[AntlrParameter]:
+    ) -> list[VhdlParameter]:
         identifiers: list[str]
         value: str
         rule: Union[vhdlParser.ExpressionContext, vhdlParser.Identifier_listContext]
@@ -208,6 +245,9 @@ class VhdlVisitor(vhdlVisitor):
         identifier_list = ctx.identifier_list()
         expression = ctx.expression()
         subtype_indication = ctx.subtype_indication()
+
+        if not subtype_indication:
+            raise IllegalStateException("Generics must be strictly typed")
 
         if identifier_list:
             identifiers = self.visitIdentifier_list(identifier_list)
@@ -217,17 +257,15 @@ class VhdlVisitor(vhdlVisitor):
                 value = expression.getText()
                 rule = expression
             else:
-                if subtype_indication:
-                    rule = subtype_indication
-                else:
-                    raise IllegalStateException("Generics must be strictly typed")
+                rule = subtype_indication
 
             return [
-                AntlrParameter(
+                VhdlParameter(
                     name=identifier,
                     value=value,
                     rule=rule,
                     has_default=True if value != "" else False,
+                    is_boolean=self.visitSubtype_indication(subtype_indication)[0],
                 )
                 for identifier in identifiers
             ]

@@ -29,6 +29,6 @@ def test_cv32e40p_core_parsing():
     assert module.ports[-1].direction == "output"
 
     assert (
-        parsed.replace({"PULP_XPULP": "1"})
+        parsed.replace({"cv32e40p_core": {"PULP_XPULP": "1"}})
         == Path(path_prexif + "/replaced_cv32e40p_core.sv").read_text()
     )

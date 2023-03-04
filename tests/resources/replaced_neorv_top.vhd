@@ -50,7 +50,7 @@ entity neorv32_top is
     CLOCK_FREQUENCY              : natural:=10;           -- clock frequency of clk_i in Hz
     HW_THREAD_ID                 : natural := 11;      -- hardware thread id (32-bit)
     CUSTOM_ID                    : std_ulogic_vector(31 downto 0) := x"00000000"; -- custom user-defined ID
-    INT_BOOTLOADER_EN            : boolean := false;  -- boot configuration: true = boot explicit bootloader; false = boot from int/ext (I)MEM
+    INT_BOOTLOADER_EN            : boolean := true;  -- boot configuration: true = boot explicit bootloader; false = boot from int/ext (I)MEM
 
     -- On-Chip Debugger (OCD) --
     ON_CHIP_DEBUGGER_EN          : boolean := false;  -- implement on-chip debugger

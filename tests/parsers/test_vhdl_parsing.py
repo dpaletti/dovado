@@ -40,6 +40,14 @@ def test_neorv_top_parsing():
     assert wb_tag_o.direction == "output"
 
     assert (
-        parsed.replace({"CLOCK_FREQUENCY": "10", "HW_THREAD_ID": "11"})
+        parsed.replace(
+            {
+                "neorv32_top": {
+                    "CLOCK_FREQUENCY": "10",
+                    "HW_THREAD_ID": "11",
+                    "INT_BOOTLOADER_EN": "1",
+                }
+            }
+        )
         == Path(path_prexif + "/replaced_neorv_top.vhd").read_text()
     )

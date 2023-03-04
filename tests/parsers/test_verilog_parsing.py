@@ -22,7 +22,7 @@ def test_corundum_queue_manager_parsing():
     assert parameter.has_default == True
 
     assert (
-        parsed.replace({"ADDR_WIDTH": "32"})
+        parsed.replace({"cpl_queue_manager": {"ADDR_WIDTH": "32"}})
         == Path(path_prexif + "/replaced_corundum_queue_manager.v").read_text()
     )
 

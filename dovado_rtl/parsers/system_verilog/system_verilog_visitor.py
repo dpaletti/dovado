@@ -1,4 +1,4 @@
-from typing import Any, Optional, Union, cast
+from typing import Any, Optional, Sequence, Union, cast
 from antlr4 import IllegalStateException
 from dovado_rtl.parsers.system_verilog.generated.SystemVerilogParserVisitor import (
     SystemVerilogParserVisitor,
@@ -16,7 +16,9 @@ from dovado_rtl.parsing_utilities import (
 
 
 class SystemVerilogVisitor(SystemVerilogParserVisitor):
-    def visitSource_text(self, ctx: SystemVerilogParser.Source_textContext):
+    def visitSource_text(
+        self, ctx: SystemVerilogParser.Source_textContext
+    ) -> Sequence[HdlAntlrModule]:
         modules: list[HdlAntlrModule]
 
         descriptions = ctx.description()

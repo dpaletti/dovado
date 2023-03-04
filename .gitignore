@@ -14,6 +14,7 @@ dap_templates.el
 *.out
 *.pkl
 *.old
+todo.org
 
 __pycache__/
 

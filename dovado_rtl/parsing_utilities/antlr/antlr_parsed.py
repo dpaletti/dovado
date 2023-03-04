@@ -1,19 +1,25 @@
 from abc import ABC, abstractmethod
-from typing import TypeVar
+from typing import Sequence
 from antlr4 import TokenStream
 from antlr4.TokenStreamRewriter import TokenStreamRewriter
 from dovado_rtl.parsing_utilities.antlr.antlr_module import AntlrModule
-
 from dovado_rtl.parsing_utilities.antlr.antlr_parameter import AntlrParameter
+from dovado_rtl.parsing_utilities.parsed import (
+    MODULE_NAME_STR,
+    PARAMETER_NAME_STR,
+    VALUE_STR,
+)
 
 
 class AntlrParsed(ABC):
-    def __init__(self, token_stream: TokenStream, modules: tuple[AntlrModule]) -> None:
+    def __init__(
+        self, token_stream: TokenStream, modules: Sequence[AntlrModule]
+    ) -> None:
         self._modules = modules
         self.__rewriter = TokenStreamRewriter(token_stream)
 
     @property
-    def modules(self) -> tuple[AntlrModule]:
+    def modules(self) -> Sequence[AntlrModule]:
         return self._modules
 
     @property
@@ -21,12 +27,36 @@ class AntlrParsed(ABC):
     def _parameter_initialization_prefix(self) -> str:
         ...
 
-    def _get_parameter(self, name: str) -> AntlrParameter:
+    def _get_module(self, name: str) -> AntlrModule:
+        if "/" in name:
+            raise ValueError(
+                "Module identifiers containing '/' are not supported.\n"
+                + "In the future a module name containing '/' will represent a path to a submodule.\n"
+                + " Submodules are not supported for now."
+            )
+
         for module in self.modules:
-            for parameter in module.parameters:
-                if parameter.name == name:
-                    return parameter
-        raise ValueError("Parameter with name " + str(name) + " does not exists.")
+            if name == module.name:
+                return module
+        raise ValueError(
+            "Module '"
+            + str(name)
+            + "' does not exist.\n"
+            + "WARNING: module identifiers containing '/' are not supported."
+        )
+
+    def _get_parameter(self, parameter_name: str, module_name: str) -> AntlrParameter:
+        module = self._get_module(module_name)
+        for parameter in module.parameters:
+            if parameter.name == parameter_name:
+                return parameter
+        raise ValueError(
+            "Parameter '"
+            + str(parameter_name)
+            + "' does not exist in module '"
+            + str(module_name)
+            + "'"
+        )
 
     def _lazy_replace(self, parameter: AntlrParameter, value: str) -> None:
         parameter.value = value
@@ -41,7 +71,15 @@ class AntlrParsed(ABC):
             parameter.rule.start, parameter.rule.stop, to_write
         )
 
-    def replace(self, parameter_to_value: dict[str, str]):
-        for parameter_name, value in parameter_to_value.items():
-            self._lazy_replace(self._get_parameter(parameter_name), value)
+    def replace(
+        self,
+        module_parameter_to_value: dict[
+            MODULE_NAME_STR, dict[PARAMETER_NAME_STR, VALUE_STR]
+        ],
+    ) -> str:
+        for module_name, parameter_to_value in module_parameter_to_value.items():
+            for parameter_name, value in parameter_to_value.items():
+                self._lazy_replace(
+                    self._get_parameter(parameter_name, module_name), value
+                )
         return self.__rewriter.getDefaultText()
