@@ -1,0 +1,5 @@
+["core/neorv32_top.vhd"]
+["core/neorv32_top.vhd"."neorv32_top"]
+CPU_EXTENSION_RISCV_B = [0, 1]
+PMP_NUM_REGIONS = [0, 16]
+MEM_INT_IMEM_SIZE = {range=[1024, 16384], step="powers_of_two"}
