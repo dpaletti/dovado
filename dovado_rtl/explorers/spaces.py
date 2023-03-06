@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -17,7 +18,14 @@ SOURCE_PATH = Path
 
 
 @dataclass
-class ContinuousSpace:
+class Space(ABC):
+    @abstractmethod
+    def get_sources(self) -> list[SOURCE_PATH]:
+        ...
+
+
+@dataclass
+class ContinuousSpace(Space):
     ranges: dict[SOURCE_PATH, dict[MODULE_NAME_STR, dict[PARAMETER_NAME_STR, Range]]]
 
     def __init__(self, toml_file: Path) -> None:
@@ -36,6 +44,9 @@ class ContinuousSpace:
                 for parameter_name, range in parameter_range_dict.items():
                     self.ranges[source_path][module_name][parameter_name] = Range(range)
 
+    def get_sources(self) -> list[SOURCE_PATH]:
+        return list(self.ranges.keys())
+
     def get_range(
         self,
         source_path: SOURCE_PATH,
@@ -46,7 +57,7 @@ class ContinuousSpace:
 
 
 @dataclass
-class DiscreteSpace:
+class DiscreteSpace(Space):
     points: dict[
         SOURCE_PATH, dict[MODULE_NAME_STR, dict[PARAMETER_NAME_STR, list[VALUE_STR]]]
     ]
@@ -75,6 +86,9 @@ class DiscreteSpace:
             self.points[source_path][module_name][parameter_name] = self._get_column(
                 csv_dict, fully_specified_parameter
             )
+
+    def get_sources(self) -> list[SOURCE_PATH]:
+        return list(self.points.keys())
 
     def get_points(
         self,

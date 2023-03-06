@@ -6,8 +6,10 @@ from dovado_rtl.parsing_utilities.antlr.antlr_module import AntlrModule
 from dovado_rtl.parsing_utilities.antlr.antlr_parsed import AntlrParsed
 from abc import ABC, abstractmethod
 
+from dovado_rtl.parsing_utilities.parser import Parser
 
-class AntlrParser(ABC):
+
+class AntlrParser(ABC, Parser):
     @abstractmethod
     def parse(self, to_parse: Path) -> AntlrParsed:
         ...

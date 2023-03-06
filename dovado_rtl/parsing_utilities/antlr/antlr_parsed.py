@@ -8,10 +8,11 @@ from dovado_rtl.parsing_utilities.parsed import (
     MODULE_NAME_STR,
     PARAMETER_NAME_STR,
     VALUE_STR,
+    Parsed,
 )
 
 
-class AntlrParsed(ABC):
+class AntlrParsed(ABC, Parsed):
     def __init__(
         self, token_stream: TokenStream, modules: Sequence[AntlrModule]
     ) -> None:

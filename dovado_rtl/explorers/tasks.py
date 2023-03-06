@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from dataclasses import dataclass
 from pathlib import Path
 from dovado_rtl.explorers.spaces import ContinuousSpace, DiscreteSpace, SOURCE_PATH
 from dovado_rtl.input import Input
@@ -23,9 +24,9 @@ class ParsedProject(Input):
         self.target_sources[source_path].replace(module_parameter_to_value)
 
 
-class OptimizationProject(ParsedProject):
+class AutomaticExplorationProject(ParsedProject):
     space: ContinuousSpace
 
 
-class ExplorationProject(ParsedProject):
+class ManualExplorationProject(ParsedProject):
     space: DiscreteSpace

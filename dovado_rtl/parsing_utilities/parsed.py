@@ -4,7 +4,10 @@ MODULE_NAME_STR = str
 PARAMETER_NAME_STR = str
 VALUE_STR = str
 
+from typing_extensions import runtime_checkable
 
+
+@runtime_checkable
 class Parsed(Protocol):
     def replace(
         self,
