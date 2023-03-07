@@ -14,7 +14,7 @@ class SimpleModule:
 
 @dataclass
 class RecursiveModule(Generic[_T]):
-    submodules: Optional[tuple[_T]] = None
+    submodules: Optional[Sequence[_T]] = None
 
 
 @dataclass
