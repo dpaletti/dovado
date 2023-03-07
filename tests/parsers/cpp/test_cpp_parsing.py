@@ -7,7 +7,6 @@ def test_cpp_parsing():
     to_parse = Path("resources/01-convolution-tutorial/src/common.h")
     parser = CppParser()
     parsed: CppParsed = parser.parse(Path(to_parse))
-    parsed
     cpp_module = parsed.modules[0]
     assert cpp_module.name == ""
 
