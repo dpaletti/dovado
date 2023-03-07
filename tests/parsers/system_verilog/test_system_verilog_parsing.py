@@ -5,7 +5,7 @@ from dovado_rtl.parsers.system_verilog.system_verilog_parser import SystemVerilo
 
 
 def test_cv32e40p_core_parsing():
-    path_prexif: str = "../" + os.curdir + "/resources"
+    path_prexif: str = "resources"
     to_parse = Path(path_prexif + "/cv32e40p/rtl/cv32e40p_core.sv")
     parser = SystemVerilogParser()
     parsed: SystemVerilogParsed = parser.parse(Path(to_parse))

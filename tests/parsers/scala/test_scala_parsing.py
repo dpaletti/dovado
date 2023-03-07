@@ -6,7 +6,7 @@ from dovado_rtl.parsers.scala.scala_parser import ScalaParser
 
 
 def test_rocket_top_parsing():
-    path_prexif: str = "../" + os.curdir + "/resources"
+    path_prexif: str = "resources"
     to_parse = Path(path_prexif + "/rocket-chip/src/main/scala/tile/RocketTile.scala")
     parser = ScalaParser()
     parsed: ScalaParsed = parser.parse(Path(to_parse))

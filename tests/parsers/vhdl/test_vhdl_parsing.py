@@ -5,7 +5,7 @@ import os
 
 
 def test_neorv_top_parsing():
-    path_prexif: str = "../" + os.curdir + "/resources"
+    path_prexif: str = "./resources"
     to_parse = Path(path_prexif + "/neorv32/rtl/core/neorv32_top.vhd")
     parser = VhdlParser()
     parsed: VhdlParsed = parser.parse(Path(to_parse))

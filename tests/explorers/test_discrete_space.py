@@ -4,7 +4,7 @@ from dovado_rtl.explorers.spaces import DiscreteSpace
 
 
 def test_discrete_space():
-    path_prefix: str = "../" + os.curdir + "/resources"
+    path_prefix: str = "resources"
 
     toml_file = Path(path_prefix + "/exploration_files/neorv_exploration_file.csv")
 

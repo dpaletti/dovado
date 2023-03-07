@@ -1,7 +1,7 @@
 import pytest
-from pytest import MonkeyPatch, FixtureRequest
+from pathlib import Path
 
 
 @pytest.fixture(autouse=True)
-def change_test_dir(request: FixtureRequest, monkeypatch: MonkeyPatch):
-    monkeypatch.chdir(request.fspath.dirname)  # type: ignore
+def change_test_dir(request, monkeypatch):
+    monkeypatch.chdir(Path(request.config.rootdir, "tests"))

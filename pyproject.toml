@@ -51,4 +51,4 @@ requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
 
 [tool.pytest.ini_options]
-addopts = "--ignore=tests/resources"
+addopts = "--ignore=tests/resources --rootdir=tests"

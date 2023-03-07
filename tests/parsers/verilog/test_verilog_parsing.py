@@ -5,7 +5,7 @@ from dovado_rtl.parsers.verilog.verilog_parser import VerilogParser
 
 
 def test_corundum_queue_manager_parsing():
-    path_prexif: str = "../" + os.curdir + "/resources"
+    path_prexif: str = "resources"
     to_parse = Path(path_prexif + "/corundum/fpga/common/rtl/cpl_queue_manager.v")
     parser = VerilogParser()
     parsed: VerilogParsed = parser.parse(Path(to_parse))

@@ -8,7 +8,7 @@ from dovado_rtl.input import Input
 
 
 def test_input():
-    path_prefix: str = "./" + os.curdir + "/resources/configs"
+    path_prefix: str = "resources/configs"
 
     to_parse_broken = Path(path_prefix + "/broken_test_config.toml")
     with pytest.raises(ValidationError):
@@ -18,13 +18,11 @@ def test_input():
     input_data = Input(**toml.load(to_parse))
 
     assert input_data.board == "some_board_name"
-    assert input_data.project_root == Path("../resources/neorv32/rtl")
+    assert input_data.project_root == Path("resources/neorv32/rtl")
 
-    assert input_data.target_file == Path(
-        "../resources/neorv32/rtl/core/neorv32_top.vhd"
-    )
+    assert input_data.target_file == Path("resources/neorv32/rtl/core/neorv32_top.vhd")
     assert input_data.task_file == Path(
-        "../resources/neorv32/test_exploration_file.json"
+        "resources/exploration_files/neorv_exploration_file.csv"
     )
     assert input_data.target_module == "neorv32_top"
     assert input_data.clock_port == "clk_port_identifier"

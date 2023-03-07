@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 def test_continuous_space():
-    path_prexif: str = "../" + os.curdir + "/resources"
+    path_prexif: str = "resources"
 
     toml_file = Path(path_prexif + "/exploration_files/neorv_exploration_file.toml")
 

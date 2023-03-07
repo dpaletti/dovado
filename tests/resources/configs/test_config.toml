@@ -1,8 +1,8 @@
-project_root = "../resources/neorv32/rtl"
+project_root = "resources/neorv32/rtl"
 
-target_file = "../resources/neorv32/rtl/core/neorv32_top.vhd"
+target_file = "resources/neorv32/rtl/core/neorv32_top.vhd"
 
-task_file = "../resources/exploration_files/neorv_exploration_file.csv" # if csv we go points mode, if toml we go space mode
+task_file = "resources/exploration_files/neorv_exploration_file.csv" # if csv we go points mode, if toml we go space mode
 
 target_module = "neorv32_top" # optional if only one module is present in file
 
