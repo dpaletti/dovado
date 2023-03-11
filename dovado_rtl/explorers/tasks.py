@@ -24,9 +24,19 @@ class ParsedProject(Input):
         self.target_sources[source_path].replace(module_parameter_to_value)
 
 
+class Probe(Input):
+    ...
+
+
 class AutomaticExplorationProject(ParsedProject):
     space: ContinuousSpace
+
+    def get_parsed_project(self) -> ParsedProject:
+        return super()
 
 
 class ManualExplorationProject(ParsedProject):
     space: DiscreteSpace
+
+    def get_parsed_project(self) -> ParsedProject:
+        return super()

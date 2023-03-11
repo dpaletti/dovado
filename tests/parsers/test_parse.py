@@ -11,5 +11,5 @@ def test_parse():
 
     path_prefix: str = "resources"
     to_parse = Path(path_prefix + "/configs/test_config.toml")
-    input_project = Input(**toml.load(to_parse))
+    input_project = Input.make_from_file(to_parse)
     parse(input_project, VhdlParser)

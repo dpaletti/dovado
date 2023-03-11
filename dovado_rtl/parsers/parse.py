@@ -1,10 +1,10 @@
-from dataclasses import asdict
 from pathlib import Path
-from typing import TypeVar, Union
+from typing import Union
 from dovado_rtl.explorers.spaces import ContinuousSpace, DiscreteSpace, Space
 from dovado_rtl.explorers.tasks import (
     AutomaticExplorationProject,
     ManualExplorationProject,
+    Probe,
 )
 from dovado_rtl.input import Input
 from dovado_rtl.parsing_utilities.parsed import Parsed
@@ -14,9 +14,12 @@ from dovado_rtl.parsing_utilities.parser import Parser
 def parse(
     input_project: Input,
     parser: type[Parser],
-) -> Union[AutomaticExplorationProject, ManualExplorationProject]:
+) -> Union[AutomaticExplorationProject, ManualExplorationProject, Probe]:
     task_file = input_project.task_file
     project_root = input_project.project_root
+
+    if not input_project.default_metrics and not input_project.custom_metrics:
+        return Probe(**dict(input_project))
 
     if task_file.suffix == ".csv":
         discrete_space = DiscreteSpace(task_file, project_root)

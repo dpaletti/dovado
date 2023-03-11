@@ -10,10 +10,10 @@ board = "some_board_name"
 
 clock_port = "clk_port_identifier"
 
-# Optionals
-implementation = false
-incremental = false
-synthesis_directives = ["RuntimeOptimized"]
-implementation_directives = ["RuntimeOptimized"]
-target_clock = 1000 # 1000 Mhz
-metrics = [1, 2, 3] # default is interactive, you will be asked
+custom_metrics_folder = "resources/custom_metrics"
+
+
+[metrics]
+default = ["lut_occupation", "frequency"]
+custom=["test_metric", "another_test_metric"]
+

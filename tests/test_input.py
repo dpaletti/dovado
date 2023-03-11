@@ -10,13 +10,10 @@ from dovado_rtl.input import Input
 def test_input():
     path_prefix: str = "resources/configs"
 
-    to_parse_broken = Path(path_prefix + "/broken_test_config.toml")
-    with pytest.raises(ValidationError):
-        Input(**toml.load(to_parse_broken))
-
     to_parse = Path(path_prefix + "/test_config.toml")
-    input_data = Input(**toml.load(to_parse))
+    input_data = Input.make_from_file(to_parse)
 
+    assert isinstance(input_data, Input)
     assert input_data.board == "some_board_name"
     assert input_data.project_root == Path("resources/neorv32/rtl")
 
@@ -29,3 +26,15 @@ def test_input():
 
     assert input_data.synthesis_directives == ["RuntimeOptimized"]
     assert input_data.implementation_directives == ["RuntimeOptimized"]
+    assert input_data.default_metrics == ["lut_occupation", "frequency"]
+    assert list(input_data.custom_metrics.keys()) == [
+        "test_metric",
+        "another_test_metric",
+    ]
+
+    to_parse = Path(path_prefix + "/test_probe_config.toml")
+    input_data = Input.make_from_file(to_parse)
+
+    to_parse = Path(path_prefix + "/broken_test_config.toml")
+    with pytest.raises(ValueError):
+        input_data = Input.make_from_file(to_parse)
