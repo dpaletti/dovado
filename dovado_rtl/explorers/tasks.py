@@ -23,6 +23,18 @@ class ParsedProject(Input):
     ):
         self.target_sources[source_path].replace(module_parameter_to_value)
 
+    def get_parsed_project(self) -> "ParsedProject":
+        # This method is meaningful only when called by a children
+        parsed_project_attributes = ParsedProject.__fields__
+
+        return ParsedProject(
+            **{
+                key: value
+                for key, value in dict(self).items()
+                if key in parsed_project_attributes
+            }
+        )
+
 
 class Probe(Input):
     ...
@@ -31,12 +43,6 @@ class Probe(Input):
 class AutomaticExplorationProject(ParsedProject):
     space: ContinuousSpace
 
-    def get_parsed_project(self) -> ParsedProject:
-        return super()
-
 
 class ManualExplorationProject(ParsedProject):
     space: DiscreteSpace
-
-    def get_parsed_project(self) -> ParsedProject:
-        return super()

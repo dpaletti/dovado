@@ -33,6 +33,7 @@ class Input(ImmutableModel):
     custom_metrics: dict[str, Callable[..., float]] = {}
 
     default_metrics_folder: ClassVar[str] = "custom_metrics"
+    work_directory: ClassVar[str] = "dovado_work"
 
     @staticmethod
     def make_from_file(input_file: Path) -> "Input":
