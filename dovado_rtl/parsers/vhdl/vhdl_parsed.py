@@ -1,9 +1,9 @@
 from typing import Sequence
 
 from dovado_rtl.parsers.vhdl.vhdl_parameter import VhdlParameter
-from dovado_rtl.parsing_utilities.antlr.hdl.hdl_antlr_module import HdlAntlrModule
-from dovado_rtl.parsing_utilities.antlr.hdl.hdl_antlr_parsed import HdlAntlrParsed
-from dovado_rtl.parsing_utilities.parsed import (
+from dovado_rtl.parsers.utilities.antlr.hdl.hdl_antlr_module import HdlAntlrModule
+from dovado_rtl.parsers.utilities.antlr.hdl.hdl_antlr_parsed import HdlAntlrParsed
+from dovado_rtl.parsers.utilities.parsed import (
     MODULE_NAME_STR,
     PARAMETER_NAME_STR,
     VALUE_STR,

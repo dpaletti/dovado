@@ -1,6 +1,6 @@
 project_root = "resources/neorv32/rtl"
 
-target_file = "resources/neorv32/rtl/core/neorv32_top.vhd"
+target_file = "core/neorv32_top.vhd"
 
 task_file = "resources/exploration_files/neorv_exploration_file.csv" # if csv we go points mode, if toml we go space mode
 
@@ -8,7 +8,7 @@ target_module = "neorv32_top" # optional if only one module is present in file
 
 board = "some_board_name"
 
-clock_port = "clk_port_identifier"
+clock_port = "clk_i"
 
 custom_metrics_folder = "resources/custom_metrics"
 
@@ -17,3 +17,32 @@ custom_metrics_folder = "resources/custom_metrics"
 default = ["lut_occupation", "frequency"]
 custom=["test_metric", "another_test_metric"]
 
+[genetic]
+algorithm = "NSGA2"
+
+[genetic.options]
+pop_size=10 # both values are multiplied for the number of genes (free parameters)
+n_offsprings=10 # if set to None it is equal to the population size
+# for selection only tournament selection is available and only with pressure = 2
+[genetic.termination]
+method = "" # alternatives are None (uses pymoo default termination), time, n_eval (number of function evaluations), f_tol (objective space tolerance, forse serve f_tol$ per make_termination)
+#max_time = "01:30:00"  # meaningful for 'time' termination
+#n_eval = 100  # meaningful for 'n_eval' termination
+#tol = 0.001  # meaningful for 'f_tol' termination
+#nth_gen = 10  # how many generations pass before recomputing the tolerance (f_tol)
+#n_max_gen = 100  # generations upperbound in f_tol
+#n_last = 5
+[genetic.sampling]
+method = "random"
+[genetic.crossover]
+method = "sbx"  # options: sbx (e.g. in pymoo int_sbx), ux, hux, one_point, two_point, k_point, exp
+# points = 3  # if k_point crossover is chosen this determines the number of points
+# prob = 0.9  # goes from 0 to 1, meaningful only for sbx and exp (0.5 suggested)
+# eta = 15  # goes from 1 to infinity, meaningful for sbx only (1 suggested)
+[genetic.mutation]
+method = "pm" # only method available
+# mutation_eta = 20
+[genetic.movado]
+stochastic = false # whether the task is stochastic (that is wheter we can cache fitness values)
+# estimator = "HoeffdingAdaptiveTree" # estimator to use for approximating the fitness
+# controller = "Mab" # controller to use to decide wheter to approximate or not

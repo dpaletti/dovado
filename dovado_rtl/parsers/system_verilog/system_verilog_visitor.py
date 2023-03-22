@@ -6,7 +6,7 @@ from dovado_rtl.parsers.system_verilog.generated.SystemVerilogParserVisitor impo
 from dovado_rtl.parsers.system_verilog.generated.SystemVerilogParser import (
     SystemVerilogParser,
 )
-from dovado_rtl.parsing_utilities import (
+from dovado_rtl.parsers.utilities import (
     AntlrParameter,
     HdlAntlrModule,
     PORT_DIRECTION,
@@ -224,6 +224,7 @@ class SystemVerilogVisitor(SystemVerilogParserVisitor):
         implicit_data_type = ctx.implicit_data_type()
         data_type_or_implicit = ctx.data_type_or_implicit()
         data_type = ctx.data_type()
+        constant_expression = ctx.constant_expression()
 
         if port_direction:
             parsed_port_direction = port_direction.getText()
@@ -246,6 +247,7 @@ class SystemVerilogVisitor(SystemVerilogParserVisitor):
                     name=parsed_port_identifier,
                     direction=parsed_port_direction,
                     dimension=port_dimension,
+                    has_default=constant_expression is not None,
                 )
         return None
 
@@ -551,6 +553,7 @@ class SystemVerilogVisitor(SystemVerilogParserVisitor):
                     name=variable_identifier,
                     direction="input",
                     dimension=port_dimension,
+                    has_default=False,
                 )
                 for variable_identifier in variable_identifiers
             ]
@@ -578,8 +581,6 @@ class SystemVerilogVisitor(SystemVerilogParserVisitor):
     def visitInout_declaration(
         self, ctx: SystemVerilogParser.Inout_declarationContext
     ) -> list[Port]:
-        # TODO: implement input, output and ref declaration
-        # Similar to this implementation
 
         parsed_identifiers: list[str]
         parsed_port_size: PORT_DIMENSION
@@ -605,6 +606,7 @@ class SystemVerilogVisitor(SystemVerilogParserVisitor):
                         name=parsed_identifier,
                         direction="inout",
                         dimension=parsed_port_size,
+                        has_default=False,
                     )
                 )
 
@@ -633,7 +635,12 @@ class SystemVerilogVisitor(SystemVerilogParserVisitor):
             elif data_type_or_implicit:
                 port_dimension = self.visitData_type_or_implicit(data_type_or_implicit)
             return [
-                Port(name=port_identifier, direction="output", dimension=port_dimension)
+                Port(
+                    name=port_identifier,
+                    direction="output",
+                    dimension=port_dimension,
+                    has_default=False,
+                )
                 for port_identifier in port_identifiers
             ]
         elif list_of_variable_identifiers:
@@ -646,7 +653,12 @@ class SystemVerilogVisitor(SystemVerilogParserVisitor):
             if data_type:
                 port_dimension = self.visitData_type(data_type)
             return [
-                Port(name=port_identifier, direction="output", dimension=port_dimension)
+                Port(
+                    name=port_identifier,
+                    direction="output",
+                    dimension=port_dimension,
+                    has_default=False,
+                )
                 for port_identifier in variable_identifiers
             ]
 
@@ -675,7 +687,12 @@ class SystemVerilogVisitor(SystemVerilogParserVisitor):
             elif data_type_or_implicit:
                 port_dimension = self.visitData_type_or_implicit(data_type_or_implicit)
             return [
-                Port(name=port_identifier, direction="input", dimension=port_dimension)
+                Port(
+                    name=port_identifier,
+                    direction="input",
+                    dimension=port_dimension,
+                    has_default=False,
+                )
                 for port_identifier in port_identifiers
             ]
         elif list_of_variable_identifiers:
@@ -688,7 +705,12 @@ class SystemVerilogVisitor(SystemVerilogParserVisitor):
             if data_type:
                 port_dimension = self.visitData_type(data_type)
             return [
-                Port(name=port_identifier, direction="input", dimension=port_dimension)
+                Port(
+                    name=port_identifier,
+                    direction="input",
+                    dimension=port_dimension,
+                    has_default=False,
+                )
                 for port_identifier in variable_identifiers
             ]
 

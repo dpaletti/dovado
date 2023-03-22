@@ -1,6 +1,6 @@
 from typing import Optional, Sequence, Union, cast
 from antlr4 import IllegalStateException
-from dovado_rtl.parsing_utilities import (
+from dovado_rtl.parsers.utilities import (
     AntlrParameter,
     Port,
 )
@@ -8,7 +8,7 @@ from dovado_rtl.parsers.verilog.generated.VerilogParserVisitor import (
     VerilogParserVisitor,
 )
 from dovado_rtl.parsers.verilog.generated.VerilogParser import VerilogParser
-from dovado_rtl.parsing_utilities.antlr.hdl.hdl_antlr_module import HdlAntlrModule
+from dovado_rtl.parsers.utilities.antlr.hdl.hdl_antlr_module import HdlAntlrModule
 
 
 class VerilogVisitor(VerilogParserVisitor):
@@ -169,6 +169,7 @@ class VerilogVisitor(VerilogParserVisitor):
                     name=identifier,
                     direction="output",
                     dimension="vectorial" if ctx.range_() else "scalar",
+                    has_default=False,
                 )
                 for identifier in identifiers
             ]
@@ -188,6 +189,7 @@ class VerilogVisitor(VerilogParserVisitor):
                     name=identifier,
                     direction="input",
                     dimension="vectorial" if ctx.range_() else "scalar",
+                    has_default=False,
                 )
                 for identifier in identifiers
             ]
@@ -207,6 +209,7 @@ class VerilogVisitor(VerilogParserVisitor):
                     name=identifier,
                     direction="inout",
                     dimension="vectorial" if ctx.range_() else "scalar",
+                    has_default=False,
                 )
                 for identifier in identifiers
             ]

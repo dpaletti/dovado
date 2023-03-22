@@ -1,10 +1,29 @@
 from importlib.machinery import ModuleSpec
-from typing import Callable, ClassVar, Literal, Optional, Union
+from typing import Any, Callable, ClassVar, Literal, Optional, Union
 from nacolla import ImmutableModel
 from pydantic import DirectoryPath, FilePath
 from pathlib import Path
 import importlib.util
 import toml
+
+OPTION_DICTIONARY = dict[str, Optional[Union[str, int, bool, float]]]
+
+_default_genetic_options: OPTION_DICTIONARY = {"pop_size": 10, "n_offsprings": None}
+_default_genetic_sampling: OPTION_DICTIONARY = {"method": "int_random"}
+_default_genetic_crossover: OPTION_DICTIONARY = {
+    "method": "int_sbx",
+    "prob": 0.9,
+    "eta": 15,
+}
+_default_genetic_mutation: OPTION_DICTIONARY = {"method": "int_pm", "eta": 20}
+_default_genetic_termination: OPTION_DICTIONARY = {"method": None}
+_default_genetic_algorithm: str = "NSGA2"
+_default_approximation_options: OPTION_DICTIONARY = {
+    "stochastic": False,
+    "estimator": "HoeffdingAdaptiveTree",
+    "controller": "Mab",
+}
+_default_approximation: bool = False
 
 
 class Input(ImmutableModel):
@@ -32,6 +51,16 @@ class Input(ImmutableModel):
     default_metrics: list[str] = []
     custom_metrics: dict[str, Callable[..., float]] = {}
 
+    algorithm: str = _default_genetic_algorithm  # options for now are (case insensitive): NSGA2, AGEMOEA, MOEAD, RVEA, RNSGA2, CTAEA, NSGA3, RNSGA3, UNSGA3
+    approximate: bool = _default_approximation
+
+    options: OPTION_DICTIONARY = _default_genetic_options
+    sampling: OPTION_DICTIONARY = _default_genetic_sampling
+    crossover: OPTION_DICTIONARY = _default_genetic_crossover
+    mutation: OPTION_DICTIONARY = _default_genetic_mutation
+    termination: OPTION_DICTIONARY = _default_genetic_termination
+    approximation_options: OPTION_DICTIONARY = _default_approximation_options
+
     default_metrics_folder: ClassVar[str] = "custom_metrics"
     work_directory: ClassVar[str] = "dovado_work"
 
@@ -39,6 +68,7 @@ class Input(ImmutableModel):
     def make_from_file(input_file: Path) -> "Input":
         input_dict = toml.load(input_file)
         metrics = input_dict.get("metrics")
+        genetic_settings = Input._make_genetic_settings(input_dict)
         if metrics is not None:
             custom_metrics_folder = Input._get_metrics_folder(
                 input_dict.get("custom_metrics_folder")
@@ -51,13 +81,65 @@ class Input(ImmutableModel):
 
             del input_dict["custom_metrics_folder"]
             del input_dict["metrics"]
-            return Input(
-                **input_dict,
-                custom_metrics=custom_metrics,
-                default_metrics=default_metrics,
-                custom_metrics_folder=Path(custom_metrics_folder)
-            )
-        return Input(**input_dict)
+            del input_dict["genetic"]
+            if genetic_settings:
+                return Input(
+                    **input_dict,
+                    **genetic_settings,
+                    custom_metrics=custom_metrics,
+                    default_metrics=default_metrics,
+                    custom_metrics_folder=Path(custom_metrics_folder),
+                )
+        return Input(**input_dict, **genetic_settings)
+
+    @staticmethod
+    def _make_genetic_settings(input_dict: dict[str, Any]) -> dict[str, Any]:
+        genetic = input_dict.get("genetic")
+        if genetic is not None:
+            algorithm = genetic.get("algorithm")
+            approximate = genetic.get("approximate")
+            options = genetic.get("options")
+            termination = genetic.get("termination")
+            sampling = genetic.get("sampling")
+            crossover = genetic.get("crossover")
+            mutation = genetic.get("mutation")
+            movado = genetic.get("movado")
+            return {
+                "algorithm": algorithm
+                if algorithm is not None
+                else _default_genetic_algorithm,
+                "approximate": approximate
+                if approximate is not None
+                else _default_approximation,
+                "options": (_default_genetic_options | options)
+                if options is not None
+                else _default_genetic_options,
+                "termination": (_default_genetic_termination | termination)
+                if termination is not None
+                else _default_genetic_termination,
+                "sampling": (_default_genetic_sampling | sampling)
+                if sampling is not None
+                else _default_genetic_sampling,
+                "crossover": (_default_genetic_crossover | crossover)
+                if crossover
+                else _default_genetic_crossover,
+                "mutation": (_default_genetic_mutation | mutation)
+                if mutation is not None
+                else _default_genetic_mutation,
+                "approximation_options": (_default_approximation_options | movado)
+                if movado is not None
+                else _default_approximation_options,
+            }
+        return {
+            "algorithm": _default_genetic_algorithm,
+            "approximate": _default_approximation,
+            "options": _default_genetic_options,
+            "termination": _default_genetic_termination,
+            "sampling": _default_genetic_sampling,
+            "crossover": _default_genetic_crossover,
+            "mutation": _default_genetic_mutation,
+            "approximation_options": _default_approximation_options,
+        }
 
     @staticmethod
     def get_available_custom_metrics(

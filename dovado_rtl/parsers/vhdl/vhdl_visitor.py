@@ -2,10 +2,10 @@ from typing import Optional, Sequence, Union
 
 from antlr4 import IllegalStateException
 from dovado_rtl.parsers.vhdl.vhdl_parameter import VhdlParameter
-from dovado_rtl.parsing_utilities import Port, HdlAntlrModule
+from dovado_rtl.parsers.utilities import Port, HdlAntlrModule
 from dovado_rtl.parsers.vhdl.generated.vhdlVisitor import vhdlVisitor
 from dovado_rtl.parsers.vhdl.generated.vhdlParser import vhdlParser
-from dovado_rtl.parsing_utilities.port import PORT_DIMENSION, PORT_DIRECTION
+from dovado_rtl.parsers.utilities.port import PORT_DIMENSION, PORT_DIRECTION
 
 
 class VhdlVisitor(vhdlVisitor):
@@ -140,6 +140,7 @@ class VhdlVisitor(vhdlVisitor):
         identifier_list = ctx.identifier_list()
         signal_mode = ctx.signal_mode()
         subtype_indication = ctx.subtype_indication()
+        expression = ctx.expression()
 
         if identifier_list:
             identifiers = self.visitIdentifier_list(identifier_list)
@@ -160,6 +161,7 @@ class VhdlVisitor(vhdlVisitor):
                     name=identifier,
                     direction=port_direction,
                     dimension=port_dimension,
+                    has_default=expression is not None,
                 )
                 for identifier in identifiers
             ]

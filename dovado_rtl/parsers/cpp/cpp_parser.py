@@ -1,7 +1,7 @@
 from pathlib import Path
 import antlr4
 from dovado_rtl.parsers.cpp.cpp_parsed import CppParsed
-from dovado_rtl.parsing_utilities.antlr.antlr_parser import AntlrParser
+from dovado_rtl.parsers.utilities.antlr.antlr_parser import AntlrParser
 from dovado_rtl.parsers.cpp.generated.CPP14Lexer import (
     CPP14Lexer as GeneratedCppLexer,
 )

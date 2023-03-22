@@ -4,8 +4,8 @@ from dovado_rtl.parsers.scala.generated.ScalaVisitor import (
     ScalaVisitor as GeneratedScalaVisitor,
 )
 from dovado_rtl.parsers.scala.generated.ScalaParser import ScalaParser
-from dovado_rtl.parsing_utilities.antlr.antlr_module import AntlrModule
-from dovado_rtl.parsing_utilities.antlr.antlr_parameter import AntlrParameter
+from dovado_rtl.parsers.utilities.antlr.antlr_module import AntlrModule
+from dovado_rtl.parsers.utilities.antlr.antlr_parameter import AntlrParameter
 
 
 class ScalaVisitor(GeneratedScalaVisitor):

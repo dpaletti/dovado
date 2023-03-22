@@ -1,4 +1,4 @@
-from dovado_rtl.parsing_utilities.antlr.hdl.hdl_antlr_parsed import HdlAntlrParsed
+from dovado_rtl.parsers.utilities.antlr.hdl.hdl_antlr_parsed import HdlAntlrParsed
 
 
 class SystemVerilogParsed(HdlAntlrParsed):

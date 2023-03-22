@@ -1,6 +1,5 @@
-import os
 from pathlib import Path
-from dovado_rtl.explorers.spaces import DiscreteSpace
+from dovado_rtl.explorers.utilities.spaces import DiscreteSpace
 
 
 def test_discrete_space():
@@ -12,7 +11,7 @@ def test_discrete_space():
 
     assert space.get_points(
         Path("core/neorv32_top.vhd"), "neorv32_top", "CPU_EXTENSION_RISCV_B"
-    ) == ["0", "0", "1", "2"]
+    ) == ["0", "0", "1", "1"]
 
     assert space.get_points(
         Path("core/neorv32_top.vhd"), "neorv32_top", "PMP_NUM_REGIONS"

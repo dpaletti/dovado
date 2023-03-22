@@ -1,14 +1,14 @@
 from pathlib import Path
 from typing import Union
-from dovado_rtl.explorers.spaces import ContinuousSpace, DiscreteSpace, Space
-from dovado_rtl.explorers.tasks import (
+from dovado_rtl.explorers.utilities.spaces import ContinuousSpace, DiscreteSpace, Space
+from dovado_rtl.explorers.utilities.tasks import (
     AutomaticExplorationProject,
     ManualExplorationProject,
     Probe,
 )
 from dovado_rtl.input import Input
-from dovado_rtl.parsing_utilities.parsed import Parsed
-from dovado_rtl.parsing_utilities.parser import Parser
+from dovado_rtl.parsers.utilities.parsed import Parsed
+from dovado_rtl.parsers.utilities.parser import Parser
 
 
 def parse(
@@ -18,21 +18,29 @@ def parse(
     task_file = input_project.task_file
     project_root = input_project.project_root
 
+    target_source = parser().parse(Path(project_root, input_project.target_file))
+
     if not input_project.default_metrics and not input_project.custom_metrics:
         return Probe(**dict(input_project))
 
     if task_file.suffix == ".csv":
         discrete_space = DiscreteSpace(task_file, project_root)
-        target_sources = _parse_sources(project_root, discrete_space, parser)
+        parameter_sources = _parse_sources(project_root, discrete_space, parser)
         return ManualExplorationProject(
-            **dict(input_project), space=discrete_space, target_sources=target_sources
+            **dict(input_project),
+            space=discrete_space,
+            parameter_sources=parameter_sources,
+            target_source=target_source
         )
 
     elif task_file.suffix == ".toml":
         continuous_space = ContinuousSpace(task_file)
-        target_sources = _parse_sources(project_root, continuous_space, parser)
+        parameter_sources = _parse_sources(project_root, continuous_space, parser)
         return AutomaticExplorationProject(
-            **dict(input_project), space=continuous_space, target_sources=target_sources
+            **dict(input_project),
+            space=continuous_space,
+            parameter_sources=parameter_sources,
+            target_source=target_source
         )
     else:
         raise ValueError(

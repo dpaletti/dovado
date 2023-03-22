@@ -1,6 +1,6 @@
 from typing import Union
 
-from dovado_rtl.explorers.tasks import (
+from dovado_rtl.explorers.utilities.tasks import (
     AutomaticExplorationProject,
     ManualExplorationProject,
     Probe,

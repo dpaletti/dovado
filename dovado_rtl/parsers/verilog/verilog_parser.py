@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from antlr4.tree.Tree import ParseTree
-from dovado_rtl.parsing_utilities import HdlAntlrParser
+from dovado_rtl.parsers.utilities import HdlAntlrParser
 from dovado_rtl.parsers.verilog.verilog_parsed import VerilogParsed
 from dovado_rtl.parsers.verilog.generated.VerilogLexer import (
     VerilogLexer as GeneratedVerilog2001Lexer,

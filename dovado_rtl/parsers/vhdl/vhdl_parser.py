@@ -11,7 +11,7 @@ from dovado_rtl.parsers.vhdl.vhdl_visitor import VhdlVisitor
 from dovado_rtl.parsers.vhdl.vhdl_parsed import VhdlParsed
 import antlr4
 
-from dovado_rtl.parsing_utilities.antlr.hdl.hdl_antlr_parser import HdlAntlrParser
+from dovado_rtl.parsers.utilities.antlr.hdl.hdl_antlr_parser import HdlAntlrParser
 
 
 class VhdlParser(HdlAntlrParser):

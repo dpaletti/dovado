@@ -1,7 +1,7 @@
 from pathlib import Path
 from dovado_rtl.parsers.scala.scala_visitor import ScalaVisitor
 from dovado_rtl.parsers.scala.scala_parsed import ScalaParsed
-from dovado_rtl.parsing_utilities.antlr.antlr_parser import AntlrParser
+from dovado_rtl.parsers.utilities.antlr.antlr_parser import AntlrParser
 import antlr4
 from dovado_rtl.parsers.scala.generated.ScalaParser import (
     ScalaParser as GeneratedScalaParser,

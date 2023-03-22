@@ -1,4 +1,4 @@
-from dovado_rtl.parsing_utilities.antlr.antlr_parsed import AntlrParsed
+from dovado_rtl.parsers.utilities.antlr.antlr_parsed import AntlrParsed
 
 
 class ScalaParsed(AntlrParsed):

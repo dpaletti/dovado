@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from dovado_rtl.parsing_utilities import HdlAntlrParser
+from dovado_rtl.parsers.utilities import HdlAntlrParser
 from dovado_rtl.parsers.system_verilog.system_verilog_parsed import SystemVerilogParsed
 from dovado_rtl.parsers.system_verilog.generated.SystemVerilogLexer import (
     SystemVerilogLexer as GeneratedSystemVerilogLexer,

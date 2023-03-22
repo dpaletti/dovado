@@ -1,10 +1,8 @@
-#!/usr/bin/env python3
-
 from typing import Optional
 from dovado_rtl.parsers.cpp.generated.CPP14Parser import CPP14Parser
 from dovado_rtl.parsers.cpp.generated.CPP14ParserVisitor import CPP14ParserVisitor
-from dovado_rtl.parsing_utilities.antlr.antlr_parameter import AntlrParameter
-from dovado_rtl.parsing_utilities.antlr.antlr_module import AntlrModule
+from dovado_rtl.parsers.utilities.antlr.antlr_parameter import AntlrParameter
+from dovado_rtl.parsers.utilities.antlr.antlr_module import AntlrModule
 
 
 class CppVisitor(CPP14ParserVisitor):

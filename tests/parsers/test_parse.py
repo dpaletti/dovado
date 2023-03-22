@@ -1,6 +1,4 @@
 from pathlib import Path
-import os
-import toml
 
 from dovado_rtl.input import Input
 from dovado_rtl.parsers.parse import parse
