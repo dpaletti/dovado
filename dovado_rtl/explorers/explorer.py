@@ -53,5 +53,7 @@ class Explorer(StatefulCallable, ABC):
 
     @staticmethod
     def _add_row_to_output(row: list[str], file: Path) -> None:
-        csv_writer = csv.writer(file.open("a", newline=""))
+        opened_file = file.open("a", newline="")
+        csv_writer = csv.writer(opened_file)
         csv_writer.writerow(row)
+        opened_file.flush()

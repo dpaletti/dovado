@@ -1,21 +1,26 @@
-project_root = "resources/neorv32/rtl"
+flow = "vhdl_vivado"
 
-target_file = "core/neorv32_top.vhd"
+project_root = "resources/neorv32/rtl/neorv32"
+
+target_file = "neorv32_top.vhd"
 
 task_file = "resources/exploration_files/neorv_exploration_file.csv" # if csv we go points mode, if toml we go space mode
 
 target_module = "neorv32_top" # optional if only one module is present in file
 
-board = "some_board_name"
+board = "xc7k70tfbv676-1"
 
 clock_port = "clk_i"
+
+target_clock = 0.001 # Mhz
+
 
 custom_metrics_folder = "resources/custom_metrics"
 
 
 [metrics]
-default = ["lut_occupation", "frequency"]
-custom=["test_metric", "another_test_metric"]
+default = ["Slice LUTs", "DSPs", "frequency"]
+custom= ["test_metric", "another_test_metric"]
 
 [genetic]
 algorithm = "NSGA2"

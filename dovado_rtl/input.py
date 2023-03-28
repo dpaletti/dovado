@@ -5,6 +5,11 @@ from pydantic import DirectoryPath, FilePath
 from pathlib import Path
 import importlib.util
 import toml
+from dovado_rtl.builders.vivado.directives import (
+    SYNTHESIS_DIRECTIVE,
+    PLACE_DIRECTIVE,
+    ROUTE_DIRECTIVE,
+)
 
 OPTION_DICTIONARY = dict[str, Optional[Union[str, int, bool, float]]]
 
@@ -27,6 +32,7 @@ _default_approximation: bool = False
 
 
 class Input(ImmutableModel):
+    flow: str  # which flow to use to explore the input project
     project_root: DirectoryPath  # all paths in the exploration file are appended to this path
     target_file: Path  # the full path for the target file is computed by appending this to the project root.
     task_file: FilePath  # the full path to the task file
@@ -36,13 +42,10 @@ class Input(ImmutableModel):
         False  # whether to calculate metrics after synthesi or implementation
     )
     incremental: bool = False  # whether to use incremental synthesis/implementation
-    synthesis_directives: list[str] = [
-        "RuntimeOptimized"
-    ]  # a list of synthesis directives
-    implementation_directives: list[str] = [
-        "RuntimeOptimized"
-    ]  # a list of implementation directives
-    target_clock: int = 1000  # target clock in Mhz
+    synthesis_directive: SYNTHESIS_DIRECTIVE = "RuntimeOptimized"
+    place_directive: PLACE_DIRECTIVE = "RuntimeOptimized"
+    route_directive: ROUTE_DIRECTIVE = "RuntimeOptimized"
+    target_clock: float = 1000  # target clock in Mhz
     target_module: Optional[
         str
     ] = None  # if the target file contains only one module may be left unspecified
@@ -50,6 +53,8 @@ class Input(ImmutableModel):
     custom_metrics_folder: Optional[DirectoryPath] = None
     default_metrics: list[str] = []
     custom_metrics: dict[str, Callable[..., float]] = {}
+
+    verbose: bool = False  # for now it controls whether the Vivado builder should print every vivado output
 
     algorithm: str = _default_genetic_algorithm  # options for now are (case insensitive): NSGA2, AGEMOEA, MOEAD, RVEA, RNSGA2, CTAEA, NSGA3, RNSGA3, UNSGA3
     approximate: bool = _default_approximation
@@ -79,9 +84,9 @@ class Input(ImmutableModel):
                 custom_metrics,
             ) = Input._retrieve_metrics(input_dict["metrics"], custom_metrics_folder)
 
-            del input_dict["custom_metrics_folder"]
-            del input_dict["metrics"]
-            del input_dict["genetic"]
+            input_dict.pop("custom_metrics_folder", None)
+            input_dict.pop("metrics", None)
+            input_dict.pop("genetic", None)
             if genetic_settings:
                 return Input(
                     **input_dict,

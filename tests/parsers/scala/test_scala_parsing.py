@@ -1,15 +1,19 @@
-import os
 from pathlib import Path
 from dovado_rtl.parsers.scala.scala_parsed import ScalaParsed
 
 from dovado_rtl.parsers.scala.scala_parser import ScalaParser
+from dovado_rtl.input import Input
+from dovado_rtl.project_copy import project_copy
 
 
 def test_rocket_top_parsing():
-    path_prexif: str = "resources"
-    to_parse = Path(path_prexif + "/rocket-chip/src/main/scala/tile/RocketTile.scala")
+    project = Input.make_from_file(Path("resources/configs/test_scala_config.toml"))
+    copied_project = project_copy(project)
+
     parser = ScalaParser()
-    parsed: ScalaParsed = parser.parse(Path(to_parse))
+    parsed: ScalaParsed = parser.parse(
+        Path(copied_project.project_root, copied_project.target_file)
+    )
     assert len(parsed.modules) == 2
 
     rocket_tile_params = parsed.modules[0]
@@ -35,5 +39,5 @@ def test_rocket_top_parsing():
                 "RocketTile": {"crossing": "some_crossing_type"},
             }
         )
-        == Path(path_prexif + "/replaced_rocket_tile.scala").read_text()
+        == Path("resources/replaced_rocket_tile.scala").read_text()
     )

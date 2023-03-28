@@ -1,10 +1,12 @@
+flow = "verilog_vivado"
+
 project_root = "resources/corundum/fpga/common/rtl"
 
 target_file = "queue_manager.v"
 
 task_file = "resources/exploration_files/corundum_exploration_file.csv" # if csv we go points mode, if toml we go space mode
 
-board = "some_board_name"
+board = "xc7k70tfbv676-1"
 
 clock_port = "clk"
 
@@ -12,7 +14,7 @@ custom_metrics_folder = "resources/custom_metrics"
 
 
 [metrics]
-default = ["lut_occupation", "frequency"]
+default = ["Slice LUTs*", "frequency"]
 custom=["test_metric", "another_test_metric"]
 
 [genetic]

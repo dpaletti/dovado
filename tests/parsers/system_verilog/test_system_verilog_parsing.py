@@ -2,13 +2,20 @@ import os
 from pathlib import Path
 from dovado_rtl.parsers.system_verilog.system_verilog_parsed import SystemVerilogParsed
 from dovado_rtl.parsers.system_verilog.system_verilog_parser import SystemVerilogParser
+from dovado_rtl.input import Input
+from dovado_rtl.project_copy import project_copy
 
 
 def test_cv32e40p_core_parsing():
-    path_prexif: str = "resources"
-    to_parse = Path(path_prexif + "/cv32e40p/rtl/cv32e40p_core.sv")
+    project = Input.make_from_file(
+        Path("resources/configs/test_system_verilog_config.toml")
+    )
+    copied_project = project_copy(project)
+
     parser = SystemVerilogParser()
-    parsed: SystemVerilogParsed = parser.parse(Path(to_parse))
+    parsed: SystemVerilogParsed = parser.parse(
+        Path(copied_project.project_root, copied_project.target_file)
+    )
     assert len(parsed.modules) == 1
     module = parsed.modules[0]
     assert module.name == "cv32e40p_core"
@@ -30,5 +37,5 @@ def test_cv32e40p_core_parsing():
 
     assert (
         parsed.replace({"cv32e40p_core": {"PULP_XPULP": "1"}})
-        == Path(path_prexif + "/replaced_cv32e40p_core.sv").read_text()
+        == Path("resources/replaced_cv32e40p_core.sv").read_text()
     )

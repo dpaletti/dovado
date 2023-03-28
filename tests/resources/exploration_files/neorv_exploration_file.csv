@@ -1,5 +1,5 @@
-core/neorv32_top.vhd/neorv32_top/CPU_EXTENSION_RISCV_B, core/neorv32_top.vhd/neorv32_top/PMP_NUM_REGIONS, core/neorv32_top.vhd/neorv32_top/MEM_INT_IMEM_SIZE
-0, 0, 1024
-0, 1, 1024
-1, 0, 2048
-2, 4, 4096
+neorv32_top.vhd/neorv32_top/CPU_EXTENSION_RISCV_B, neorv32_top.vhd/neorv32_top/PMP_NUM_REGIONS, neorv32_top.vhd/neorv32_top/MEM_INT_IMEM_SIZE, neorv32_top.vhd/neorv32_top/CLOCK_FREQUENCY
+0, 0, 1024, 1000000
+0, 1, 1024, 1000000
+1, 0, 2048, 1000000
+1, 4, 4096, 1000000

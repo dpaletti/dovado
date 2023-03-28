@@ -15,7 +15,7 @@ class VerilogBoxer(Boxer, StatefulStep):
 
     @staticmethod
     def _get_port_replacements(ports: list[Port], clock_port_name: str) -> list[str]:
-        return [
+        port_replacements = [
             "." + port.name + " ('1),\n"
             for port in ports
             if (
@@ -24,3 +24,6 @@ class VerilogBoxer(Boxer, StatefulStep):
                 and not port.has_default
             )
         ]
+        port_replacements.insert(0, "." + clock_port_name + " (clk),\n")
+        port_replacements[-1] = port_replacements[-1][:-2]
+        return port_replacements

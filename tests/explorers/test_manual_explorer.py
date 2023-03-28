@@ -5,6 +5,7 @@ from dovado_rtl.explorers.manual_explorer import ManualExplorer
 from dovado_rtl.explorers.utilities.design_points import EvaluatedDesignPoint
 from dovado_rtl.explorers.utilities.tasks import ManualExplorationProject
 from dovado_rtl.input import Input
+from dovado_rtl.project_copy import project_copy
 from dovado_rtl.parsers.vhdl.parse import parse
 import csv
 
@@ -12,15 +13,19 @@ import csv
 def test_manual_explorer():
     manual_explorer = ManualExplorer()
     input_project = Input.make_from_file(Path("resources/configs/test_config.toml"))
-    manual_exploration_project = cast(ManualExplorationProject, parse(input_project))
+    copied_input_project = project_copy(input_project)
+    manual_exploration_project = cast(
+        ManualExplorationProject, parse(copied_input_project)
+    )
 
     design_point = manual_explorer.explore(task=manual_exploration_project)
 
-    assert design_point.points[Path("core/neorv32_top.vhd")] == {
+    assert design_point.points[Path("neorv32_top.vhd")] == {
         "neorv32_top": {
+            "CLOCK_FREQUENCY": "1000000",
             "CPU_EXTENSION_RISCV_B": "false",
-            "PMP_NUM_REGIONS": "0",
             "MEM_INT_IMEM_SIZE": "1024",
+            "PMP_NUM_REGIONS": "0",
         }
     }
 
@@ -31,7 +36,7 @@ def test_manual_explorer():
                 zip(
                     design_point.default_metrics
                     + list(design_point.custom_metrics.keys()),
-                    [0] * 4,
+                    [0] * 5,
                 )
             )
         )
@@ -44,39 +49,31 @@ def test_manual_explorer():
     csv_dict = csv.DictReader(last_exploration_file.open())
     rows = [row for row in csv_dict]
     assert list(rows[0].keys()) == [
-        "lut_occupation",
+        "Slice LUTs",
+        "DSPs",
         "frequency",
         "test_metric",
         "another_test_metric",
     ]
     assert len(rows) == 4
     assert rows[1] == {
-        "lut_occupation": "0.0",
+        "Slice LUTs": "0.0",
+        "DSPs": "0.0",
         "frequency": "0.0",
         "test_metric": "0.0",
         "another_test_metric": "0.0",
     }
 
-    # Revert file to original values
-    restored = manual_exploration_project.replace(
-        Path("core/neorv32_top.vhd"),
-        {
-            "neorv32_top": {
-                "MEM_INT_IMEM_SIZE": "16*1024",
-                "CPU_EXTENSION_RISCV_B": "0",
-                "PMP_NUM_REGIONS": "0",
-            }
-        },
-    )
-    Path(manual_exploration_project.project_root, "core/neorv32_top.vhd").write_text(
-        restored
-    )
-
 
 def get_exploration_file(path: Path, name: str) -> Path:
-    files = [file for file in path.iterdir() if name in str(file) if name in str(file)]
+    files = [file for file in path.iterdir() if name in str(file)]
     if len(files) == 1:
         return files[0]
     else:
-        versions = [str(file).replace(name, "") for file in files]
+        versions = [
+            int(str(file.parts[-1]).replace(name, "").replace(file.suffix, ""))
+            for file in files
+            if str(file.parts[-1]).replace(name, "").replace(file.suffix, "") != ""
+        ]
+        files.remove(Path(path, name + files[0].suffix))
         return files[versions.index(max(versions))]

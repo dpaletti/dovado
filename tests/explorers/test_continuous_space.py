@@ -11,17 +11,17 @@ def test_continuous_space():
     space = ContinuousSpace(toml_file)
 
     assert space.get_range(
-        Path("core/neorv32_top.vhd"), "neorv32_top", "CPU_EXTENSION_RISCV_B"
+        Path("neorv32_top.vhd"), "neorv32_top", "CPU_EXTENSION_RISCV_B"
     ) == Range([0, 1])
 
     assert space.get_range(
-        Path("core/neorv32_top.vhd"), "neorv32_top", "PMP_NUM_REGIONS"
+        Path("neorv32_top.vhd"), "neorv32_top", "PMP_NUM_REGIONS"
     ) == Range([0, 16])
 
     assert space.get_range(
-        Path("core/neorv32_top.vhd"), "neorv32_top", "MEM_INT_IMEM_SIZE"
+        Path("neorv32_top.vhd"), "neorv32_top", "MEM_INT_IMEM_SIZE"
     ) == Range({"range": [1024, 16384], "step": "powers_of_two"})
 
     assert space.get_range(
-        Path("core/neorv32_top.vhd"), "neorv32_top", "HPM_CNT_WIDTH"
+        Path("neorv32_top.vhd"), "neorv32_top", "HPM_CNT_WIDTH"
     ) == Range({"range": [0, 64], "step": 4})

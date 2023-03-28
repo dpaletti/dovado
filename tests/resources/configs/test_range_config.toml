@@ -1,12 +1,14 @@
-project_root = "resources/neorv32/rtl"
+flow = "vhdl_vivado"
 
-target_file = "core/neorv32_top.vhd"
+project_root = "resources/neorv32/rtl/neorv32"
+
+target_file = "neorv32_top.vhd"
 
 task_file = "resources/exploration_files/neorv_exploration_file.toml" # if csv we go points mode, if toml we go space mode
 
 target_module = "neorv32_top" # optional if only one module is present in file
 
-board = "some_board_name"
+board = "xc7k70tfbv676-1"
 
 clock_port = "clk_port_identifier"
 

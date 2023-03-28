@@ -1,5 +1,6 @@
 library ieee;
 use ieee.std_logic_1164.all;
+____; -- library of the entity to be boxed
 
 entity box is
   port (
@@ -13,8 +14,6 @@ architecture box_arch of box is
 begin
   BOXED:  entity ____
     port map(
-    ____ => clk,
-    -- remaining input ports are attached to internal clocks
     ____
     );
 

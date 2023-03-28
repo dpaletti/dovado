@@ -4,11 +4,11 @@ from dovado_rtl.explorers.utilities.design_points import DesignPoint
 from dovado_rtl.parsers.utilities.antlr.hdl.hdl_antlr_module import HdlAntlrModule
 from dovado_rtl.parsers.utilities.antlr.hdl.hdl_antlr_parsed import HdlAntlrParsed
 import re
-from importlib.resources import files
 from pathlib import Path
 from typing import Sequence
 from dovado_rtl.parsers.utilities.port import Port
 from abc import ABC, abstractmethod
+from dovado_rtl.fill import fill
 
 
 class Boxer(ABC):
@@ -28,11 +28,7 @@ class Boxer(ABC):
         resource: str,
         out_path: Path,
     ) -> None:
-        frame = files(package).joinpath(resource).read_text()
-        filled_frame = re.sub(
-            self._placeholder, lambda m, r=iter(replacements): next(r), frame
-        )
-        out_path.write_text(filled_frame)
+        fill(replacements, package, resource, out_path, self._placeholder)
 
     def _box_hdl_antlr(
         self,
@@ -40,6 +36,7 @@ class Boxer(ABC):
         package: str,
         frame_file_name: str,
         box_file_name: str,
+        add_library: bool = False,
     ):
         if self.boxed:
             return design_point
@@ -66,12 +63,23 @@ class Boxer(ABC):
         port_replacements = self._get_port_replacements(
             parsed_module.ports, design_point.clock_port
         )
+
+        target_module_library = str(design_point.target_file.parent)
+        target_module_library = (
+            target_module_library
+            if str(target_module_library) != "."
+            else design_point.project_root.parts[-1]
+        )
+        replacements = [
+            (target_module_library + "." + parsed_module.name)
+            if add_library
+            else parsed_module.name,
+            " ".join(port_replacements),
+        ]
+        if add_library:
+            replacements.insert(0, "library " + target_module_library)
         self._fill(
-            replacements=[
-                parsed_module.name,
-                design_point.clock_port,
-                "".join(port_replacements),
-            ],
+            replacements=replacements,
             package=package,
             resource=frame_file_name,
             out_path=Path(design_point.work_directory, box_file_name),

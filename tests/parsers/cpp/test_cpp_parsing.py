@@ -1,12 +1,16 @@
 from pathlib import Path
 from dovado_rtl.parsers.cpp.cpp_parser import CppParser
 from dovado_rtl.parsers.cpp.cpp_parsed import CppParsed
+from dovado_rtl.input import Input
+from dovado_rtl.project_copy import project_copy
 
 
 def test_cpp_parsing():
-    to_parse = Path("resources/01-convolution-tutorial/src/common.h")
+    project = Input.make_from_file(Path("resources/configs/test_cpp_config.toml"))
+    copied_project = project_copy(project)
+
     parser = CppParser()
-    parsed: CppParsed = parser.parse(Path(to_parse))
+    parsed: CppParsed = parser.parse(Path(copied_project.project_root, "common.h"))
     cpp_module = parsed.modules[0]
     assert cpp_module.name == ""
 

@@ -5,6 +5,7 @@ from dovado_rtl.explorers.automatic_explorer import AutomaticExplorer, EndResult
 from dovado_rtl.explorers.utilities.design_points import EvaluatedDesignPoint
 from dovado_rtl.explorers.utilities.tasks import AutomaticExplorationProject
 from dovado_rtl.input import Input
+from dovado_rtl.project_copy import project_copy
 from dovado_rtl.parsers.vhdl.parse import parse
 from tests.explorers.test_manual_explorer import get_exploration_file
 
@@ -14,8 +15,9 @@ def test_automatic_explorer():
     input_project = Input.make_from_file(
         Path("resources/configs/test_range_config.toml")
     )
+    copied_input_project = project_copy(input_project)
     automatic_exploration_project = cast(
-        AutomaticExplorationProject, parse(input_project)
+        AutomaticExplorationProject, parse(copied_input_project)
     )
 
     design_point = automatic_explorer.explore(task=automatic_exploration_project)
@@ -66,23 +68,6 @@ def test_automatic_explorer():
 
     for power_row_value in power_of_two_rows:
         assert is_power_of_two(int(power_row_value))
-
-    # Revert file to original values
-    restored = automatic_exploration_project.replace(
-        Path("core/neorv32_top.vhd"),
-        {
-            "neorv32_top": {
-                "MEM_INT_IMEM_SIZE": "16*1024",
-                "CPU_EXTENSION_RISCV_B": "0",
-                "PMP_NUM_REGIONS": "0",
-                "HPM_CNT_WIDTH": "40",
-            }
-        },
-    )
-
-    Path(automatic_exploration_project.project_root, "core/neorv32_top.vhd").write_text(
-        restored
-    )
 
 
 def is_power_of_two(x: int) -> bool:

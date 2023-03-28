@@ -1,0 +1,17 @@
+flow = "cpp_vivado"
+
+project_root = "resources/01-convolution-tutorial/src/"
+
+target_file = "filter2d_hw.cpp"
+
+task_file = "resources/exploration_files/filter_exploration_file.csv" # if csv we go points mode, if toml we go space mode
+
+board = "xc7k70tfbv676-1"
+
+clock_port = "clk"
+
+custom_metrics_folder = "resources/custom_metrics"
+
+[metrics]
+default = ["Slice LUTs*", "frequency"]
+custom=["test_metric", "another_test_metric"]

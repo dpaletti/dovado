@@ -1,0 +1,39 @@
+{
+    "implementations": [
+        {
+            "callable": {
+                "module": "../dovado_rtl/parsers/vhdl/parse.py",
+                "name": "parse"
+            },
+            "name": "vhdl_parser"
+        },
+        {
+            "callable": {
+                "module": "../dovado_rtl/parsers/verilog/parse.py",
+                "name": "parse"
+            },
+            "name": "verilog_parser"
+        },
+        {
+            "callable": {
+                "module": "../dovado_rtl/parsers/system_verilog/parse.py",
+                "name": "parse"
+            },
+            "name": "system_verilog_parser"
+        },
+        {
+            "callable": {
+                "module": "../dovado_rtl/parsers/scala/parse.py",
+                "name": "parse"
+            },
+            "name": "scala_parser"
+        },
+        {
+            "callable": {
+                "module": "../dovado_rtl/parsers/cpp/parse.py",
+                "name": "parse"
+            },
+            "name": "cpp_parser"
+        }
+    ]
+}
