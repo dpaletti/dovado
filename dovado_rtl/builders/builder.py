@@ -5,13 +5,17 @@ from dovado_rtl.explorers.utilities.design_points import (
 )
 from pathlib import Path
 from dovado_rtl.fill import fill
+from typing import Union
+from dovado_rtl.explorers.utilities.tasks import EndExploration
 
 
 class Builder(ABC):
     _placeholder = "____"
 
     @abstractmethod
-    def build(self, design_point: DesignPoint) -> EvaluatedDesignPoint:
+    def build(
+        self, design_point: DesignPoint
+    ) -> Union[EvaluatedDesignPoint, EndExploration]:
         ...
 
     def _fill(

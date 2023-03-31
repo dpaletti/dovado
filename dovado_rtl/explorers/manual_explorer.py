@@ -52,8 +52,11 @@ class ManualExplorer(Explorer):
         return design_point
 
     def update(
-        self, evaluated_design_point: EvaluatedDesignPoint
+        self, evaluated_design_point: Union[EvaluatedDesignPoint, EndExploration]
     ) -> Union[DesignPoint, EndExploration]:
+        if isinstance(evaluated_design_point, EndExploration):
+            return EndExploration()
+
         if self._task is None:
             raise ValueError("Found None task in manual explorer")
         if self._output_file is None:

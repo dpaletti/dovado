@@ -3,7 +3,6 @@ from pathlib import Path
 from dovado_rtl.explorers.utilities.design_points import DesignPoint
 from dovado_rtl.parsers.utilities.antlr.hdl.hdl_antlr_module import HdlAntlrModule
 from dovado_rtl.parsers.utilities.antlr.hdl.hdl_antlr_parsed import HdlAntlrParsed
-import re
 from pathlib import Path
 from typing import Sequence
 from dovado_rtl.parsers.utilities.port import Port

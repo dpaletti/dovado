@@ -3,16 +3,12 @@ from pathlib import Path
 from typing import Union
 from nacolla.stateful_callable import StatefulCallable
 from nacolla.step import ImmutableModel
-from dovado_rtl.explorers.utilities.tasks import ParsedProject
+from dovado_rtl.explorers.utilities.tasks import ParsedProject, EndExploration
 from dovado_rtl.explorers.utilities.design_points import (
     DesignPoint,
     EvaluatedDesignPoint,
 )
 import csv
-
-
-class EndExploration(ImmutableModel):
-    ...
 
 
 class Explorer(StatefulCallable, ABC):
@@ -27,7 +23,7 @@ class Explorer(StatefulCallable, ABC):
 
     @abstractmethod
     def update(
-        self, evaluated_design_point: EvaluatedDesignPoint
+        self, evaluated_design_point: Union[EvaluatedDesignPoint, EndExploration]
     ) -> Union[DesignPoint, EndExploration]:
         ...
 

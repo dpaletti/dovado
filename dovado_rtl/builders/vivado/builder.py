@@ -11,6 +11,8 @@ from typing import Dict, Any, List, Optional
 from bs4 import BeautifulSoup
 from bs4.element import PageElement, ResultSet
 import numpy as np
+from typing import Union
+from dovado_rtl.explorers.utilities.tasks import EndExploration
 
 
 class VivadoBuilder(Builder, StatefulStep):
@@ -29,12 +31,23 @@ class VivadoBuilder(Builder, StatefulStep):
     _post_synth_util = "post_synth_util.xml"
     _post_impl_timing = "post_impl_setup_timing.rpt"
     _post_impl_util = "post_impl_util.xml"
+    _metrics_file = "metrics.txt"
 
     def __init__(self) -> None:
         self._vivado = Vivado()
         self._tcl_script: Optional[Path] = None
 
-    def build(self, design_point: DesignPoint) -> EvaluatedDesignPoint:
+    def build(
+        self, design_point: DesignPoint
+    ) -> Union[EvaluatedDesignPoint, EndExploration]:
+        if not self._vivado.is_board_valid(design_point.board):
+            raise ValueError(
+                "Board '"
+                + str(design_point.board)
+                + "' is invalid. Please pick one among:\n"
+                + str(set(self._vivado.get_boards().keys()))
+            )
+
         if not self._tcl_script:
             self._tcl_script = self._make_tcl_file(design_point)
 
@@ -42,9 +55,41 @@ class VivadoBuilder(Builder, StatefulStep):
         if design_point.verbose:
             print(vivado_out)
 
+        if not design_point.custom_metrics and not design_point.default_metrics:
+            self._write_all_metrics(design_point)
+            return EndExploration()
+
         design_value = VivadoBuilder._compute_metrics(success, design_point)
 
         return EvaluatedDesignPoint(**dict(design_point), design_value=design_value)
+
+    @staticmethod
+    def _write_all_metrics(design_point: DesignPoint):
+        utilisation_report = (
+            VivadoBuilder._post_impl_util
+            if design_point.implementation
+            else VivadoBuilder._post_synth_util
+        )
+
+        report_directory = Path(
+            design_point.work_directory, VivadoBuilder._output_directory
+        )
+        metrics = VivadoBuilder._get_all_metrics(
+            Path(report_directory, utilisation_report)
+        )
+        Path(report_directory, VivadoBuilder._metrics_file).write_text(
+            "\n".join(metrics)
+        )
+
+    @staticmethod
+    def _get_all_metrics(report_path: Path):
+        report = BeautifulSoup(report_path.open(), "lxml-xml")
+        report_structure = VivadoBuilder._get_available_indices(report)
+        out = []
+        for metrics in report_structure.values():
+            for metric in metrics:
+                out.append(metric)
+        return out
 
     @staticmethod
     def _compute_metrics(success: bool, design_point: DesignPoint) -> dict[str, float]:

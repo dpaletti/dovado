@@ -1,0 +1,6 @@
+root = "vhdl_parser"
+
+[vhdl_parser]
+AutomaticExplorationProject = "automatic_explorer"
+ManualExplorationProject = "manual_explorer"
+ProbeExplorationProject = "probe_explorer"

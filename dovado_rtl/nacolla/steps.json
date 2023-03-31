@@ -1,0 +1,40 @@
+{
+    "implementations":[
+        {
+        "callable": {"module": "parsers/cpp/parse.py"},
+        "name": "cpp_parser"
+    },
+        {
+        "callable": {"module": "parsers/scala/parse.py"},
+        "name": "scala_parser"
+    },
+        {
+        "callable": {"module": "parsers/verilog/parse.py"},
+        "name": "verilog_parser"
+    },
+        {
+        "callable": {"module": "parsers/vhdl/parse.py"},
+        "name": "vhdl_parser"
+    },
+        {
+        "callable": {"module": "explorers/manual_explorer.py"},
+        "name": "manual_explorer"
+    },
+        {
+        "callable": {"module": "explorers/automatic_explorer.py"},
+        "name": "automatic_explorer"
+    },
+        {
+        "callable": {"module": "boxers/verilog/boxer.py"},
+        "name": "verilog_boxer"
+    },
+        {
+        "callable": {"module": "boxers/vhdl/boxer.py"},
+        "name": "vhld_boxer"
+    },
+        {
+        "callable": {"builder": "builders/vivado/builder.py"},
+        "name": "vivado_builder"
+    }
+    ]
+}

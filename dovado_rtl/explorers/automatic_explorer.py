@@ -57,8 +57,10 @@ class AutomaticExplorer(Explorer):
         self._task: Optional[AutomaticExplorationProject] = None
 
     def update(
-        self, evaluated_design_point: EvaluatedDesignPoint
-    ) -> Union[DesignPoint, EndResult]:
+        self, evaluated_design_point: Union[EvaluatedDesignPoint, EndExploration]
+    ) -> Union[DesignPoint, EndExploration]:
+        if isinstance(evaluated_design_point, EndExploration):
+            return EndExploration()
 
         self._evaluated_points.append(
             (evaluated_design_point.vectorized(), evaluated_design_point)
@@ -70,7 +72,7 @@ class AutomaticExplorer(Explorer):
 
         if isinstance(point, EndResult):
             self._save_results(point.result)
-            return point
+            return EndExploration()
 
         if self._task is None:
             raise ValueError("Please save the task in explore, found it None")

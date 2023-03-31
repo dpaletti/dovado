@@ -50,6 +50,8 @@ class Input(ImmutableModel):
         str
     ] = None  # if the target file contains only one module may be left unspecified
 
+    in_place: bool = False  # Whether to work on a copy of the target project
+
     custom_metrics_folder: Optional[DirectoryPath] = None
     default_metrics: list[str] = []
     custom_metrics: dict[str, Callable[..., float]] = {}

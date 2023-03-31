@@ -10,6 +10,7 @@ from dovado_rtl.parsers.utilities.parsed import (
     VALUE_STR,
     Parsed,
 )
+from nacolla import ImmutableModel
 
 
 class ParsedProject(Input):
@@ -38,13 +39,13 @@ class ParsedProject(Input):
         )
 
 
-class Probe(Input):
-    ...
-
-
 class AutomaticExplorationProject(ParsedProject):
     space: ContinuousSpace
 
 
 class ManualExplorationProject(ParsedProject):
     space: DiscreteSpace
+
+
+class EndExploration(ImmutableModel):
+    ...

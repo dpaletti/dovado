@@ -4,7 +4,6 @@ from dovado_rtl.explorers.utilities.spaces import ContinuousSpace, DiscreteSpace
 from dovado_rtl.explorers.utilities.tasks import (
     AutomaticExplorationProject,
     ManualExplorationProject,
-    Probe,
 )
 from dovado_rtl.input import Input
 from dovado_rtl.parsers.utilities.parsed import Parsed
@@ -14,14 +13,11 @@ from dovado_rtl.parsers.utilities.parser import Parser
 def parse(
     input_project: Input,
     parser: type[Parser],
-) -> Union[AutomaticExplorationProject, ManualExplorationProject, Probe]:
+) -> Union[AutomaticExplorationProject, ManualExplorationProject]:
     task_file = input_project.task_file
     project_root = input_project.project_root
 
     target_source = parser().parse(Path(project_root, input_project.target_file))
-
-    if not input_project.default_metrics and not input_project.custom_metrics:
-        return Probe(**dict(input_project))
 
     if task_file.suffix == ".csv":
         discrete_space = DiscreteSpace(task_file, project_root)
