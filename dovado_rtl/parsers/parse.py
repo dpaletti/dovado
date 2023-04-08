@@ -1,10 +1,9 @@
 from pathlib import Path
-from typing import Union
 from dovado_rtl.explorers.utilities.spaces import ContinuousSpace, DiscreteSpace, Space
 from dovado_rtl.explorers.utilities.tasks import (
-    AutomaticExplorationProject,
-    ManualExplorationProject,
     ParsedProject,
+    ManualExplorationProject,
+    AutomaticExplorationProject,
 )
 from dovado_rtl.input import Input
 from dovado_rtl.parsers.utilities.parsed import Parsed

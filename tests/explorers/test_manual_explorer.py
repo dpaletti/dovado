@@ -41,10 +41,12 @@ def test_manual_explorer():
             )
         )
         design_point = manual_explorer.update(evaluated_design_point)
+        assert_exploration_file(Path(manual_exploration_project.work_directory))
 
-    last_exploration_file = get_exploration_file(
-        Path(manual_exploration_project.work_directory), name="exploration"
-    )
+
+def assert_exploration_file(work_directory: Path):
+
+    last_exploration_file = get_exploration_file(work_directory, name="exploration")
 
     csv_dict = csv.DictReader(last_exploration_file.open())
     rows = [row for row in csv_dict]
