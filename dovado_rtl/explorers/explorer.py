@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Union
 from nacolla.stateful_callable import StatefulCallable
-from nacolla.step import ImmutableModel
 from dovado_rtl.explorers.utilities.tasks import ParsedProject, EndExploration
 from dovado_rtl.explorers.utilities.design_points import (
     DesignPoint,

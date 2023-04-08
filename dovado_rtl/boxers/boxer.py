@@ -8,12 +8,14 @@ from typing import Sequence
 from dovado_rtl.parsers.utilities.port import Port
 from abc import ABC, abstractmethod
 from dovado_rtl.fill import fill
+from nacolla.stateful_callable import StatefulCallable
 
 
-class Boxer(ABC):
+class Boxer(StatefulCallable, ABC):
     _placeholder = "____"
 
     def __init__(self) -> None:
+        super().__init__()
         self.boxed = False
 
     @abstractmethod
@@ -36,7 +38,7 @@ class Boxer(ABC):
         frame_file_name: str,
         box_file_name: str,
         add_library: bool = False,
-    ):
+    ) -> DesignPoint:
         if self.boxed:
             return design_point
 

@@ -4,6 +4,7 @@ from dovado_rtl.explorers.utilities.spaces import ContinuousSpace, DiscreteSpace
 from dovado_rtl.explorers.utilities.tasks import (
     AutomaticExplorationProject,
     ManualExplorationProject,
+    ParsedProject,
 )
 from dovado_rtl.input import Input
 from dovado_rtl.parsers.utilities.parsed import Parsed
@@ -13,7 +14,7 @@ from dovado_rtl.parsers.utilities.parser import Parser
 def parse(
     input_project: Input,
     parser: type[Parser],
-) -> Union[AutomaticExplorationProject, ManualExplorationProject]:
+) -> ParsedProject:
     task_file = input_project.task_file
     project_root = input_project.project_root
 

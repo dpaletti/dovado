@@ -17,13 +17,7 @@ keywords = [
     "Design Space",
     "Genetic Algorithm",
 ]
-packages = [
-    { include = "dovado_rtl"},
-    { include = "vhdl" },
-    { include = "verilog" },
-    { include = "xdc" },
-    { include = "tcl" },
-]
+
 [tool.poetry.dependencies]
 python = "^3.9"
 pathvalidate = "^2.3.0"
@@ -35,9 +29,8 @@ pymoo = "^0.5.0"
 antlr4-python3-runtime = "4.11.1"
 dataclasses = { version = "^0.8", python = "~3.6" }
 typer = "^0.3.2"
-#movado = { path = "../movado/dist/Movado-0.6.3-py3-none-any.whl" }
 importlib-resources = "^5.1.4"
-nacolla = "*"
+nacolla = "^0.1.3"
 movado = "0.7.4"
 numpy = "1.23.4"
 

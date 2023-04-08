@@ -1,4 +1,3 @@
-from nacolla import StatefulStep
 from dovado_rtl.builders.builder import Builder
 from dovado_rtl.builders.vivado.vivado import Vivado
 from dovado_rtl.explorers.utilities.design_points import (
@@ -15,7 +14,7 @@ from typing import Union
 from dovado_rtl.explorers.utilities.tasks import EndExploration
 
 
-class VivadoBuilder(Builder, StatefulStep):
+class VivadoBuilder(Builder):
     _output_directory = "vivado_out"
     _constraint_package = "constraint_files"
     _constraint_frame = "constraint_frame.xdc"
@@ -34,6 +33,7 @@ class VivadoBuilder(Builder, StatefulStep):
     _metrics_file = "metrics.txt"
 
     def __init__(self) -> None:
+        super().__init__()
         self._vivado = Vivado()
         self._tcl_script: Optional[Path] = None
 

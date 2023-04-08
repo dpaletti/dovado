@@ -1,10 +1,12 @@
 from dovado_rtl.boxers.boxer import Boxer
 from dovado_rtl.explorers.utilities.design_points import DesignPoint
 from dovado_rtl.parsers.utilities.port import Port
-from nacolla import StatefulStep
 
 
-class VerilogBoxer(Boxer, StatefulStep):
+class VerilogBoxer(Boxer):
+    def __init__(self) -> None:
+        super().__init__()
+
     def box(self, design_point: DesignPoint) -> DesignPoint:
         return self._box_hdl_antlr(
             design_point,

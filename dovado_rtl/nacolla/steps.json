@@ -1,39 +1,48 @@
 {
     "implementations":[
         {
-        "callable": {"module": "parsers/cpp/parse.py"},
+        "callable": {"module": "parsers/cpp/parse.py",
+                     "name": "parse"},
         "name": "cpp_parser"
     },
         {
-        "callable": {"module": "parsers/scala/parse.py"},
+        "callable": {"module": "parsers/scala/parse.py",
+                     "name": "parse"},
         "name": "scala_parser"
     },
         {
-        "callable": {"module": "parsers/verilog/parse.py"},
+        "callable": {"module": "parsers/verilog/parse.py",
+                     "name": "parse"},
         "name": "verilog_parser"
     },
         {
-        "callable": {"module": "parsers/vhdl/parse.py"},
+        "callable": {"module": "parsers/vhdl/parse.py",
+                     "name": "parse"},
         "name": "vhdl_parser"
     },
         {
-        "callable": {"module": "explorers/manual_explorer.py"},
+        "callable": {"module": "explorers/manual_explorer.py",
+                     "name": "ManualExplorer"},
         "name": "manual_explorer"
     },
         {
-        "callable": {"module": "explorers/automatic_explorer.py"},
+        "callable": {"module": "explorers/automatic_explorer.py",
+                     "name": "AutomaticExplorer"},
         "name": "automatic_explorer"
     },
         {
-        "callable": {"module": "boxers/verilog/boxer.py"},
+        "callable": {"module": "boxers/verilog/boxer.py",
+                     "name": "VerilogBoxer"},
         "name": "verilog_boxer"
     },
         {
-        "callable": {"module": "boxers/vhdl/boxer.py"},
-        "name": "vhld_boxer"
+        "callable": {"module": "boxers/vhdl/boxer.py",
+                     "name": "VhdlBoxer"},
+        "name": "vhdl_boxer"
     },
         {
-        "callable": {"builder": "builders/vivado/builder.py"},
+        "callable": {"module": "builders/vivado/builder.py",
+                     "name": "VivadoBuilder"},
         "name": "vivado_builder"
     }
     ]

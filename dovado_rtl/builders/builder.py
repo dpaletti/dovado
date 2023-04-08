@@ -7,10 +7,14 @@ from pathlib import Path
 from dovado_rtl.fill import fill
 from typing import Union
 from dovado_rtl.explorers.utilities.tasks import EndExploration
+from nacolla.stateful_callable import StatefulCallable
 
 
-class Builder(ABC):
+class Builder(StatefulCallable, ABC):
     _placeholder = "____"
+
+    def __init__(self) -> None:
+        super().__init__()
 
     @abstractmethod
     def build(

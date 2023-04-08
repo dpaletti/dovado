@@ -1,10 +1,12 @@
 from dovado_rtl.boxers.boxer import Boxer
 from dovado_rtl.explorers.utilities.design_points import DesignPoint
 from dovado_rtl.parsers.utilities.port import Port
-from nacolla import StatefulStep
 
 
-class VhdlBoxer(Boxer, StatefulStep):
+class VhdlBoxer(Boxer):
+    def __init__(self) -> None:
+        super().__init__()
+
     def box(self, design_point: DesignPoint) -> DesignPoint:
         return self._box_hdl_antlr(
             design_point,
@@ -12,17 +14,6 @@ class VhdlBoxer(Boxer, StatefulStep):
             "box_frame.vhd",
             "box.vhd",
             add_library=True,
-        )
-
-        self._fill(
-            replacements=[
-                str(design_point.target_file.parent) + "." + parsed_module.name,
-                design_point.clock_port,
-                "".join(port_replacements),
-            ],
-            package=package,
-            resource=frame_file_name,
-            out_path=Path(design_point.work_directory, box_file_name),
         )
 
     @staticmethod

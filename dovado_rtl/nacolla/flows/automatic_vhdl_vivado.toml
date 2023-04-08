@@ -1,0 +1,14 @@
+root = "vhdl_parser"
+
+[vhdl_parser]
+ParsedProject = "automatic_explorer"
+
+[automatic_explorer]
+DesignPoint = "vhdl_boxer"
+
+[vhdl_boxer]
+DesignPoint = "vivado_builder"
+
+[vivado_builder]
+EvaluatedDesignPoint = "automatic_explorer"
+EndExploration = "automatic_explorer"
