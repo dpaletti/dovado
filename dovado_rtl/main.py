@@ -12,6 +12,7 @@ _DEFAULT_STEP_FILE_NAME = "default_steps.json"
 
 
 def main() -> None:
+
     input_project = Input.make_from_file(_parse_config_path())
 
     if not input_project.in_place:

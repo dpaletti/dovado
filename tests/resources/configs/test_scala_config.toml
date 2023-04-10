@@ -15,3 +15,8 @@ custom_metrics_folder = "resources/custom_metrics"
 [metrics]
 default = ["Slice LUTs*", "frequency"]
 custom=["test_metric", "another_test_metric"]
+
+[extra]
+[extra.generate]
+command = "make verilog -C ../resources/rocket-chip/vsim" # the command is ran from the work directory
+project_root = "resources/rocket-chip/vsim/generated-src" # this is given with respect to the current working directory

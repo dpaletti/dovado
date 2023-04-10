@@ -71,6 +71,8 @@ class Input(ImmutableModel):
     default_metrics_folder: ClassVar[str] = "custom_metrics"
     work_directory: ClassVar[str] = "dovado_work"
 
+    extra: Optional[dict] = None
+
     @staticmethod
     def make_from_file(input_file: Path) -> "Input":
         input_dict = toml.load(input_file)
@@ -81,10 +83,9 @@ class Input(ImmutableModel):
                 input_dict.get("custom_metrics_folder")
             )
 
-            (
-                default_metrics,
-                custom_metrics,
-            ) = Input._retrieve_metrics(input_dict["metrics"], custom_metrics_folder)
+            (default_metrics, custom_metrics) = Input._retrieve_metrics(
+                input_dict["metrics"], custom_metrics_folder
+            )
 
             input_dict.pop("custom_metrics_folder", None)
             input_dict.pop("metrics", None)

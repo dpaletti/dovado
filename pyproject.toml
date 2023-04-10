@@ -48,4 +48,4 @@ build-backend = "poetry.masonry.api"
 addopts = "--ignore=tests/resources --rootdir=tests"
 
 [tool.pyright]
-exclude = ["tests/resources"]
+exclude = ["**/tests/resources"]

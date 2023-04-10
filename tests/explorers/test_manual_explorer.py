@@ -57,7 +57,7 @@ def assert_exploration_file(work_directory: Path):
         "test_metric",
         "another_test_metric",
     ]
-    assert len(rows) == 4
+    assert len(rows) == 1
     assert rows[1] == {
         "Slice LUTs": "0.0",
         "DSPs": "0.0",

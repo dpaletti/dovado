@@ -15,3 +15,11 @@ custom_metrics_folder = "resources/custom_metrics"
 [metrics]
 default = ["Slice LUTs*", "frequency"]
 custom=["test_metric", "another_test_metric"]
+
+[extra]
+[extra.vitis]
+project_root = "solution1/syn/verilog" # this is given with respect to the folder of the generated output (e.g. <work_directory>/hls_generated)
+target_file = "Filter2DKernel.v"
+clock_port = "ap_clk" # generated clock port
+target_clock = 100 # this is the target clock given to the csynth step (in Mhz), if missing we use the general target cloc
+target_module = "Filter2DKernel"

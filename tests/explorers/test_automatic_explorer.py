@@ -1,7 +1,8 @@
 import csv
 from pathlib import Path
 from typing import cast
-from dovado_rtl.explorers.automatic_explorer import AutomaticExplorer, EndResult
+from dovado_rtl.explorers.automatic_explorer import AutomaticExplorer
+from dovado_rtl.explorers.explorer import EndExploration
 from dovado_rtl.explorers.utilities.design_points import EvaluatedDesignPoint
 from dovado_rtl.explorers.utilities.tasks import AutomaticExplorationProject
 from dovado_rtl.input import Input
@@ -21,7 +22,7 @@ def test_automatic_explorer():
     )
 
     design_point = automatic_explorer.explore(task=automatic_exploration_project)
-    while not isinstance(design_point, EndResult):
+    while not isinstance(design_point, EndExploration):
         evaluated_design_point = EvaluatedDesignPoint(
             **dict(design_point),
             design_value=dict(
