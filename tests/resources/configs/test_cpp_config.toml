@@ -1,4 +1,4 @@
-flow = "cpp_vivado"
+flow = "manual_hls_vitis"
 
 project_root = "resources/01-convolution-tutorial/src/"
 

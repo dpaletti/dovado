@@ -1,4 +1,4 @@
-flow = "scala_vivado"
+flow = "manual_chisel_vivado"
 
 project_root = "resources/rocket-chip/src/main/scala/tile/"
 
@@ -8,9 +8,11 @@ task_file = "resources/exploration_files/rocket_exploration_file.csv" # if csv w
 
 board = "xc7k70tfbv676-1"
 
-clock_port = "clk"
+clock_port = "clock"
 
 custom_metrics_folder = "resources/custom_metrics"
+
+verbose = true
 
 [metrics]
 default = ["Slice LUTs*", "frequency"]
@@ -18,5 +20,8 @@ custom=["test_metric", "another_test_metric"]
 
 [extra]
 [extra.generate]
-command = "make verilog -C ../resources/rocket-chip/vsim" # the command is ran from the work directory
-project_root = "resources/rocket-chip/vsim/generated-src" # this is given with respect to the current working directory
+command = "bash ../resources/make_rocket.bash" # the command is ran from the work directory
+# the above command script a rocket chip and puts it into a chisel_generated folder inside the working directory
+project_root = "chisel_generated" # this is given with respect to dovado_work
+target_file = "freechips.rocketchip.system.DefaultFPGAConfig.v" # generated file containing target module relative to root
+target_module = "Rocket"

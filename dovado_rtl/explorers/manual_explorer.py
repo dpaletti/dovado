@@ -46,7 +46,7 @@ class ManualExplorer(Explorer):
             raise ValueError("Found at least one parameter with no values to explore")
 
         design_point = DesignPoint(
-            **dict(self._task.get_parsed_project()), points=current_points
+            **(dict(self._task.get_parsed_project()) | {"points": current_points})
         )
         self._points_under_evaluation.append(design_point)
         return design_point
@@ -81,7 +81,7 @@ class ManualExplorer(Explorer):
             return EndExploration()
 
         design_point = DesignPoint(
-            **dict(self._task.get_parsed_project()), points=current_points
+            **(dict(self._task.get_parsed_project()) | {"points": current_points})
         )
         self._points_under_evaluation.append(design_point)
         return design_point

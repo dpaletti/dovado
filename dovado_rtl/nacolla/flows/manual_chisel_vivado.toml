@@ -1,0 +1,20 @@
+root = "scala_parser"
+
+[scala_parser]
+ParsedProject = "manual_explorer"
+
+[manual_explorer]
+DesignPoint = "bash_generator"
+
+[bash_generator]
+DesignPoint = "verilog_parser"
+
+[verilog_parser]
+DesignPoint = "verilog_boxer"
+
+[verilog_boxer]
+DesignPoint = "vivado_builder"
+
+[vivado_builder]
+EvaluatedDesignPoint = "manual_explorer"
+EndExploration = "manual_explorer"

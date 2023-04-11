@@ -30,7 +30,7 @@ antlr4-python3-runtime = "4.11.1"
 dataclasses = { version = "^0.8", python = "~3.6" }
 typer = "^0.3.2"
 importlib-resources = "^5.1.4"
-nacolla = "0.1.4"
+nacolla = "0.1.5"
 movado = "0.7.4"
 numpy = "1.23.4"
 

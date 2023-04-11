@@ -67,7 +67,7 @@ class DesignPoint(ParsedProject):
                 + str(current_vector_position)
                 + " parameters can be explored."
             )
-        return DesignPoint(**dict(parsed_project), points=points)
+        return DesignPoint(**(dict(parsed_project) | {"points": points}))
 
 
 class EvaluatedDesignPoint(DesignPoint):

@@ -67,7 +67,8 @@ proc read_all_files { dir libs} {
             read_verilog -library $lib $item
         }
         if { [file extension $item] == ".sv" } {
-            read_verilog -sv -library $lib $item
+            # -library in system verilog files may create issues
+            read_verilog -sv $item
         }
     }
 }

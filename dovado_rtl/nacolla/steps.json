@@ -44,6 +44,16 @@
         "callable": {"module": "builders/vivado/builder.py",
                      "name": "VivadoBuilder"},
         "name": "vivado_builder"
+    },
+        {
+        "callable": {"module": "generators/bash_generator.py",
+                     "name": "BashGenerator"},
+        "name": "bash_generator"
+    },
+        {
+        "callable": {"module": "generators/vitis/generator.py",
+                     "name": "VitisGenerator"},
+        "name": "vitis_generator"
     }
     ]
 }
