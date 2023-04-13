@@ -1,0 +1,14 @@
+root = "verilog_parser"
+
+[verilog_parser]
+ParsedProject = "automatic_explorer"
+
+[automatic_explorer]
+DesignPoint = "verilog_boxer"
+
+[verilog_boxer]
+DesignPoint = "vivado_builder"
+
+[vivado_builder]
+EvaluatedDesignPoint = "automatic_explorer"
+EndExploration = "automatic_explorer"

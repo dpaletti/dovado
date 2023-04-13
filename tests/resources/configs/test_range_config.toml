@@ -1,4 +1,4 @@
-flow = "vhdl_vivado"
+flow = "automatic_vhdl_vivado"
 
 project_root = "resources/neorv32/rtl/neorv32"
 
