@@ -174,7 +174,7 @@ class Input(ImmutableModel):
     @staticmethod
     def _retrieve_metrics(
         metrics: dict[Union[Literal["default"], Literal["custom"]], list[str]],
-        metrics_folder: Path,
+        metrics_folder: Optional[Path],
     ) -> tuple[list[str], dict[str, Callable[..., float]]]:
 
         if not isinstance(metrics, dict):
@@ -189,6 +189,8 @@ class Input(ImmutableModel):
 
         custom_metrics = {}
         if "custom" in metrics.keys():
+            if metrics_folder is None:
+                raise ValueError("Could not find custom metrics folder")
             function_to_module = Input.get_available_custom_metrics(metrics_folder)
             for custom_metric in metrics["custom"]:
                 module = function_to_module.get(custom_metric)
@@ -204,7 +206,7 @@ class Input(ImmutableModel):
         return default_metrics, custom_metrics
 
     @staticmethod
-    def _get_metrics_folder(custom_metrics_folder: Optional[str]) -> Path:
+    def _get_metrics_folder(custom_metrics_folder: Optional[str]) -> Optional[Path]:
 
         custom_metrics_path = (
             Path(custom_metrics_folder)
@@ -213,6 +215,4 @@ class Input(ImmutableModel):
         )
         if custom_metrics_path.is_dir():
             return custom_metrics_path
-        raise ValueError(
-            "Cannot find custom_metrics folder " + str(custom_metrics_folder)
-        )
+        return None
