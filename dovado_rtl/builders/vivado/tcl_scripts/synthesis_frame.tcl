@@ -58,9 +58,6 @@ proc read_all_files { dir libs} {
         set lib [lindex [::struct::set intersect $libs $path] end]
 
         if { [file extension $item] == ".vhd" } {
-            puts "Reading VHDL file"
-            puts $lib
-            puts $item
             read_vhdl -vhdl2008 -library $lib $item
         }
         if { [file extension $item] == ".v" } {

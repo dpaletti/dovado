@@ -5,14 +5,13 @@ from pathlib import Path
 from importlib.resources import files
 from typing import Optional
 from nacolla.models import ImmutableModel
-import os
 
 
 class VitisProject(ImmutableModel):
     project_root: str
     target_file: str
     target_module: str
-    clock_port: str
+    clock_port: Optional[str] = None
     target_clock: Optional[float] = None
 
 
