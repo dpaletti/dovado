@@ -179,7 +179,7 @@ class Input(ImmutableModel):
 
         if not isinstance(metrics, dict):
             raise ValueError("Invalid format for metrics " + str(metrics))
-        if set(metrics.keys()) != set(("default", "custom")):
+        if not set(metrics.keys()).intersection({"default", "custom"}):
             raise ValueError("Allowed keys for metrics are 'default' and 'custom'")
 
         if "default" in metrics.keys():
