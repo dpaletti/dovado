@@ -84,6 +84,9 @@ class AutomaticExplorer(Explorer):
                 "Found None parsed_project in automatic explorer, please save it in the explore method"
             )
 
+        if evaluated_design_point.verbose:
+            print("Point under evaluation: " + str(point))
+
         return DesignPoint.make_design_point_from_vector(
             vector=point,
             parameters_structure=self._parameters_structure,
@@ -120,6 +123,9 @@ class AutomaticExplorer(Explorer):
             parsed_project=self._parsed_project,
         )
 
+        if design_point.verbose:
+            print("Point under evaluation: " + str(point))
+
         return design_point
 
     def _evaluate(self, point: list[int]) -> list[float]:
@@ -145,7 +151,7 @@ class AutomaticExplorer(Explorer):
         return evaluation
 
     def _release(self, evaluated_design_point: EvaluatedDesignPoint):
-        for (point, lock) in self._points_under_evaluation:
+        for point, lock in self._points_under_evaluation:
             if point == evaluated_design_point.vectorized():
                 lock.release()
                 return

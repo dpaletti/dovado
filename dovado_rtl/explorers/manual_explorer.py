@@ -49,6 +49,9 @@ class ManualExplorer(Explorer):
             **(dict(self._task.get_parsed_project()) | {"points": current_points})
         )
         self._points_under_evaluation.append(design_point)
+
+        if design_point.verbose:
+            print("Point under evaluation: " + str(current_points))
         return design_point
 
     def update(
@@ -84,6 +87,10 @@ class ManualExplorer(Explorer):
             **(dict(self._task.get_parsed_project()) | {"points": current_points})
         )
         self._points_under_evaluation.append(design_point)
+
+        if design_point.verbose:
+            print("Point under evaluation: " + str(current_points))
+
         return design_point
 
     def _add_buffered_points_to_output(self) -> None:
