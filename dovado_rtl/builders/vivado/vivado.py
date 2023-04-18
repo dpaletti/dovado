@@ -25,7 +25,7 @@ class Vivado:
                 + " debug why it does not start"
             )
         if self.__t_vivado_init:
-            print("Waiting for Vivado to start ...")
+            print("Waiting for Vivado to start...")
             self.__t_vivado_init.join()
             self.__vivado.sendline("set_param tcl.collectionResultDisplayLimit Inf")
             self.__vivado.expect("Vivado%", timeout=None)  # type: ignore
@@ -36,7 +36,6 @@ class Vivado:
         return str(self.__vivado.before)
 
     def execute_script(self, tcl_script: str) -> Tuple[str, bool]:
-
         vivado_out = self.execute_command("source " + tcl_script)
         return vivado_out, not re.findall("ERROR:", vivado_out)
 
