@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dovado-rtl"
-version = "0.10.7"
+version = "0.10.8"
 description = "RTL Design Space Exploration on top of Vivado"
 authors = ["Daniele Paletti <danielepaletti98@gmail.com>"]
 license = "MIT"
