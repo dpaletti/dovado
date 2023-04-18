@@ -7,12 +7,12 @@ from nacolla.parsing.parse_flow import parse_flow
 from nacolla.flow import Flow
 from importlib.resources import files
 import json
+from importlib import metadata
 
 _DEFAULT_STEP_FILE_NAME = "default_steps.json"
 
 
 def main() -> None:
-
     input_project = Input.make_from_file(_parse_config_path())
 
     if not input_project.in_place:
@@ -29,7 +29,6 @@ def make_flow(
     implementation_map: IMPLEMENTATION_MAP,
     input_project: Input,
 ) -> Flow:
-
     flow_name = input_project.flow
     work_directory = Path(input_project.work_directory)
 
@@ -83,5 +82,11 @@ def _make_implementation_map(work_directory: Path) -> IMPLEMENTATION_MAP:
 
 def _parse_config_path() -> Path:
     if len(sys.argv) == 1:
-        raise ValueError("Missing the path to the configuration file")
+        print(
+            "Version "
+            + str(metadata.version("dovado_rtl"))
+            + "\n"
+            + "Example command: dovado <path/to/config.toml>"
+        )
+        exit()
     return Path(sys.argv[1])
