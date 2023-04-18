@@ -9,13 +9,14 @@ from dovado_rtl.parsers.cpp.generated.CPP14Parser import (
     CPP14Parser as GeneratedCppParser,
 )
 from dovado_rtl.parsers.cpp.cpp_visitor import CppVisitor
+from typing import Optional
 
 
 class CppParser(AntlrParser):
     __grammar_top_rule: str = "translationUnit"
 
-    def parse(self, to_parse: Path) -> CppParsed:
-        token_stream, classes = self._parse(to_parse)
+    def parse(self, to_parse: Path, target_module: Optional[str] = None) -> CppParsed:
+        token_stream, classes = self._parse(to_parse, target_module)
         return CppParsed(token_stream, classes)
 
     @property
@@ -31,5 +32,5 @@ class CppParser(AntlrParser):
         return GeneratedCppParser
 
     @property
-    def _visitor_type(self) -> type[antlr4.ParseTreeVisitor]:
+    def _visitor_type(self) -> type[CppVisitor]:
         return CppVisitor

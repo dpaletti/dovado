@@ -7,11 +7,13 @@ from dovado_rtl.parsers.utilities.antlr.antlr_parsed import AntlrParsed
 from abc import ABC, abstractmethod
 
 from dovado_rtl.parsers.utilities.parser import Parser
+from typing import Optional
+from dovado_rtl.parsers.utilities.targettable import Targettable
 
 
 class AntlrParser(ABC, Parser):
     @abstractmethod
-    def parse(self, to_parse: Path) -> AntlrParsed:
+    def parse(self, to_parse: Path, target_module: Optional[str] = None) -> AntlrParsed:
         ...
 
     @property
@@ -45,19 +47,22 @@ class AntlrParser(ABC, Parser):
         parse_tree: ParseTree = getattr(parser, self._grammar_top_rule)()
         return parse_tree, token_stream
 
-    def _visit(self, parse_tree: ParseTree) -> tuple[AntlrModule]:
+    def _visit(
+        self, parse_tree: ParseTree, target_module: Optional[str] = None
+    ) -> tuple[AntlrModule]:
         visitor = self._visitor_type()
+        if issubclass(type(visitor), Targettable):
+            visitor.target = target_module
         modules: tuple[AntlrModule] = visitor.visit(parse_tree)
         return modules
 
     def _parse(
-        self,
-        to_parse: Path,
+        self, to_parse: Path, target_module: Optional[str] = None
     ) -> tuple[antlr4.CommonTokenStream, tuple[AntlrModule]]:
         parse_tree: ParseTree
         token_stream: antlr4.CommonTokenStream
         modules: tuple[AntlrModule]
 
         parse_tree, token_stream = self._make_parser(to_parse)
-        modules = self._visit(parse_tree)
+        modules = self._visit(parse_tree, target_module)
         return token_stream, modules

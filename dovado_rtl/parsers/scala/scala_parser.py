@@ -9,13 +9,14 @@ from dovado_rtl.parsers.scala.generated.ScalaParser import (
 from dovado_rtl.parsers.scala.generated.ScalaLexer import (
     ScalaLexer as GeneratedScalaLexer,
 )
+from typing import Optional
 
 
 class ScalaParser(AntlrParser):
     __grammar_top_rule: str = "compilationUnit"
 
-    def parse(self, to_parse: Path) -> ScalaParsed:
-        token_stream, classes = self._parse(to_parse)
+    def parse(self, to_parse: Path, target_module: Optional[str] = None) -> ScalaParsed:
+        token_stream, classes = self._parse(to_parse, target_module)
         return ScalaParsed(token_stream, classes)
 
     @property
@@ -31,5 +32,5 @@ class ScalaParser(AntlrParser):
         return GeneratedScalaParser
 
     @property
-    def _visitor_type(self) -> type[antlr4.ParseTreeVisitor]:
+    def _visitor_type(self) -> type[ScalaVisitor]:
         return ScalaVisitor

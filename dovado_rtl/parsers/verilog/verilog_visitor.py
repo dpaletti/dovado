@@ -9,9 +9,10 @@ from dovado_rtl.parsers.verilog.generated.VerilogParserVisitor import (
 )
 from dovado_rtl.parsers.verilog.generated.VerilogParser import VerilogParser
 from dovado_rtl.parsers.utilities.antlr.hdl.hdl_antlr_module import HdlAntlrModule
+from dovado_rtl.parsers.utilities.targettable import Targettable
 
 
-class VerilogVisitor(VerilogParserVisitor):
+class VerilogVisitor(VerilogParserVisitor, Targettable):
     def visitSource_text(
         self, ctx: VerilogParser.Source_textContext
     ) -> Sequence[HdlAntlrModule]:
@@ -22,23 +23,25 @@ class VerilogVisitor(VerilogParserVisitor):
         modules = []
         if descriptions:
             for description in descriptions:
-                parsed_description = self.visitDescription(description)
+                parsed_description = self.visitDescription(description, self.target)
                 if parsed_description:
                     modules.append(parsed_description)
         return modules
 
     def visitDescription(
-        self, ctx: VerilogParser.DescriptionContext
+        self, ctx: VerilogParser.DescriptionContext, target_module: Optional[str] = None
     ) -> Optional[HdlAntlrModule]:
         module_declaration = ctx.module_declaration()
 
         if module_declaration:
-            return self.visitModule_declaration(module_declaration)
+            return self.visitModule_declaration(module_declaration, target_module)
         return None
 
     def visitModule_declaration(
-        self, ctx: VerilogParser.Module_declarationContext
-    ) -> HdlAntlrModule:
+        self,
+        ctx: VerilogParser.Module_declarationContext,
+        target_module: Optional[str] = None,
+    ) -> Optional[HdlAntlrModule]:
         parameters: list[AntlrParameter]
         ports: list[Port]
         parsed_module_item: Optional[Union[list[AntlrParameter], list[Port]]]
@@ -50,6 +53,12 @@ class VerilogVisitor(VerilogParserVisitor):
 
         ports = []
         parameters = []
+        if (
+            target_module is not None
+            and module_identifier is not None
+            and module_identifier.getText() != target_module
+        ):
+            return None
 
         if module_parameter_port_list:
             parameters = self.visitModule_parameter_port_list(

@@ -19,7 +19,9 @@ def parse(
     task_file = input_project.task_file
     project_root = input_project.project_root
 
-    target_source = parser().parse(Path(project_root, input_project.target_file))
+    target_source = parser().parse(
+        Path(project_root, input_project.target_file), input_project.target_module
+    )
 
     if isinstance(input_project, DesignPoint):
         # if the parser is needed in the middle of the flow

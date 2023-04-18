@@ -13,13 +13,16 @@ from dovado_rtl.parsers.system_verilog.system_verilog_visitor import (
 )
 
 import antlr4
+from typing import Optional
 
 
 class SystemVerilogParser(HdlAntlrParser):
     __grammar_top_rule: str = "source_text"
 
-    def parse(self, to_parse: Path) -> SystemVerilogParsed:
-        token_stream, modules = self._parse(to_parse)
+    def parse(
+        self, to_parse: Path, target_module: Optional[str] = None
+    ) -> SystemVerilogParsed:
+        token_stream, modules = self._parse(to_parse, target_module)
         return SystemVerilogParsed(token_stream, modules)
 
     @property
@@ -35,5 +38,5 @@ class SystemVerilogParser(HdlAntlrParser):
         return GeneratedSystemVerilogParser
 
     @property
-    def _visitor_type(self) -> type[antlr4.ParseTreeVisitor]:
+    def _visitor_type(self) -> type[SystemVerilogVisitor]:
         return SystemVerilogVisitor

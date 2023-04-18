@@ -12,13 +12,14 @@ from dovado_rtl.parsers.vhdl.vhdl_parsed import VhdlParsed
 import antlr4
 
 from dovado_rtl.parsers.utilities.antlr.hdl.hdl_antlr_parser import HdlAntlrParser
+from typing import Optional
 
 
 class VhdlParser(HdlAntlrParser):
     __grammar_top_rule: str = "design_file"
 
-    def parse(self, to_parse: Path) -> VhdlParsed:
-        token_stream, entities = self._parse(to_parse)
+    def parse(self, to_parse: Path, target_module: Optional[str] = None) -> VhdlParsed:
+        token_stream, entities = self._parse(to_parse, target_module)
         return VhdlParsed(token_stream, entities)
 
     @property
@@ -34,5 +35,5 @@ class VhdlParser(HdlAntlrParser):
         return GeneratedVhdlParser
 
     @property
-    def _visitor_type(self) -> type[antlr4.ParseTreeVisitor]:
+    def _visitor_type(self) -> type[VhdlVisitor]:
         return VhdlVisitor
