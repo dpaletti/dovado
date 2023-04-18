@@ -21,6 +21,11 @@
         "name": "vhdl_parser"
     },
         {
+        "callable": {"module": "parsers/system_verilog/parse.py",
+                     "name": "parse"},
+        "name": "system_verilog_parser"
+    },
+        {
         "callable": {"module": "explorers/manual_explorer.py",
                      "name": "ManualExplorer"},
         "name": "manual_explorer"

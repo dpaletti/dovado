@@ -1,16 +1,18 @@
-flow = "system_verilog_vivado"
+flow = "manual_system_verilog_vivado"
 
 project_root = "resources/cv32e40p/rtl"
 
 target_file = "cv32e40p_core.sv"
 
-task_file = "resources/exploration_files/corundum_exploration_file.csv" # if csv we go points mode, if toml we go space mode
+task_file = "resources/exploration_files/cv32e40p_exploration_file.csv" # if csv we go points mode, if toml we go space mode
 
 board = "xc7k70tfbv676-1"
 
 clock_port = "clk"
 
 custom_metrics_folder = "resources/custom_metrics"
+
+verbose = true
 
 
 [metrics]

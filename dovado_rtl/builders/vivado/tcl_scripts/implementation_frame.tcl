@@ -10,19 +10,12 @@ proc create_file_list { dir} {
     set files {}
     foreach item $contents {
         if { [file isdirectory $item] } {
-            lappend subdirs $item
+            set files [concat $files [create_file_list $item]]
         } else {
             lappend files $item
         }
     }
 
-    foreach item $subdirs {
-        set contents [glob -nocomplain -directory $item *]
-        foreach iitem $contents {
-            lappend files $iitem
-        }
-    }
-    
     return $files
 }
 
