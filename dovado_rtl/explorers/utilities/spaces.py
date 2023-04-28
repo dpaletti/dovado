@@ -39,10 +39,17 @@ class ContinuousSpace(Space):
         for source, module_parameter_dict in toml_dict.items():
             source_path = Path(source)
             self.ranges[source_path] = {}
-            for module_name, parameter_range_dict in module_parameter_dict.items():
-                self.ranges[source_path][module_name] = {}
-                for parameter_name, range in parameter_range_dict.items():
-                    self.ranges[source_path][module_name][parameter_name] = Range(range)
+            if not type(list(module_parameter_dict.values())[0]) is dict:
+                self.ranges[source_path][""] = {}
+                for parameter_name, range in module_parameter_dict.items():
+                    self.ranges[source_path][""][parameter_name] = Range(range)
+            else:
+                for module_name, parameter_range_dict in module_parameter_dict.items():
+                    self.ranges[source_path][module_name] = {}
+                    for parameter_name, range in parameter_range_dict.items():
+                        self.ranges[source_path][module_name][parameter_name] = Range(
+                            range
+                        )
 
     def get_sources(self) -> list[SOURCE_PATH]:
         return list(self.ranges.keys())
