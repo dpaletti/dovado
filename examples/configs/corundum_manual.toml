@@ -1,0 +1,14 @@
+flow = "manual_verilog_vivado"
+
+project_root = "corundum/fpga/common/rtl"
+
+target_file = "queue_manager.v"
+
+task_file = "exploration_files/corundum_exploration_file.csv"
+
+board = "xc7k70tfbv676-1"
+
+clock_port = "clk"
+
+[metrics]
+default = ["Slice LUTs*", "frequency"]

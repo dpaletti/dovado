@@ -1,0 +1,5 @@
+queue_manager.v/queue_manager/PIPELINE, queue_manager.v/queue_manager/OP_TABLE_SIZE
+3, 2
+2, 8
+4, 16
+8, 64

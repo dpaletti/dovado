@@ -1,0 +1,7 @@
+# path is relative to the project root specified in the config file
+path/to/source_file/module_name/PARAMETER_1, path/to/source_file/module_name/PARAMETER_2
+# WARNING: module_name is empty in case of cpp files thus an example would be path/to/source_file//PARAMETER_NAME
+# notice the double bars
+0, 0
+1, 1
+2, 2

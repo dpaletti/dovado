@@ -1,0 +1,30 @@
+# Flow specification:
+# - automatic: a toml file with the ranges is required
+# - vhdl: parsing and boxing a vhdl project
+# - vivado: vivado is used for synthesis/implementation
+
+flow = "automatic_vhdl_vivado"
+
+project_root = "neorv32/rtl/neorv32"
+
+target_file = "neorv32_top.vhd"
+
+task_file = "exploration_files/neorv_exploration_file.toml"
+
+target_module = "neorv32_top"
+
+board = "xc7k70tfbv676-1"
+
+clock_port = "clk_i"
+
+custom_metrics_folder = "custom_metrics"
+
+verbose = true
+
+[metrics]
+default = ["Slice LUTs", "frequency"]
+custom=["test_metric", "another_test_metric"]
+
+[genetic]
+
+approximate = true

@@ -1,0 +1,150 @@
+# Flow specification:
+# available flows:
+# manual_vhdl_vivado, manual_verilog_vivado, manual_cpp_vitis, manual_chisel_vivado,
+# automatic_vhdl_vivado, automatic_verilog_vivado, automatic_cpp_vitis, automatic_chisel_vivado
+# 'Manual' expects a csv with all the points to explore
+# 'Automatic' expects a toml file with ranges
+flow = <flow_name>
+
+# Root folder
+project_root = <path/to/root/folder>
+
+# Target file: the path is relative to the root folder
+# It is sufficient to specify the file name for a file directly inside the project root
+target_file = <path/to/top/file>
+
+# Target module inside the target file
+# (optional if the target file contains only one module)
+target_module = <module_name>
+
+# Clock port inside the target module
+clock_port = <clock_port_name>
+
+# Target clock (Mhz)
+target_clock = <float_value>
+
+# CSV file specifying the points to explore / TOML file specifying the space to explore
+task_file = <path/to/CSV_or_TOML>
+
+# Target board
+# This must be among the available boards in Vivado (or any other build tool)
+board = <board_name>
+
+
+# If metrics are not specified a metrics.txt file is created
+# One synthesis run is used to check available metrics and they are then printed to file
+# The task file in this case must be a CSV
+[metrics]
+# Metrics available in build tool report
+default = [<metric>, <metric>, <metric>]
+
+# Custom metric available in the custom_metrics folder
+# all files and all subfolder will be inspected for functions
+# ensure that there are no functions with the same name
+custom= [<custom_metric>, <custom_metric>]
+
+
+# All extra fields can be used for custom steps
+[extra]
+
+# This section is required if using the bash generator
+# e.g. if exploring a Chisel project
+[extra.generate]
+# A bash command ran from dovado_work
+command = <bash_command>
+
+ # Path to the folder containing the generated source
+ # relative to dovado_work
+project_root = <path/to/project/root>
+
+# generated file containing target module relative to new project root
+target_file = <path/to/target/file>
+
+# target module
+target_module = <module_name>
+
+
+# This section is required if using the vitis generator
+# i.e. if exploring a HLS project
+[extra.vitis]
+# generated source is saved in dovado_work/hls_generated
+# this path is relative to dovado_work/hls_generated
+project_root = <generated/project/root>
+
+# New target file relative to generated source project root
+target_file = <target/file/paht>
+
+# Target module inside new target file
+target_module = <module_name>
+
+# this is the target clock given to the csynth step (in Mhz)
+# if missing we use the target clock defined above
+target_clock = <float_value>
+
+
+# NON-MANDATORY FIELDS
+
+# If true increase reporting at each build step (e.g. print build tool output)
+# Default is false
+verbose = <true_or_false>
+
+# The following values are all defaults
+[genetic]
+# Available genetic algorithms
+# Options for now are:
+# NSGA2, AGEMOEA, MOEAD, RVEA, RNSGA2, CTAEA, NSGA3, RNSGA3, UNSGA3
+# For further details see: https://pymoo.org/algorithms/list.html
+algorithm = "NSGA2"
+
+[genetic.options]
+# both the following values are multiplied for the number of genes (free parameters)
+pop_size=10
+n_offsprings=10
+
+[genetic.termination]
+# alternatives are
+# - None (uses pymoo default termination),
+# - time,
+# - n_eval (number of function evaluations),
+# - f_tol (objective space tolerance)
+
+method = "" # this is None
+
+max_time = "01:30:00"  # meaningful for 'time' termination
+n_eval = 100  # meaningful for 'n_eval' termination
+tol = 0.001  # meaningful for 'f_tol' termination
+nth_gen = 10  # how many generations pass before recomputing the tolerance (f_tol)
+n_max_gen = 100  # generations upperbound in f_tol
+n_last = 5
+
+[genetic.sampling]
+method = "random" # only this available
+
+[genetic.crossover]
+ # options:
+ # - sbx (e.g. in pymoo int_sbx),
+ # - ux,
+ # - hux,
+ # - one_point,
+ # - two_point,
+ # - k_point,
+ # - exp
+ # see: https://pymoo.org/operators/crossover.html
+
+method = "sbx"
+points = 3  # for k_point crossover this determines the number of points
+prob = 0.9  # goes from 0 to 1, meaningful only for sbx and exp
+eta = 15  # goes from 1 to infinity, meaningful for sbx only
+
+[genetic.mutation]
+method = "pm" # only method available
+mutation_eta = 20 # controls the distribution of mutations
+
+[genetic.movado]
+ # whether the task is stochastic (that is wheter we can cache fitness values)
+stochastic = false
+# estimator to use for approximating the fitness (only one available)
+estimator = "HoeffdingAdaptiveTree"
+# controller to use to decide wheter to approximate or not (only one available)
+controller = "Mab"
+

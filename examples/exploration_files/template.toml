@@ -1,0 +1,24 @@
+# path is relative to the project root specified in the config file
+["path/to/source_file"]
+["path/to/source_file"."module_name1"]
+# range from 0 to 32 inlcuded
+PARAMETER_1 = [0, 32]
+
+ # range from 0 to 128 considering only powers of two
+PARAMETER_2 = {range=[0, 128], step="powers_of_two"}
+
+# range from 0 to 64 keeping steps of size 4 thus 0, 4, 8, ...
+PARAMETER_3 = {range=[0, 64], step=4}
+
+["path/to/source_file"."module_name2"]
+# this fixes a single value
+PARAMETER_4 = [0, 0]
+
+["path/to_source_file2"]
+["path/to/source_file2"."module_name3"]
+PARAMETER_5 = {range[0, 8], step=2}
+
+# WARNING: module_name is empty in case of cpp files thus an example would be
+# ["path/to/source_file"]
+# ["path/to/source_file".""]
+# PARAMETER = [0, 8]

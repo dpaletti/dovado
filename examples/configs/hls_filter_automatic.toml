@@ -1,0 +1,21 @@
+flow = "automatic_hls_vitis"
+
+project_root = "01-convolution-tutorial/src/"
+
+target_file = "filter2d_hw.cpp"
+
+task_file = "exploration_files/hls_automatic.toml"
+
+board = "xc7k70tfbv676-1"
+
+clock_port = "ap_clk" # refers to the clock port of the generated module
+
+[metrics]
+default = ["Slice LUTs*", "frequency"]
+
+[extra]
+[extra.vitis]
+project_root = "solution1/syn/verilog"
+target_file = "Filter2DKernel.v"
+target_clock = 100
+target_module = "Filter2DKernel"

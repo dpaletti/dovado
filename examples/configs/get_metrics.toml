@@ -1,0 +1,18 @@
+flow = "manual_vhdl_vivado"
+
+project_root = "neorv32/rtl/neorv32"
+
+target_file = "neorv32_top.vhd"
+
+task_file = "exploration_files/neorv_exploration_file.csv" # if csv we go points mode, if toml we go space mode
+
+target_module = "neorv32_top" # optional if only one module is present in file
+
+board = "xc7k70tfbv676-1"
+
+clock_port = "clk_i"
+
+target_clock = 0.001 # Mhz
+
+
+custom_metrics_folder = "custom_metrics"

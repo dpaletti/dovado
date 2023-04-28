@@ -1,0 +1,7 @@
+["neorv32_top.vhd"]
+["neorv32_top.vhd"."neorv32_top"]
+CPU_EXTENSION_RISCV_B = [0, 1]
+PMP_NUM_REGIONS = [0, 16]
+MEM_INT_IMEM_SIZE = {range=[1024, 16384], step="powers_of_two"}
+HPM_CNT_WIDTH = {range=[0, 64], step=4}
+CLOCK_FREQUENCY = [1000, 1000]

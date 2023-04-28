@@ -1,0 +1,3 @@
+["common.h"]
+MAX_IMAGE_WIDTH = {range=[180, 4096], step=180}
+MAX_IMAGE_HEIGHT = {range=[180, 4096], step=180}
