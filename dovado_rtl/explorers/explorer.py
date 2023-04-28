@@ -8,11 +8,10 @@ from dovado_rtl.explorers.utilities.design_points import (
     EvaluatedDesignPoint,
 )
 import csv
+import datetime
 
 
 class Explorer(StatefulCallable, ABC):
-    _homonymous_files_limit = 100
-
     def __init__(self) -> None:
         super().__init__()
 
@@ -32,18 +31,11 @@ class Explorer(StatefulCallable, ABC):
         if not Path(work_dir, current_file).exists():
             return current_file
 
-        homonymous_files = 1
-        while homonymous_files < Explorer._homonymous_files_limit:
-            current_file = base_file_name + str(homonymous_files) + ".csv"
-            if not Path(work_dir, current_file).exists():
-                return current_file
-            homonymous_files += 1
-
-        raise Exception(
-            "Found more than "
-            + str(Explorer._homonymous_files_limit)
-            + " homonymous files with "
-            + str(base_file_name)
+        return (
+            base_file_name
+            + "_"
+            + str(datetime.datetime.now()).replace(" ", "_")
+            + ".csv"
         )
 
     @staticmethod
