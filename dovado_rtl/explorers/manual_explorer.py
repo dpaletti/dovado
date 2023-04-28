@@ -50,7 +50,7 @@ class ManualExplorer(Explorer):
         )
         self._points_under_evaluation.append(design_point)
 
-        if design_point.verbose:
+        if design_point.verbose > 0:
             print("Point under evaluation: " + str(current_points))
         return design_point
 
@@ -88,7 +88,7 @@ class ManualExplorer(Explorer):
         )
         self._points_under_evaluation.append(design_point)
 
-        if design_point.verbose:
+        if design_point.verbose > 0:
             print("Point under evaluation: " + str(current_points))
 
         return design_point

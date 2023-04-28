@@ -56,7 +56,11 @@ class Input(ImmutableModel):
     default_metrics: list[str] = []
     custom_metrics: dict[str, Callable[..., float]] = {}
 
-    verbose: bool = False  # for now it controls whether the Vivado builder should print every vivado output
+    # controls reporting:
+    # >= 0: movado if approximate=True
+    # >= 1: points under evaluation
+    # >= 2: builder outputs
+    verbose: int = 0
 
     algorithm: str = _default_genetic_algorithm  # options for now are (case insensitive): NSGA2, AGEMOEA, MOEAD, RVEA, RNSGA2, CTAEA, NSGA3, RNSGA3, UNSGA3
     approximate: bool = _default_approximation
@@ -96,7 +100,7 @@ class Input(ImmutableModel):
                     **genetic_settings,
                     custom_metrics=custom_metrics,
                     default_metrics=default_metrics,
-                    custom_metrics_folder=Path(custom_metrics_folder),
+                    custom_metrics_folder=custom_metrics_folder,
                 )
         return Input(**input_dict, **genetic_settings)
 
@@ -176,7 +180,6 @@ class Input(ImmutableModel):
         metrics: dict[Union[Literal["default"], Literal["custom"]], list[str]],
         metrics_folder: Optional[Path],
     ) -> tuple[list[str], dict[str, Callable[..., float]]]:
-
         if not isinstance(metrics, dict):
             raise ValueError("Invalid format for metrics " + str(metrics))
         if not set(metrics.keys()).intersection({"default", "custom"}):
@@ -207,7 +210,6 @@ class Input(ImmutableModel):
 
     @staticmethod
     def _get_metrics_folder(custom_metrics_folder: Optional[str]) -> Optional[Path]:
-
         custom_metrics_path = (
             Path(custom_metrics_folder)
             if custom_metrics_folder is not None

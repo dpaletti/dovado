@@ -52,7 +52,7 @@ class VivadoBuilder(Builder):
             self._tcl_script = self._make_tcl_file(design_point)
 
         vivado_out, success = self._vivado.execute_script(str(self._tcl_script))
-        if design_point.verbose:
+        if design_point.verbose > 1:
             print(vivado_out)
 
         if not design_point.custom_metrics and not design_point.default_metrics:
@@ -316,7 +316,6 @@ class VivadoBuilder(Builder):
         sections = []
         sections.extend(sections_partial)
         for section in sections:
-
             for nested_section in section.find_all("section"):
                 nested_section.decompose()
 
@@ -362,7 +361,6 @@ class VivadoBuilder(Builder):
 
     @staticmethod
     def _get_max_frequency(target_clock: float, wns: float) -> float:
-
         return 1000 / (1 / (1 / 1000 * target_clock) - wns)
 
     @staticmethod

@@ -84,7 +84,7 @@ class AutomaticExplorer(Explorer):
                 "Found None parsed_project in automatic explorer, please save it in the explore method"
             )
 
-        if evaluated_design_point.verbose:
+        if evaluated_design_point.verbose > 0:
             print("Point under evaluation: " + str(point))
 
         return DesignPoint.make_design_point_from_vector(
@@ -123,7 +123,7 @@ class AutomaticExplorer(Explorer):
             parsed_project=self._parsed_project,
         )
 
-        if design_point.verbose:
+        if design_point.verbose > 0:
             print("Point under evaluation: " + str(point))
 
         return design_point

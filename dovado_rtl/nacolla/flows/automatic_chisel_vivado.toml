@@ -3,7 +3,7 @@ root = "scala_parser"
 [scala_parser]
 ParsedProject = "automatic_explorer"
 
-[manual_explorer]
+[automatic_explorer]
 DesignPoint = "bash_generator"
 
 [bash_generator]

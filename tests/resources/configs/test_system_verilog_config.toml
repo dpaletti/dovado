@@ -12,7 +12,7 @@ clock_port = "clk"
 
 custom_metrics_folder = "resources/custom_metrics"
 
-verbose = true
+verbose = 1
 
 
 [metrics]

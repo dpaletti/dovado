@@ -11,7 +11,6 @@ class VitisProject(ImmutableModel):
     project_root: str
     target_file: str
     target_module: str
-    clock_port: Optional[str] = None
     target_clock: Optional[float] = None
 
 

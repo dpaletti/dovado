@@ -12,7 +12,7 @@ clock_port = "clock"
 
 custom_metrics_folder = "resources/custom_metrics"
 
-verbose = true
+verbose = 1
 
 [metrics]
 default = ["Slice LUTs*", "frequency"]
