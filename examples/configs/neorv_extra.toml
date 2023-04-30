@@ -1,0 +1,21 @@
+flow = "extra_vhdl"
+
+project_root = "neorv32/rtl/neorv32"
+
+target_file = "neorv32_top.vhd"
+
+target_module = "neorv32_top"
+
+clock_port = "clk_i"
+
+target_clock = 0.001
+
+task_file = "exploration_files/neorv_exploration_file.csv"
+
+board = "xc7k70tfbv676-1"
+
+verbose = true
+
+[metrics]
+default = ["Slice LUTs", "frequency"]
+custom=["test_metric", "another_test_metric"]

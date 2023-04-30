@@ -1,0 +1,7 @@
+{
+    "implementations":[
+        {
+        "callable": {"module": "parsers/cpp/parse.py",
+                     "name": "parse"},
+        "name": "cpp_parser"
+    }]}
