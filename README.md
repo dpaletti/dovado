@@ -1,16 +1,18 @@
 
 # Table of Contents
 
-1.  [Installation](#installation)
-2.  [Usage](#usage)
-3.  [Examples](#examples)
-        1.  [neorv32 (VHDL)](#orgcb021dc)
-        2.  [corundum (VERILOG)](#org9b66d30)
-        3.  [cv32e40p (SYSTEM-VERILOG)](#orgbda061b)
-        4.  [Rocket-Chip (CHISEL)](#rocket-chip)
-        5.  [ (CHISEL)](#rocket-chip)
-4.  [RAW'22 Experiments](#raw22experiments)
-5. [Associated Publication](#paper_ref)
+- [Installation](#installation)
+- [Usage](#usage)
+  * [Adding Custom Processing Steps](#adding-custom-processing-steps)
+- [Examples](#examples)
+  * [neorv32 (VHDL)](#neorv32--vhdl-)
+  * [corundum (VERILOG)](#corundum--verilog-)
+  * [cv32e40p (SYSTEM-VERILOG)](#cv32e40p--system-verilog-)
+  * [Rocket-chip (CHISEL)](#rocket-chip--chisel-)
+  * [Convolution Filter (HLS)](#convolution-filter--hls-)
+- [RAW'22 Experiments](#raw-22-experiments)
+- [Associated Publication](#associated-publication)
+
 DoVado is a RTL design automation and exploration CLI tool.
 
 
