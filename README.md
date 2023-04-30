@@ -3,7 +3,6 @@
 
 1.  [Installation](#installation)
 2.  [Usage](#usage)
-        1. [Adding Custom Processing Steps](#custom-step)
 3.  [Examples](#examples)
         1.  [neorv32 (VHDL)](#orgcb021dc)
         2.  [corundum (VERILOG)](#org9b66d30)
