@@ -1,0 +1,15 @@
+root = "vhdl_parser"
+
+[vhdl_parser]
+ParsedProject = "manual_explorer"
+
+[manual_explorer]
+DesignPoint = "vhdl_boxer"
+EndExploration = "custom_step" # here we send EndExploration to our custom_step
+
+[vhdl_boxer]
+DesignPoint = "vivado_builder"
+
+[vivado_builder]
+EvaluatedDesignPoint = "manual_explorer"
+EndExploration = "manual_explorer"
