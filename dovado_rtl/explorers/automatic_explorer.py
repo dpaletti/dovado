@@ -12,7 +12,8 @@ from dovado_rtl.explorers.utilities.design_points import (
     DesignPoint,
     EvaluatedDesignPoint,
 )
-from dovado_rtl.explorers.explorer import EndExploration, Explorer
+from dovado_rtl.explorers.explorer import Explorer
+from dovado_rtl.explorers.utilities.design_points import EndExploration
 import numpy as np
 from dovado_rtl.explorers.utilities.spaces import SOURCE_PATH
 from dovado_rtl.explorers.utilities.tasks import (
@@ -28,9 +29,10 @@ from queue import SimpleQueue
 
 import importlib
 from threading import Thread
+from nacolla import ImmutableModel
 
 
-class EndResult(EndExploration):
+class EndResult(ImmutableModel):
     result: Result
 
 
@@ -60,7 +62,7 @@ class AutomaticExplorer(Explorer):
         self, evaluated_design_point: Union[EvaluatedDesignPoint, EndExploration]
     ) -> Union[DesignPoint, EndExploration]:
         if isinstance(evaluated_design_point, EndExploration):
-            return EndExploration()
+            return evaluated_design_point
 
         self._evaluated_points.append(
             (evaluated_design_point.vectorized(), evaluated_design_point)
@@ -72,7 +74,7 @@ class AutomaticExplorer(Explorer):
 
         if isinstance(point, EndResult):
             self._save_results(point.result)
-            return EndExploration()
+            return EndExploration(**dict(evaluated_design_point))
 
         if self._task is None:
             raise ValueError("Please save the task in explore, found it None")

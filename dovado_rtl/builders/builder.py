@@ -6,7 +6,7 @@ from dovado_rtl.explorers.utilities.design_points import (
 from pathlib import Path
 from dovado_rtl.fill import fill
 from typing import Union
-from dovado_rtl.explorers.utilities.tasks import EndExploration
+from dovado_rtl.explorers.utilities.design_points import EndExploration
 from nacolla.stateful_callable import StatefulCallable
 
 

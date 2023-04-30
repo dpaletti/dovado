@@ -58,7 +58,7 @@ class ManualExplorer(Explorer):
         self, evaluated_design_point: Union[EvaluatedDesignPoint, EndExploration]
     ) -> Union[DesignPoint, EndExploration]:
         if isinstance(evaluated_design_point, EndExploration):
-            return EndExploration()
+            return evaluated_design_point
 
         if self._task is None:
             raise ValueError("Found None task in manual explorer")
@@ -81,7 +81,7 @@ class ManualExplorer(Explorer):
 
         current_points = self._set_point(self._evaluated_points, self._task)
         if current_points is None:
-            return EndExploration()
+            return EndExploration(**dict(evaluated_design_point))
 
         design_point = DesignPoint(
             **(dict(self._task.get_parsed_project()) | {"points": current_points})

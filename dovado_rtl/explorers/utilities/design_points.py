@@ -75,3 +75,7 @@ class EvaluatedDesignPoint(DesignPoint):
 
     class Config:
         extra = "allow"
+
+
+class EndExploration(EvaluatedDesignPoint):
+    ...

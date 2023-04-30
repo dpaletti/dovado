@@ -36,7 +36,7 @@ def make_flow(
         str(files("dovado_rtl.nacolla.flows").joinpath(flow_name + ".toml"))
     )
 
-    custom_flow_path = Path(work_directory, flow_name)
+    custom_flow_path = Path(work_directory, flow_name + ".toml")
 
     if default_flow_path.is_file():
         flow_path = default_flow_path

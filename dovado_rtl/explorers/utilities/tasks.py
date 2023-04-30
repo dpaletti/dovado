@@ -45,7 +45,3 @@ class AutomaticExplorationProject(ParsedProject):
 
 class ManualExplorationProject(ParsedProject):
     space: DiscreteSpace
-
-
-class EndExploration(ImmutableModel):
-    ...

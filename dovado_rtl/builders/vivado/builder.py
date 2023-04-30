@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 from bs4.element import PageElement, ResultSet
 import numpy as np
 from typing import Union
-from dovado_rtl.explorers.utilities.tasks import EndExploration
+from dovado_rtl.explorers.utilities.design_points import EndExploration
 
 
 class VivadoBuilder(Builder):
@@ -57,7 +57,7 @@ class VivadoBuilder(Builder):
 
         if not design_point.custom_metrics and not design_point.default_metrics:
             self._write_all_metrics(design_point)
-            return EndExploration()
+            return EndExploration(**dict(design_point), design_value={"": 0})
 
         design_value = VivadoBuilder._compute_metrics(success, design_point)
 
