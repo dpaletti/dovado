@@ -3,13 +3,14 @@
 
 - [Installation](#installation)
 - [Usage](#usage)
-  * [Adding Custom Processing Steps](#adding-custom-processing-steps)
+  * [Adding Custom Processing Steps](#custom-step)
 - [Examples](#examples)
-  * [neorv32 (VHDL)](#neorv32--vhdl-)
-  * [corundum (VERILOG)](#corundum--verilog-)
-  * [cv32e40p (SYSTEM-VERILOG)](#cv32e40p--system-verilog-)
-  * [Rocket-chip (CHISEL)](#rocket-chip--chisel-)
-  * [Convolution Filter (HLS)](#convolution-filter--hls-)
+  * [Retrieiving Available Metrics](#metrics)
+  * [neorv32 (VHDL)](#neorv32)
+  * [corundum (VERILOG)](#corundum)
+  * [cv32e40p (SYSTEM-VERILOG)](#cv32e40p)
+  * [Rocket-chip (CHISEL)](#rocket-chip)
+  * [Convolution Filter (HLS)](#convolution)
 - [RAW'22 Experiments](#raw-22-experiments)
 - [Associated Publication](#associated-publication)
 
@@ -37,6 +38,13 @@ In the examples directory you can find `configs/template.toml` which describes t
 ## Adding Custom Processing Steps
 In the examples directory you can find `custom_step.py` which is an example of a custom step added after exploration (e.g. for plot generation after exploration). On top of this, you can find `dovado_work/steps.json`, this file tells dovado which custom step are available and where they are. Finally, we need to specify one or more new flows, this is done through flow files. You can find `dovado_work/extra_vhdl.toml` where there is a new flow specified which adds the custom step after a manual exploration vhdl flow.
 
+To run an example of such flow:
+
+``` sh
+  cd examples/
+  dovado configs/neorv_extra.toml
+```
+
 
 <a id="examples"></a>
 
@@ -47,8 +55,19 @@ All examples can be run from the `examples` folder:
     cd examples/
 ```
 
+<a id="metrics"></a>
 
-<a id="orgcb021dc"></a>
+## Retrieving Available Metrics
+Different boards may have different utilization metrics to use. In general to retrieve them it is sufficient to run your usual config file without the metric section specified. An example of such config file is `examples/configs/get_metrics.toml`.
+**WARNING**: retrieving metrics needs manual exploration, the first point specified will be ran to get a test synthesis/implementation.
+
+To test retrieving the metrics:
+
+``` sh
+  dovado configs/get_metrics.toml
+```
+
+<a id="neorv32"></a>
 
 ## neorv32 (VHDL)
 [**neorv32**](https://github.com/stnolting/neorv32) is an embedded RISC-V core.
@@ -78,7 +97,7 @@ An automatic flow is also available for this example:
 
 
 
-<a id="org9b66d30"></a>
+<a id="corundum"></a>
 
 ## corundum (VERILOG)
 [**corundum**](https://ieeexplore.ieee.org/abstract/document/9114811) is an open-source 100Gbps-NIC.
@@ -96,7 +115,7 @@ Exploring the parameter space of the top module:
 ```
 
 
-<a id="orgbda061b"></a>
+<a id="cv32e40p"></a>
 
 ## cv32e40p (SYSTEM-VERILOG)
 [**cv32e40p**](https://ieeexplore.ieee.org/document/8106976/) is a low-power RISC-V core.
