@@ -20,7 +20,7 @@ custom=["test_metric", "another_test_metric"]
 
 [extra]
 [extra.generate]
-command = "bash ../rocket-chip/make_rocket.bash" # the command is ran from the work directory
+command = "bash ../make_rocket.bash" # the command is ran from the work directory
 # the above script generates rocket chip verilog and puts it into a chisel_generated folder inside the working directory
 project_root = "chisel_generated" # this is given with respect to dovado_work
 target_file = "freechips.rocketchip.system.DefaultFPGAConfig.v" # generated file containing target module relative to root

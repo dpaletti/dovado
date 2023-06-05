@@ -22,10 +22,21 @@ DoVado is a RTL design automation and exploration CLI tool.
 # Installation
 Dovado needs python 3.9 or higher.
 
+Dovado needs Boost and Cmake:
+``` sh
+    sudo apt install cmake
+    sudo apt install libboost-all-dev
+```
+
+Install Dovado through pip:
 ``` sh
     pip install dovado-rtl
 ```
 
+Add Dovado installation directory to PATH:
+``` sh
+    echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+```
 
 <a id="usage"></a>
 
